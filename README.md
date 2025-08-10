@@ -4,7 +4,7 @@
     - It provides a flexible space for application testing, troubleshooting, and experimentation.
     * User interface service:
      - The user interface for login and registration using HTML and JavaScript.
-     - This interface integrates with the API to handle image uploads, register new users , and validate login credentials , and despliay profile of users.
+     - This interface integrates with the API to handle image uploads, register new users, validate login credentials, and display profiles of users.
  
     * API service:
      - The Application Programming Interface (API) is built using Python to handle data coming from users.
@@ -19,7 +19,7 @@
      -  Serves as a centralized storage zone for user images, providing access and retrieval capabilities.
      - Built with Go to ensure performance and scalability.
 
-    * Docker Containerzation:
+    * Docker Containerization:
      - Docker is a containerization technology that allows you to package applications and their dependencies into isolated units called containers. 
      - I used Docker to build container images, which are then deployed, orchestrated, and managed by Kubernetes.
        - My Docker image :
@@ -27,10 +27,10 @@
          * 'auth-service'
          * 'image-servic'
          * 'webportal-service'
-         * 'registry images:' -> used to store the Docker images which build internally.
+         * 'registry images:' -> used to store the Docker images that are built internally.
 
     * Kubernetes Orchestration:
-     - Is a container orchestration platform designed to manage and scale large numbers of these containers across a cluster of machines.
+     - It is a container orchestration platform designed to manage and scale large numbers of these containers across a cluster of machines.
      - I used Kubernetes to run containers as Deployments, which control Pods and allow scaling up or down as needed.
      - I implemented dynamic autoscaling (HPA) to automatically add new pods to the cluster when resources are highly utilized.
      - I configured Kubernetes Services to route traffic to the Pods, using ClusterIP for internal communication between them.
@@ -41,37 +41,37 @@
      - I implemented a ConfigMap to store non-sensitive configuration data, such as environment variables or application settings, and pass them to the pods for use by the application.
      - I configured Persistent Volume (PV) and Persistent Volume Claim (PVC) objects to allocate and manage persistent storage for applications and databases.
      - Ingress-controller:
-       * Is a component in Kubernetes that allows routing HTTP/HTTPS traffic to your services.
+       * It is a component in Kubernetes that allows routing HTTP/HTTPS traffic to your services.
        * I configured it to route traffic to service endpoints and secured it using self-signed TLS certificates.
      - Issuer With cert-manager:
-       * Issuer -> It's Kubernetes object for release the certificates
-       * cert-manager -> is a Kubernetes controller responsible for managing your TLS certificates,including self-signed ones, automatically within the cluster.
-         - I configure issuer to release the certification then referenced the Issuer in the certificates object to create the TLS secret.
-     - Openssl with secret tls
+       * Issuer -> It's a Kubernetes object for releasing the certificates
+       * cert-manager -> is a Kubernetes controller responsible for managing your TLS certificates, including self-signed ones, automatically within the cluster.
+         - I configure the issuer to release the certification, then reference the Issuer in the certificates object to create the TLS secret.
+     - Openssl with secret TLS
        openssl -> is a tool that allows you to create TLS self-signed certificates locally.
-       - I used openssl comandline to to generate the Key(Private Key).
-       - Then request to certification self-signed (CSR) , Then generated Certification 
+       - I used the OpenSSL command to generate the Key(Private Key).
+       - Then request to certification self-signed (CSR), then generate the certification 
        - Allocated the Certification with Key to Kubernetes secret tls.
     **Note**
       There are three ways to generate certificates in Kubernetes: 
       1- Manuel:
         - Using OpenSSL to generate certificates and manually creating the TLS secret
       2- With Issuer and cert-manager:
-         - Creating Kubernetes objects (Issuer and Certificate) managed by cert-manager.(Implemetation)
+         - Creating Kubernetes objects (Issuer and Certificate) managed by cert-manager.(Implementation)
       3- Automated via Ingress Annotations
          - Creating an Issuer and referencing it in the Ingress annotations (cert-manager.io/issuer) so cert-manager automatically generates the certificate.
 
     * Helm charts package Kubernetes:
-       - helm -> is the package manager for Kubernetes, allowing you to define, install, and manage Kubernetes applications using preconfigured charts.
+       - Helm -> is the package manager for Kubernetes, allowing you to define, install, and manage Kubernetes applications using preconfigured charts.
        - install helm charts
-       - I used Helm to install the prometheus-community chart, which is a very useful comprehensive monitoring solution package that bundles all the necessary templates and manifests for:
+       - I used Helm to install the prometheus-community chart, which is a very useful, comprehensive monitoring solution package that bundles all the necessary templates and manifests for:
            * 'Prometheus'
            * 'AlertManager'
            * 'Grafana'
 
-    * Prometheus, AlertManager and Grafana:
+    * Prometheus, AlertManager, and Grafana:
        - Prometheus-> is a monitoring tool that scrapes metrics and stores them in its time-series database (TSDB).
-       - Used Prometheus to scrape metrics from the services and persist the collected data.The metrics can be viewed in Prometheus under the Targets page.
+       - Used Prometheus to scrape metrics from the services and persist the collected data. The metrics can be viewed in Prometheus under the Targets page.
          * Configured templates to define which services Prometheus should scrape.
        - AlertManager -> is a component that works alongside Prometheus. Its job is to group, route, and silence the alerts generated by Prometheus before sending them to notification endpoints like email or Slack.
        - I configured alerting rules to define which services should trigger alerts.
@@ -81,7 +81,7 @@
        - I configured visualization dashboards for services with key metrics such as:
          * 'Status Pods'
          * 'Histogram Bucket'
-         * 'HTTP Request Coun'
+         * 'HTTP Request Count'
          * 'CPU Usage'
          * 'Memory Usage'
         **Note**
@@ -90,14 +90,14 @@
 - Steps of failure simulation and recovery verification.
     - Database Failure with API Service:
       * Pre-Failure State Monitoring:
-       - I began by using the 'watch' command-line tool with 'kubectl describe' to monitoring the Postgres database Deployment in the app-services namespace using
+       - I began by using the 'watch' command-line tool with 'kubectl describe' to monitor the Postgres database Deployment in the app-services namespace using
          'watch -n1 kubectl describe deployment <name-of-deployment> -n <namespace>'.
 
        - Concurrently, you observed the Pods with 'kubectl get' Postgres and API services status.
          'kubectl get pod -n <name-of-pod> -n <namespace> -l <lable-of-pod-inside-ymal> -w'.
-          * -w --> is watch watch for changes.
+          * -w --> is watch for changes.
 
-      - Then, I used 'kubctl logs -f' to print the logs for a container in a pod resourece streamly. 
+      - Then, I used 'kubctl logs -f' to print the logs for a container in a pod resource streamly. 
          'kubctl logs -f <name-of-pod> -n <namespace>'.
       - Grafana dashboards and AlertManager showed a normal operational state (the database dashboard was "Up" and no active alerts existed). A new user was successfully registered via the frontend (webportal.local), confirming that all services were functioning correctly. 
 
@@ -119,19 +119,19 @@
           - Restored the service by scaling the database replicas back to one using 'kubectl scale deployment'.
               'kubectl scale deployment <name-of-deployment> --replicas=<number-scale> -n <namespac>'.
 
-  - Simulating a high utilize in Requests to the Image Service.
+  - Simulating a high utilization in Requests to the Image Service.
     - Pre-Failure State Monitoring:
-       * started by monitoring the image-service Deployment in the app-services namespace with using 
+       * started by monitoring the image-service Deployment in the app-services namespace using 
           'watch -n1 kubectl describe deployment <name-of-deployment> -n <namespace>'
        * Concurrently, you observed the HPA with 'kubectl get hpa' Image-service utilize pod.
            'kubectl get hap <name-of-pod> -n <namespece>'.
           - The service initially had 2 replicas. The Grafana dashboards showed low CPU and memory usage for the service.
     - Simulating the Failure:
-       * I used hey tool to generate and send large number of requets 
+       * I used the 'hey' tool to generate and send a large number of requests 
            'hey -n 100000 -c 100 https://images.local/uploads/<image-name>.png' 
-       * Due to the high utilize in CPU usage exceeding the threshold defined in the Horizontal Pod Autoscaler (HPA), Kubernetes automatically scaled up the replicas for the image-service.
-       * The deployment's replica count increased from 2 to 10, then to 18, before stable at 10 Pods.
-       * The Grafana dashboard clearly showed a sharp increase in CPU usage, Memory usage ,http requests followed by a decrease as the new Pods were added.
+       * Due to the high utilization in CPU usage exceeding the threshold defined in the Horizontal Pod Autoscaler (HPA), Kubernetes automatically scaled up the replicas for the image-service.
+       * The deployment's replica count increased from 2 to 10, then to 18, before stabilizing at 10 Pods.
+       * The Grafana dashboard clearly showed a sharp increase in CPU usage, Memory usage,http requests, followed by a decrease as the new Pods were added.
     - Verifying Recovery:
        - Service Restoration:
           * After the load test ended, Kubernetes automatically scaled down the Pods gradually based on the HPA settings.
@@ -139,48 +139,47 @@
           * The Grafana dashboard returned to its normal state, indicating that the service had recovered and stabilized. 
 
 **Database Failure with API Service:**[View Video](https://bit.ly/3UlgOTS)
-**Simulating a high utilize in Requests to the Image Service**[View Video](https://bit.ly/4fuLQlW)
+**Simulating a high utilization in Requests to the Image Service**[View Video](https://bit.ly/4fuLQlW)
 
 ---
 - Setup Environment
-   1. Perequisits: 
+   1. Prerequisites: 
       * Docker
-      * Minikube: to use kuberenetes cluster (for a local development environment) or a cloud provider.
+      * Minikube: to use a Kubernetes cluster (for a local development environment) or a cloud provider.
       * kubectl
       * Helm
       * Load Testing Tool
 ---
 
    2. Steps:
-      **Docker instalation and Configuration**
-        3. Install Docker: Run this following command to install Docker onn local machine:
+      **Docker Installation and Configuration**
+        3. Install Docker: Run the following command to install Docker on the local machine:
            curl -fsSL https://get.docker.com -o get-docker.sh
             sudo sh get-docker.sh
-        4. Configre Docker deamon for local Registry:
-           * If you are planning to used a local Docker registry on you mechine
-             . Edit the Docker 'deamon.json'file, which exists on path '/etc/docker/deamon.json'.
-             . If the file does not exists create one.
-             . Add the following configration and replace with your local IP. 
+        4. Configure Docker daemon for local Registry:
+           * If you are planning to use a local Docker registry on your machine
+             . Edit the Docker daemon. json file, which exists on path '/etc/docker/deamon.json'.
+             . If the file does not exist, create one.
+             . Add the following configuration and replace with your local IP. 
             {
                  "insecure-registries": ["your-registry-host-(IP):5000"]
             }
-
-            .Restart the Dokcer Engine
+             .Restart the Docker Engine
               'sudo systemctl restart docker'
 
             *Note*
-             - If you use Docker Desktop you can configure the code json format on it.
-                 1. Go the setting icon on the right corner click then will pop up page
-                 2. Then nvigte the 'Dokcer Engine' will see there is an empty box, enter the command on box.
+             - If you use Docker Desktop, you can configure the code JSON format on it.
+                 1. Go to the settings icon in the right corner, click, then will pop up page
+                 2. Then navigate to the 'Docker Engine' will see there is an empty box. Enter the command in the box.
                  3. Click 'Apply & restart'
 
        5.  **Run Dokcer Registry**
-             . Docker image Registry it's private registry to store your repositry images.
-             . Following the command to run container registry
+             . Docker image Registry it's a private registry to store your repository images.
+             . Following the command to run the container registry
                'docker run -d -p 5000:5000 --restart always --name registry registry:3'
-             . --restart always : is policy to reload the contaier even if there is issues with registry container or restart your machine. 
+             . --restart always: is the policy to reload the container even if there are issues with the registry container, or restart your machine? 
        6. **Build Docker Image and Push** 
-            - One the Docker deamon Configure you can build and push on your local registry.
+            - Once the Docker daemon is configured, you can build and push to your local registry.
 
                * API_service:
                  'cd API_Service/'
@@ -210,53 +209,53 @@
                - Push image webportal-service:
                    'docker push your-registry-host(ip):5000/webportal-service:v1'
 
-      **install Minikube and Configuration** 
-        7. Install and Configuration Environment local meachine
-           - Once to install Docker and configure install mninikube to run as container on docker.
+      **Install Minikube and Configuration** 
+        7. Install and configure the Environment local machine
+           - Once to install Docker and configure it to install minikube to run as a container on Docker.
             'curl -LO https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64'
              'sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64'
              'minikube start --cpus=2 --memory=4096 --cni=calico --insecure-registry="your-registry-host(ip):5000"
-            . Start Minikube: --cpu=2, you specify 'CPU' usge on your mechine host.(I recomended to allocate if you does not specfiy will take resource of mechine). 
-            . Start Minikube: --memory=4096, you specify 'Memory' usge on your mechine host.(I recomended to allocate if you does not specfiy will take resource of mechine).
+            . Start Minikube: --cpu=2, you specify 'CPU' usage on your machine host. (I recommended allocating, if you do not specify will take the resource of the machine). 
+            . Start Minikube: --memory=4096, you specify 'Memory' usage on your machine host. (I recommend allocating; if you do not specify will take resources of the machine).
             . Start Minikube: --cni=calico, you must specify a Container Network Interface (CNI) that supports Network Policies, such as Calico, Cilium, or Weave Net.
-            . Start Minikube: --insecure-registry, you must specify registry container to the minikube to allow you pull images from registry.
+            . Start Minikube: --insecure-registry, you must specify the registry container to the minikube to allow you to pull images from the registry.
 
-      **kubbctl runs objects kuberentes culster**
-        8. Runs Deployment on kuberenetes culster
-         - Run 'namespace' to allocate each objects for the namespace
+      **kubbctl runs objects Kubernetes cluster**
+        8. Runs Deployment on Kubernetes cluster
+         - Run 'namespace' to allocate each object for the namespace
             'kubectl create namespace apps-services'
             'kubectl create namespace frontend-service'
          - Run
              'kubectl create secret docker-registry my-registry-creds --docker-server=your-registry-host(ip):5000 --docker-username=<username> --docker-password=<Password>  --docker-email=<email>  -n app-services'
              'kubectl create secret docker-registry my-registry-creds --docker-server=your-registry-host(ip):5000 --docker-username=<username> --docker-password=<Password>  --docker-email=<email>  -n freontend-services'
-         * I devided the files to easy apply the deployments
+         * I divided the files to easily apply the deployments
             * Issure Certification:
-               - I put the 'selfsined-issure.yml' on globle file because most apps is following the namespace apps-services
+               - I put the 'self-signed-issuer.yml' in the global file because most apps are following the namespace apps-services
                'kubectl -f Apps_deployment/selfsigned-issuer.yml'
             * Postgresql-Group:
-               - Create empty file to store data of database.
+               - Create an empty file to store the data of the database.
                    'mkdir -p Apps_deployment/mountDatabase'
-               - I sterted with 'Databse' most apps is depends on the Database postgres , ConfigMap , Secret. 
+               - I started with 'Database', most apps depend on the Database, Postgres, ConfigMap, and Secret. 
                    'kubectl -f Apps_deployment/Postgresql-Group/'
             * Api_Group: 
                'kubectl apply -f Apps_deployment/Api-Group/'
-            * Authntaction-Group:
+            * Authentication-Group:
                'kubectl apply -f Apps_deployment/Authntaction-Group/
             * Image-Group:
                'kubectl apply -f Apps_deployment/Image-Group/'
             * WebPortal-Group:
                 'kubectl -f Apps_deployment/WebPortal-Group/'
-             - I already put Issure with Group of WebPortal because of I have one app under namespace 'frontend-service'
+             - I already put Issure with the Group of WebPortal because I have one app under the namespace 'frontend-service'
          - Network-Policy:
            **Informations:**
-             - Before to start apply Networkpolicy there are two concepts 'ingress' , 'egress'
-                * Ingress in network policy -> (That meaning when reception your friend) and (which door will reception your friend)--> that mean(Ports).
-                * Egress in  network policy -> (That meaning when goes your friend) and (which door will reception you)--> that mean(Ports).
+             - Before starting to apply Network, there are two concepts: 'ingress', 'egress'
+                * Ingress in network policy -> (That means when you receive your friend) and (which door will receive your friend)--> that means (Ports).
+                * Egress in  network policy -> (That means when your friend goes) and (which door will reception you)--> that means (Ports).
           9. Run NetworkPolicy
-              - I devided the file of grop policy and there are two yaml file it's outside the devided.
+              - I divided the file of group policy, and there are two YAML files it's outside the divide.
             * Policies Deny all :
-               - It's important to put on your infrastructure from consept 'default security' to pervent all pods to communication with each other.
-               - After that you can allow by sepecify ports for each Applications
+               - It's important to put on your infrastructure from concept 'default security' to prevent all pods from communicating with each other.
+               - After that, you can allow by specifying ports for each application
                * Network Policy Deny:
                   'kubectl -f Policy-Group/deny-apps-services-all.yml'
                   'kubectl -f Policy-Group/deny-webportal-service-all.yml'
@@ -268,13 +267,13 @@
                   'kubectl -f Policy-Group/Policy-image-fromAndTo'
               * Network-Policy webportal:
                   'kubectl -f Policy-Group/Policy-webportal-fromAndTo/'
-              * Network-Policy Pstgres-sql:
+              * Network-Policy Postgres-SQL:
                   'kubectl -f Policy-Group/Policy-postgresql-fromAndTo/'
 
 
      **Instaltion Helm Chart & Prometheus Community Kubernetes Helm Charts**
         10. Helm Charts:
-            - helm charts -> it's collections of resource incloud configMaps , secets , deplyment & services any thing that rquire for deployment the Applications on Kuberenets.
+            - Helm charts -> it's a collection of resources including configMaps, secrets, deployments & services, and anything required for deploying the Applications on Kubernetes.
                * Helm install
                   'curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3'
                   'chmod 700 get_helm.sh'
@@ -351,7 +350,7 @@
 │   │   ├── postgres-pv.yml
 │   │   ├── postgres-secret.yml
 │   │   └── postgres-service.yml
-│   ├── prometheus-Configruation
+│   ├── Prometheus-Configuration
 │   │   ├── alertmanager.yml
 │   │   ├── app-alerts-rules.yml
 │   │   ├── apps-monitors.yml
@@ -386,6 +385,6 @@
 │   ├── image-service
 │   └── main.go
 ├── README.md
-└── Reports of Projecte
+└── Reports of Project
     ├── HPA_Result.jpg
     └── ResultOfImageService.jpg
