@@ -1,0 +1,12 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-postgres-egress
+  namespace: app-services
+spec:
+  podSelector:
+    matchLabels:
+      app: postgres 
+  policyTypes:
+    - Egress 
+egress: []

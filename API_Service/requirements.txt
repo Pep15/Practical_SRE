@@ -1,0 +1,7 @@
+Flask==2.3.2
+prometheus_client==0.14.1
+SQLAlchemy==2.0.29
+psycopg2-binary==2.9.9
+PyJWT==2.8.0
+requests==2.31.0
+Flask-Cors

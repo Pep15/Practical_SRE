@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login & Register</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background-color: #f5f5f5; }
+    .tabs button {
+      padding: 10px 20px;
+      margin-right: 10px;
+      cursor: pointer;
+      border: none;
+      background: #007bff;
+      color: white;
+      border-radius: 5px;
+    }
+    .tab-content { display: none; margin-top: 20px; }
+    .tab-content.active { display: block; }
+    #profile-info { margin-top: 30px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    .alert { padding: 10px; margin-top: 10px; border-radius: 5px; }
+    .success { background-color: #d4edda; color: #155724; }
+    .error { background-color: #f8d7da; color: #721c24; }
+    input[type="text"], input[type="email"], input[type="password"], input[type="file"] {
+      width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;
+    }
+    button[type="submit"] {
+      background-color: #28a745;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button[type="submit"]:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+  <h2>🛡️ Auth Page <span style="font-size: 0.7em; color: #888;">v1.0.5</span></h2>
+  
+  <div class="tabs">
+    <button onclick="showTab('login')">Login</button>
+    <button onclick="showTab('register')">Register</button>
+  </div>
+
+  <!-- Login Tab -->
+  <div id="login" class="tab-content active">
+    <h3>Login</h3>
+    <form id="loginForm">
+      <label>Email:</label>
+      <input type="email" name="email" required>
+
+      <label>Password:</label>
+      <input type="password" name="password" required>
+
+      <button type="submit">Login</button>
+    </form>
+    <div id="loginMessage" class="alert"></div>
+  </div>
+
+  <!-- Register Tab -->
+  <div id="register" class="tab-content">
+    <h3>Register</h3>
+    <form id="registerForm" enctype="multipart/form-data" novalidate>
+      <label>Name:</label>
+      <input type="text" name="name" required>
+
+      <label>Email:</label>
+      <input type="email" name="email" required>
+
+      <label>Password:</label>
+      <input type="password" name="password" required>
+
+      <label>Profile Image:</label>
+      <input type="file" name="image">
+
+      <button type="submit">Register</button>
+    </form>
+    <div id="registerMessage" class="alert"></div>
+  </div>
+
+  <!-- Profile Info -->
+  <div id="profile-info"></div>
+
+  <!-- Full JavaScript -->
+  <script>
+    function showTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(div => div.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const registerForm = document.getElementById('registerForm');
+      const loginForm = document.getElementById('loginForm');
+
+      // Register Handler
+      if (registerForm) {
+        registerForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const formData = new FormData(e.target);
+          const msgDiv = document.getElementById('registerMessage');
+
+          try {
+            const res = await fetch('https://api.local/register', {
+              method: 'POST',
+              body: formData
+            });
+
+            const contentType = res.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+              const result = await res.json();
+              if (res.ok) {
+                msgDiv.textContent = "✅ Registration successful.";
+                msgDiv.className = "alert success";
+              } else {
+                msgDiv.textContent = `❌ Registration failed: ${result.error || 'Unknown error'}`;
+                msgDiv.className = "alert error";
+              }
+            } else {
+              const text = await res.text();
+              msgDiv.textContent = `❌ Registration failed. Non-JSON response: ${text.substring(0, 100)}...`;
+              msgDiv.className = "alert error";
+            }
+
+          } catch (error) {
+            msgDiv.textContent = `❌ Network error: ${error.message}`;
+            msgDiv.className = "alert error";
+          }
+        });
+      }
+
+      // Login Handler
+      if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const data = Object.fromEntries(new FormData(e.target));
+          const msgDiv = document.getElementById('loginMessage');
+
+          try {
+            const res = await fetch('https://api.local/login', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data)
+            });
+
+            const result = await res.json();
+
+            if (res.ok && result.token) {
+              msgDiv.textContent = "✅ Login successful.";
+              msgDiv.className = "alert success";
+
+              localStorage.setItem('jwt', result.token);
+
+              const profileRes = await fetch('https://api.local/profile', {
+                headers: { 'Authorization': `Bearer ${result.token}` }
+              });
+
+              const profileData = await profileRes.json();
+
+              if (profileRes.ok) {
+                const info = `
+                  <h3>User Profile</h3>
+                  <p><strong>Name:</strong> ${profileData.name}</p>
+                  <p><strong>Email:</strong> ${profileData.email}</p>
+                  ${profileData.image_url ? `<img src="${profileData.image_url}" width="150"/>` : ''}
+                `;
+                document.getElementById('profile-info').innerHTML = info;
+              } else {
+                msgDiv.textContent = `❌ Failed to load profile: ${profileData.error || 'Unknown error'}`;
+                msgDiv.className = "alert error";
+              }
+
+            } else {
+              msgDiv.textContent = `❌ Login failed: ${result.error || result.message || 'Unknown error'}`;
+              msgDiv.className = "alert error";
+            }
+
+          } catch (error) {
+            msgDiv.textContent = `❌ Network error: ${error.message}`;
+            msgDiv.className = "alert error";
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

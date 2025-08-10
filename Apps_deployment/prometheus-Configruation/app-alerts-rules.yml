@@ -1,0 +1,121 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: app-service-alerts
+  namespace: monitoring
+  labels:
+    release: prometheus-stack
+spec:
+  groups:
+  - name: application-alerts
+    rules:
+    - alert: HighHttpRequestLatency
+      annotations:
+        summary: "API Service: High request latency ({{ $value }}s)"
+        description: "API service is experiencing high request latency (above 0.5s for 99th percentile) for more than 1 minute."
+      expr: histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{job='api-service'}[5m])) by (le)) > 0.5
+      for: 1m
+      labels:
+        severity: warning
+        service: api-service
+
+    - alert: HighHttpRequestErrors
+      annotations:
+        summary: "API Service: High rate of HTTP 5xx errors on {{ $labels.endpoint }}"
+        description: "API service is returning more than 5 HTTP 5xx errors per second on endpoint {{ $labels.endpoint }} for more than 1 minute."
+      expr: sum(rate(http_requests_total{job='api-service', code=~'5..'}[5m])) by (endpoint) > 5
+      for: 1m
+      labels:
+        severity: critical
+        service: api-service
+
+    - alert: APIServiceDown
+      annotations:
+        summary: "API Service is down"
+        description: "API service is not reachable for more than 5 minutes."
+      expr: absent(up{job='api-service'})
+      for: 5m
+      labels:
+        severity: critical
+        service: api-service
+
+    - alert: AuthServiceDown
+      annotations:
+        summary: "Auth Service is down"
+        description: "Auth service is not reachable for more than 5 minutes."
+      expr: absent(up{job='auth-service'})
+      for: 5m
+      labels:
+        severity: critical
+        service: auth-service
+
+    - alert: ImageServiceDown
+      annotations:
+        summary: "Image Service is down"
+        description: "Image service is not reachable for more than 5 minutes."
+      expr: absent(up{job='image-service'})
+      for: 5m
+      labels:
+        severity: critical
+        service: image-service
+
+    - alert: WebPortalDown
+      annotations:
+        summary: "WebPortal service is down"
+        description: "WebPortal service (nginx-exporter) is not reachable for more than 2 minutes."
+      expr: absent(up{job='webportal-service'})
+      for: 2m
+      labels:
+        severity: critical
+        service: webportal-service
+
+    - alert: WebPortalHighHttp5xx
+      annotations:
+        summary: "WebPortal: High rate of HTTP 5xx errors"
+        description: "WebPortal is returning more than 5 HTTP 5xx errors per second for more than 1 minute."
+      expr: sum(rate(http_requests_total{job='webportal-service', code=~'5..'}[5m])) > 5
+      for: 1m
+      labels:
+        severity: warning
+        service: webportal-service
+
+    - alert: PostgresExporterDown
+      annotations:
+        summary: "Postgres Exporter is down"
+        description: "Postgres exporter is not reachable for more than 2 minutes."
+      expr: absent(up{job='postgres-exporter-service'})
+      for: 2m
+      labels:
+        severity: critical
+        service: postgres-exporter
+
+    - alert: PostgresExporterHighScrapeLatency
+      annotations:
+        summary: "Postgres Exporter: High scrape latency"
+        description: "Scrape duration for postgres exporter exceeded 1s."
+      expr: scrape_duration_seconds{job='postgres-exporter-service'} > 1
+      for: 1m
+      labels:
+        severity: warning
+        service: postgres-exporter
+
+    - alert: PostgresTooManyConnections
+      annotations:
+        summary: "Postgres: Too many connections"
+        description: "Postgres has more than 100 active connections."
+      expr: pg_stat_activity_count{job='postgres-exporter-service'} > 100
+      for: 2m
+      labels:
+        severity: warning
+        service: postgres-exporter
+
+  - name: pod-alerts
+    rules:
+    - alert: PodNotReady
+      expr: kube_pod_status_ready{condition="false", namespace="app-services"} > 0
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Pod in app-services is not ready"
+        description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} is not ready for more than 1 minute."

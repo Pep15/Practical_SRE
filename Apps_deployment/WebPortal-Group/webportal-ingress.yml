@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: webportal-service-ingress
+  namespace: frontend-service
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    cert-manager.io/issuer: webportal-selfsigned-issuer 
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - webportal.local
+    secretName: webportal-tls-secret 
+  rules:
+  - host: webportal.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: webportal-service
+            port:
+              number: 8083

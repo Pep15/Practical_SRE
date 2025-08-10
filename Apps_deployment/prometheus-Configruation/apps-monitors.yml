@@ -1,0 +1,106 @@
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: api-service-monitor 
+  namespace: app-services 
+  labels:
+    release: prometheus-stack 
+    prometheus.io/probe: "true" 
+spec:
+  selector:
+    matchLabels:
+      app: api-service 
+  namespaceSelector: 
+    matchNames:
+      - app-services
+  endpoints:
+  - port: http 
+    path: /metrics 
+    interval: 15s 
+
+---
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: auth-service-monitor 
+  namespace: app-services
+  labels:
+    release: prometheus-stack
+    prometheus.io/probe: "true"
+spec:
+  selector:
+    matchLabels:
+      app: auth-service
+  namespaceSelector: 
+    matchNames:
+      - app-services
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 15s
+
+---
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: image-service-monitor 
+  namespace: app-services
+  labels:
+    release: prometheus-stack
+    prometheus.io/probe: "true"
+spec:
+  selector:
+    matchLabels:
+      app: image-service
+  namespaceSelector: 
+    matchNames:
+      - app-services
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 15s
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: frontend-service-monitor
+  namespace: monitoring
+  labels:
+    release: prometheus-stack
+    prometheus.io/probe: "true"
+spec:
+  selector:
+    matchLabels:
+      app: webportal-service
+  namespaceSelector:
+    matchNames:
+    - frontend-service
+  endpoints:
+  - port: metrics  
+    path: /metrics
+    interval: 15s
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: postgresql-service-monitor
+  namespace: monitoring
+  labels:
+    release: prometheus-stack
+    prometheus.io/probe: "true"
+spec:
+  selector:
+    matchLabels:
+      app: postgres-exporter
+  namespaceSelector:
+    matchNames:
+    - app-services
+  endpoints:
+  - port: metrics  
+    path: /metrics
+    interval: 15s

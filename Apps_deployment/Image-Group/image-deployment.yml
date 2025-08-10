@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: image-deployment
+  namespace: app-services
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: image-service
+  template:
+    metadata:
+      labels:
+        app: image-service
+    spec:
+      imagePullSecrets:
+      - name: my-registry-creds
+      containers:
+      - name: image-service
+        image: 192.168.8.142:5000/image-service:v1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8082
+          protocol: TCP
+        volumeMounts:
+        - name: uploads-volume
+          mountPath: /app/uploads
+        resources:
+          requests:
+            cpu: "200m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8082
+            scheme: HTTP
+          initialDelaySeconds: 15
+          periodSeconds: 20
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /images
+            port: 8082
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 3
+      volumes: 
+      - name: uploads-volume
+        emptyDir: {}

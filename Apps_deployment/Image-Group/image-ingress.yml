@@ -1,0 +1,40 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: image-service-ingress
+  namespace: app-services
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    cert-manager.io/issuer: selfsigned-issuer
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - images.local
+    secretName: image-tls-secret
+  rules:
+  - host: images.local
+    http:
+      paths:
+      - path: /images/upload
+        pathType: Exact
+        backend:
+          service:
+            name: image-service
+            port:
+              number: 8082
+      - path: /uploads
+        pathType: Prefix
+        backend:
+          service:
+            name: image-service
+            port:
+              number: 8082
+      - path: /
+        pathType: Exact 
+        backend:
+          service:
+            name: image-service
+            port:
+              number: 8082
