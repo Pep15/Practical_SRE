@@ -70,11 +70,7 @@ else
     echo "Docker is already installed. Skipping installation."
 fi
 
-Avoid_Typing_Sudo(){
-    usermod -aG docker ${USER}
-    su - ${USER}
-    sudo usermod -aG docker $(whoami)
-}
+
 
 echo "Configuring Docker daemon for insecure registry..."
 
@@ -135,39 +131,21 @@ echo "Environment setup script finished successfully."
 
 #--- Run Dokcer Registry ---
 
-#cd "$ROOT_DIR"
+for service_dir in "${!SERVICES_TO_BUILD[@]}"; do
+  image_name="${SERVICES_TO_BUILD[$service_dir]}"
+  service_path="$ROOT_DIR/$service_dir"
+  image_tag="${IP_ADDRESS}:${REGISTRY_PORT}/${image_name}:v1"
 
+  echo ""
+  echo "🔍 Building service: $service_dir  →  Image: $image_tag"
 
-for folder in "${!SERVICES_TO_BUILD[@]}"; do
-    image_tag="${SERVICES_TO_BUILD[$folder]}"
-    service_path="$ROOT_DIR/$folder"
-
-    echo ""
-    echo "🔍 Processing service: $folder  →  Image: $image_tag"
-
-    # Check if the folder exists
-    if [ ! -d "$service_path" ]; then
-        echo "❌ Folder '$folder' does not exist, skipping..."
-        continue
+  (
+    if docker build -f "$service_path/$image_name" -t "$image_tag" "$service_path"; then
+      echo "Successfully built image: $image_tag"
+    else
+      echo "Build failed for image: $image_tag"
     fi
-
-    # Check if Dockerfile exists
-    dockerfile_path="$service_path/Dockerfile"
-    if [ ! -f "$dockerfile_path" ]; then
-        echo "❌ No Dockerfile found inside '$folder', skipping..."
-        continue
-    fi
-
-    # Build the image
-    (
-        cd "$service_path" || exit
-        echo "🏗️  Building image: $image_tag ..."
-        if docker build -t "$image_tag" .; then
-            echo "✅ Successfully built image: $image_tag"
-        else
-            echo "⚠️  Failed to build image: $image_tag, skipping..."
-        fi
-    )
+  )
 done
 
 echo "All Docker images have been built and pushed successfully."
