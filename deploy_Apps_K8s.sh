@@ -62,6 +62,13 @@ curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
 sleep 30
 
+if ! command -v docker &> /dev/null; then
+    install_docker
+else
+    echo "Docker is already installed. Skipping installation."
+fi
+
+
 echo "Configuring Docker daemon for insecure registry..."
 
 # Ensure the daemon.json file exists and is a valid JSON object
@@ -72,17 +79,21 @@ fi
 
 # Add the insecure-registries entry if it doesn't already exist
 if ! sudo grep -q "insecure-registries" "$DAEMON_FILE"; then
-  echo "Adding insecure-registries entry to $DAEMON_FILE"
+    echo "Adding insecure-registries entry to $DAEMON_FILE"
+    # Use a single sed command to insert the entry before the final '}'
+    sudo sed -i.bak "s/}$/,\"insecure-registries\": [\"${IP_ADDRESS}:${REGISTRY_PORT}\"]}/" "$DAEMON_FILE"
+    
+    # Check if a comma is needed if other entries exist
+    if sudo grep -q "{.*" "$DAEMON_FILE" | ! sudo grep -q "insecure-registries" "$DAEMON_FILE"; then
+        sudo sed -i.bak "s/}$/, \"insecure-registries\": [\"${IP_ADDRESS}:${REGISTRY_PORT}\"]}/" "$DAEMON_FILE"
+    else
+        sudo sed -i.bak "s/}$/\"insecure-registries\": [\"${IP_ADDRESS}:${REGISTRY_PORT}\"]}/" "$DAEMON_FILE"
+    fi
+
+    echo "Restarting Docker service to apply changes..."
+    sudo systemctl restart docker
 else
-   echo "{\"insecure-registries\": [\"${IP_ADDRESS}:${REGISTRY_PORT}\"]}" | sudo tee "$DAEMON_FILE" > /dev/null
-else
-  # Use a single sed command to insert the entry before the final '}'
-  sudo sed -i.bak "s/}$/,\"insecure-registries\": [\"${IP_ADDRESS}:${REGISTRY_PORT}\"]}/" "$DAEMON_FILE"
-  
-  echo "Restarting Docker service to apply changes..."
-  sudo systemctl restart docker
-else
-  echo "insecure-registries entry already exists in $DAEMON_FILE. No changes made."
+    echo "insecure-registries entry already exists in $DAEMON_FILE. No changes made."
 fi
 
 # --- Step 3: Modify hosts file ---
