@@ -98,6 +98,9 @@ if [ "$EUID" -eq 0 ]; then
   if ! command -v minikube &> /dev/null; then
     curl -LO https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64
     sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    chmod +x kubectl
+    sudo mv kubectl /usr/local/bin/
   else
     echo "Minikube is already installed. Skipping installation."
   fi
