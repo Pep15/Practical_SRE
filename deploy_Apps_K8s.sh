@@ -13,10 +13,10 @@ declare -A SERVICES_TO_BUILD=(
     ["Frontend_service/frontend-service"]="webportal-service"
 )
 declare -A DOCKERFILES=(
-    ["api-service"]="Dockerfile"
-    ["auth-service"]="Dockerfile"
-    ["image-service"]="Dockerfile"
-    ["webportal-service"]="Dockerfile"
+    ["api-service"]="api-service"
+    ["auth-service"]="auth-service"
+    ["image-service"]="image-service"
+    ["webportal-service"]="frontend-service"
 )
 Deployment_FILES=(
   "Apps_deployment/Api-Group/"
@@ -146,19 +146,23 @@ else
     echo "Docker registry container is already running."
 fi
 #--- Build Docker Image and Push# ---
+cd "$ROOT_DIR"
 
 for service_dir in "${!SERVICES_TO_BUILD[@]}"; do
   image_name="${SERVICES_TO_BUILD[$service_dir]}"
   dockerfile_name="${DOCKERFILES[$image_name]}"
   image_tag="${IP_ADDRESS}:${REGISTRY_PORT}/${image_name}:v1"
-
+  
   echo "Processing service: $image_name"
-
-  docker build -f "$service_dir/$dockerfile_name" -t "$image_tag" "$service_dir" .
-
+  
+  # Build the Docker image with the correct image name and tag
+  echo "Building Docker image: $image_tag"
+  docker build -f "$service_dir/$dockerfile_name" -t "$image_tag" .
+  
+  # Push the image to the local registry
   echo "Pushing Docker image: $image_tag"
   docker push "$image_tag"
-
+  
   echo "Successfully built and pushed $image_name."
   echo "----------------------------------------"
 done
