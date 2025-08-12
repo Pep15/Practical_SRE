@@ -157,7 +157,7 @@ for service_dir in "${!SERVICES_TO_BUILD[@]}"; do
   
   # Build the Docker image with the correct image name and tag
   echo "Building Docker image: $image_tag"
-  docker build -f "$service_dir/$dockerfile_name" -t "$image_tag" .
+  docker build -f "$dockerfile_name/$service_dir" -t "$image_tag" .
   
   # Push the image to the local registry
   echo "Pushing Docker image: $image_tag"
