@@ -92,9 +92,16 @@ else
 fi
 
 # -- install Minikube ---
-curl -LO https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64
-sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64
-minikube start --cpus=2 --memory=4096 --cni=calico --insecure-registry="${IP_ADDRESS}:${REGISTRY_PORT}
+if ! command -v minikube &> /dev/null; then
+    curl -LO https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64
+    sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64
+else
+    echo "Minikube is already installed. Skipping installation."
+fi
+
+minikube start --cpus=2 --memory=4096 --ports=80:80 --ports=443:443 --cni=calico --insecure-registry="${IP_ADDRESS}:${REGISTRY_PORT}"
+minikube addons enable ingress && minikube addons enable ingress-dns
+
 # ---  Modify hosts file ---
 echo "Updating /etc/hosts file..."
 
