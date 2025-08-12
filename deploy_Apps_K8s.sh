@@ -139,28 +139,31 @@ docker run -d -p 5000:5000 --restart always --name registry registry:3
 echo "Registry is running"
 
 #--- Build Docker Image and Push# ---
-for service_dir in "${!SERVICES_TO_BUILD[@]}"; do
-    image_name="${SERVICES_TO_BUILD[$service_dir]}"
-    image_tag="${IP_ADDRESS}:${REGISTRY_PORT}/${image_name}:v1"
-    
-    echo "Processing service: $image_name"
-    
-    # Navigate to the service's directory
-    cd "$ROOT_DIR/$service_dir"
-    
-    # Build the Docker image with the correct image name and tag
-    echo "Building Docker image: $image_tag"
-    docker build -f "$image_name" -t "$image_tag" .
-    
-    # Push the image to the local registry
-    echo "Pushing Docker image: $image_tag"
-    docker push "$image_tag"
-    
-    echo "Successfully built and pushed $image_name."
-    echo "----------------------------------------"
+# Go to the root directory first
+cd "$ROOT_DIR"
 
-    # Go back to the root directory for the next iteration
-    cd "$ROOT_DIR"
+for service_dir in "${!SERVICES_TO_BUILD[@]}"; do
+  image_name="${SERVICES_TO_BUILD[$service_dir]}"
+  image_tag="${IP_ADDRESS}:${REGISTRY_PORT}/${image_name}:v1"
+  
+  echo "Processing service: $image_name"
+  
+  # Navigate to the service's directory
+  cd "$ROOT_DIR/$service_dir"
+  
+  # Build the Docker image with the correct image name and tag
+  echo "Building Docker image: $image_tag"
+  docker build -f "$image_name" -t "$image_tag" .
+  
+  # Push the image to the local registry
+  echo "Pushing Docker image: $image_tag"
+  docker push "$image_tag"
+  
+  echo "Successfully built and pushed $image_name."
+  echo "----------------------------------------"
+
+  # Return to the root directory for the next iteration
+  cd "$ROOT_DIR"
 done
 
 echo "All Docker images have been built and pushed successfully."
