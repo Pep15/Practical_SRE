@@ -58,9 +58,11 @@ sudo apt install -y curl
 echo "Starting Docker installation and configuration..."
 
 # Installation (using an alternative method to avoid pipe errors)
-curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh get-docker.sh
-sleep 30
+install_docker() {
+    curl -fsSL https://get.docker.com -o get-docker.sh
+    sudo sh get-docker.sh
+    sleep 30
+}
 
 if ! command -v docker &> /dev/null; then
     install_docker
