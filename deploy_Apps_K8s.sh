@@ -135,31 +135,41 @@ echo "Environment setup script finished successfully."
 
 #--- Run Dokcer Registry ---
 
-cd "$ROOT_DIR"
+#cd "$ROOT_DIR"
 
-for service_dir in "${!SERVICES_TO_BUILD[@]}"; do
-  image_name="${SERVICES_TO_BUILD[$service_dir]}"
-  image_tag="${IP_ADDRESS}:${REGISTRY_PORT}/${image_name}:v1"
-  
-  echo "Processing service: $image_name"
-  
-  # Navigate to the service's directory
-  cd "$ROOT_DIR/$service_dir"
-  
-  # Build the Docker image with the correct image name and tag
-  echo "Building Docker image: $image_tag"
-   docker build -t "$image_tag" .
-  
-  # Push the image to the local registry
-  echo "Pushing Docker image: $image_tag"
-  docker push "$image_tag"
-  
-  echo "Successfully built and pushed $image_name."
-  echo "----------------------------------------"
 
-  # Return to the root directory for the next iteration
-  cd "$ROOT_DIR"
+for folder in "${!SERVICES_TO_BUILD[@]}"; do
+    image_tag="${SERVICES_TO_BUILD[$folder]}"
+    service_path="$ROOT_DIR/$folder"
+
+    echo ""
+    echo "🔍 Processing service: $folder  →  Image: $image_tag"
+
+    # Check if the folder exists
+    if [ ! -d "$service_path" ]; then
+        echo "❌ Folder '$folder' does not exist, skipping..."
+        continue
+    fi
+
+    # Check if Dockerfile exists
+    dockerfile_path="$service_path/Dockerfile"
+    if [ ! -f "$dockerfile_path" ]; then
+        echo "❌ No Dockerfile found inside '$folder', skipping..."
+        continue
+    fi
+
+    # Build the image
+    (
+        cd "$service_path" || exit
+        echo "🏗️  Building image: $image_tag ..."
+        if docker build -t "$image_tag" .; then
+            echo "✅ Successfully built image: $image_tag"
+        else
+            echo "⚠️  Failed to build image: $image_tag, skipping..."
+        fi
+    )
 done
+
 echo "All Docker images have been built and pushed successfully."
 
 
