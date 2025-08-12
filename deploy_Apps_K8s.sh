@@ -99,7 +99,7 @@ else
     echo "Minikube is already installed. Skipping installation."
 fi
 
-minikube start --cpus=2 --memory=4096 --ports=80:80 --ports=443:443 --cni=calico --insecure-registry="${IP_ADDRESS}:${REGISTRY_PORT}"
+minikube start --driver=docker --cpus=2 --memory=4096 --ports=80:80 --ports=443:443 --cni=calico --insecure-registry="${IP_ADDRESS}:${REGISTRY_PORT}"
 minikube addons enable ingress && minikube addons enable ingress-dns
 
 # ---  Modify hosts file ---
