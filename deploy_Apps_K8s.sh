@@ -154,7 +154,7 @@ for service_dir in "${!SERVICES_TO_BUILD[@]}"; do
 
   echo "Processing service: $image_name"
 
-  docker build -f "$service_dir/$dockerfile_name" -t "$image_tag" "$service_dir ."
+  docker build -f "$service_dir/$dockerfile_name" -t "$image_tag" "$service_dir" .
 
   echo "Pushing Docker image: $image_tag"
   docker push "$image_tag"
