@@ -74,24 +74,17 @@ fi
 echo "Configuring Docker daemon for insecure registry..."
 
 # Ensure the daemon.json file exists and is a valid JSON object
-if [ ! -f "$DAEMON_FILE" ]; then
-    echo "File $DAEMON_FILE does not exist. Creating it now with a basic JSON structure."
-    echo "{}" | sudo tee "$DAEMON_FILE"
-fi
-
-# Add the insecure-registries entry if it doesn't already exist
-if ! sudo grep -q "insecure-registries" "$DAEMON_FILE"; then
+if ! grep -q "insecure-registries" "$DAEMON_FILE"; then
     echo "Adding insecure-registries entry to $DAEMON_FILE"
-    # Use a single sed command to insert the entry before the final '}'
-    sudo sed -i.bak "s/}$/,\"insecure-registries\": [\"${IP_ADDRESS}:${REGISTRY_PORT}\"]}/" "$DAEMON_FILE"
-    
-    # Check if a comma is needed if other entries exist
-    if sudo grep -q "{.*" "$DAEMON_FILE" | ! sudo grep -q "insecure-registries" "$DAEMON_FILE"; then
-        sudo sed -i.bak "s/}$/, \"insecure-registries\": [\"${IP_ADDRESS}:${REGISTRY_PORT}\"]}/" "$DAEMON_FILE"
-    else
-        sudo sed -i.bak "s/}$/\"insecure-registries\": [\"${IP_ADDRESS}:${REGISTRY_PORT}\"]}/" "$DAEMON_FILE"
-    fi
 
+    # Use a single sed command to insert the entry with the correct JSON syntax.
+    # This handles both empty and non-empty files correctly.
+    if grep -q "{}" "$DAEMON_FILE"; then
+        sudo sed -i.bak "s/{}/{\"insecure-registries\": [\"${IP_ADDRESS}:${REGISTRY_PORT}\"]}/" "$DAEMON_FILE"
+    else
+        sudo sed -i.bak "s/}$/,\"insecure-registries\": [\"${IP_ADDRESS}:${REGISTRY_PORT}\"]}/" "$DAEMON_FILE"
+    fi
+    
     echo "Restarting Docker service to apply changes..."
     sudo systemctl restart docker
 else
