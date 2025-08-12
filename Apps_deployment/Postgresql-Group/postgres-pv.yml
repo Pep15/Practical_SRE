@@ -6,8 +6,8 @@ spec:
   capacity:
     storage: 1Gi
   accessModes:
-    - ReadWriteOnce 
-  persistentVolumeReclaimPolicy: Retain 
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
   hostPath:
-    path: /home/pepsi/Desktop/Practical_Assignment_SRE/Apps_deployment/mountDatabase 
+    path: $(ROOT_DIR)/Apps_deployment/mountDatabase
     type: DirectoryOrCreate

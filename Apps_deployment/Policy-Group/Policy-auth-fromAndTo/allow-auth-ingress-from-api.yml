@@ -14,13 +14,12 @@ spec:
     - podSelector:
         matchLabels:
           app: api-service
-  - from:
     - namespaceSelector:
         matchLabels:
           name: ingress-nginx
-        podSelector:
-          matchLabels:
-            app.kubernetes.io/name: ingress-nginx
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: ingress-nginx
     ports:
-      - protocol: TCP
-        port: 8081
+    - protocol: TCP
+      port: 8081

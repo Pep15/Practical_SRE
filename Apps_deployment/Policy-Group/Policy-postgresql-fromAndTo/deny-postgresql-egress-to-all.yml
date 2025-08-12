@@ -9,4 +9,4 @@ spec:
       app: postgres 
   policyTypes:
     - Egress 
-egress: []
+  egress: []

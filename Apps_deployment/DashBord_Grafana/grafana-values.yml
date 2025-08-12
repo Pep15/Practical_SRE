@@ -1,0 +1,22 @@
+grafana:
+  sidecar:
+    dashboards:
+      enabled: true
+      label: "grafana_dashboard"
+      labelValue: "1"
+      folderAnnotation: "grafana_folder"
+      searchNamespace: ALL
+      provider:
+        foldersFromFilesStructure: true
+      initWait: 60
+
+ingress:
+  enabled: true
+  hosts:
+    - grafana.local
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  tls:
+    - hosts:
+        - grafana.local
+      secretName: grafana-tls-secret

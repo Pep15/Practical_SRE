@@ -23,11 +23,4 @@ spec:
       target:
         type: Utilization
         averageUtilization: 70 
-  - type: Request
-    resource:
-      name: request
-      target:
-        type: Utilization
-      
 
-        

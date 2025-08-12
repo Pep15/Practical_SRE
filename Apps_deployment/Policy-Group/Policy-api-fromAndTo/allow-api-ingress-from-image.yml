@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-api-ingress-from-webportal
+  name: allow-api-ingress-from-image
   namespace: app-services
 spec:
   podSelector:
@@ -14,19 +14,19 @@ spec:
     - podSelector:
         matchLabels:
           app: image-service
-      namespaceSelector: 
+      namespaceSelector:
         matchLabels:
           kubernetes.io/metadata.name: app-services
-    ports: 
-      - protocol: TCP
-        port: 8082
+    ports:
+    - protocol: TCP
+      port: 8082
   - from:
     - namespaceSelector:
         matchLabels:
           name: ingress-nginx
-        podSelector:
-          matchLabels:
-            app.kubernetes.io/name: ingress-nginx
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: ingress-nginx
     ports:
-      - protocol: TCP
-        port: 8082
+    - protocol: TCP
+      port: 8082

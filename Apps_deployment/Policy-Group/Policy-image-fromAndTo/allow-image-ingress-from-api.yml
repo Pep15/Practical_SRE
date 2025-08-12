@@ -11,9 +11,9 @@ spec:
   - Ingress
   ingress:
   - from:
-    - podSelector:
-        matchLabels:
-          app: api-service
-  ports: 
+      - podSelector:
+          matchLabels:
+            app: api-service
+    ports: 
       - protocol: TCP
         port: 8081

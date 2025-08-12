@@ -2,6 +2,7 @@
 - Infrastructure and Environment :
     - I set up a Kubernetes environment using Minikube, which serves as an ideal platform for local development.
     - It provides a flexible space for application testing, troubleshooting, and experimentation.
+    
     * User interface service:
      - The user interface for login and registration using HTML and JavaScript.
      - This interface integrates with the API to handle image uploads, register new users, validate login credentials, and display profiles of users.
@@ -44,10 +45,10 @@
        * It is a component in Kubernetes that allows routing HTTP/HTTPS traffic to your services.
        * I configured it to route traffic to service endpoints and secured it using self-signed TLS certificates.
      - Issuer With cert-manager:
-       * Issuer -> It's a Kubernetes object for releasing the certificates
-       * cert-manager -> is a Kubernetes controller responsible for managing your TLS certificates, including self-signed ones, automatically within the cluster.
-         - I configure the issuer to release the certification, then reference the Issuer in the certificates object to create the TLS secret.
-     - Openssl with secret TLS
+       * Issuer -> It's Kubernetes object for release the certificates
+       * cert-manager -> is a Kubernetes controller responsible for managing your TLS certificates,including self-signed ones, automatically within the cluster.
+         - I configure issuer to release the certification then referenced the Issuer in the certificates object to create the TLS secret.
+     - Openssl with secret tls
        openssl -> is a tool that allows you to create TLS self-signed certificates locally.
        - I used the OpenSSL command to generate the Key(Private Key).
        - Then request to certification self-signed (CSR), then generate the certification 
@@ -183,7 +184,7 @@
 
                * API_service:
                  'cd API_Service/'
-               - Docker Build api_service
+               - Docker Build api_service:
                  'docker build -f api-service -t your-registry-host(ip):5000/api-service:v1 .'
                - Push image api_service:
                  'docker push your-registry-host(ip):5000/api-service:v1'
@@ -209,37 +210,37 @@
                - Push image webportal-service:
                    'docker push your-registry-host(ip):5000/webportal-service:v1'
 
-      **Install Minikube and Configuration** 
-        7. Install and configure the Environment local machine
-           - Once to install Docker and configure it to install minikube to run as a container on Docker.
+      **install Minikube and Configuration** 
+        7. Install and Configuration Environment local meachine
+           - Once to install Docker and configure install mninikube to run as container on docker.
             'curl -LO https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64'
              'sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64'
              'minikube start --cpus=2 --memory=4096 --cni=calico --insecure-registry="your-registry-host(ip):5000"
-            . Start Minikube: --cpu=2, you specify 'CPU' usage on your machine host. (I recommended allocating, if you do not specify will take the resource of the machine). 
-            . Start Minikube: --memory=4096, you specify 'Memory' usage on your machine host. (I recommend allocating; if you do not specify will take resources of the machine).
+            . Start Minikube: --cpu=2, you specify 'CPU' usge on your mechine host.(I recomended to allocate if you does not specfiy will take resource of mechine). 
+            . Start Minikube: --memory=4096, you specify 'Memory' usge on your mechine host.(I recomended to allocate if you does not specfiy will take resource of mechine).
             . Start Minikube: --cni=calico, you must specify a Container Network Interface (CNI) that supports Network Policies, such as Calico, Cilium, or Weave Net.
-            . Start Minikube: --insecure-registry, you must specify the registry container to the minikube to allow you to pull images from the registry.
+            . Start Minikube: --insecure-registry, you must specify registry container to the minikube to allow you pull images from registry.
 
-      **kubbctl runs objects Kubernetes cluster**
-        8. Runs Deployment on Kubernetes cluster
-         - Run 'namespace' to allocate each object for the namespace
+      **kubbctl runs objects kuberentes culster**
+        8. Runs Deployment on kuberenetes culster
+         - Run 'namespace' to allocate each objects for the namespace
             'kubectl create namespace apps-services'
             'kubectl create namespace frontend-service'
-         - Run
+         - Run following, To define your registry in Kubernetes, it's recommended to use a Secret for securely storing credentials, instead of including them directly in your configuration files. This approach enhances security and makes your configurations more manageable. 
              'kubectl create secret docker-registry my-registry-creds --docker-server=your-registry-host(ip):5000 --docker-username=<username> --docker-password=<Password>  --docker-email=<email>  -n app-services'
              'kubectl create secret docker-registry my-registry-creds --docker-server=your-registry-host(ip):5000 --docker-username=<username> --docker-password=<Password>  --docker-email=<email>  -n freontend-services'
-         * I divided the files to easily apply the deployments
+         * I devided the files to easy apply the deployments
             * Issure Certification:
                - I put the 'self-signed-issuer.yml' in the global file because most apps are following the namespace apps-services
                'kubectl -f Apps_deployment/selfsigned-issuer.yml'
             * Postgresql-Group:
-               - Create an empty file to store the data of the database.
+               - Create empty file to store data of database.
                    'mkdir -p Apps_deployment/mountDatabase'
-               - I started with 'Database', most apps depend on the Database, Postgres, ConfigMap, and Secret. 
+               - I sterted with 'Databse' most apps is depends on the Database postgres , ConfigMap , Secret. 
                    'kubectl -f Apps_deployment/Postgresql-Group/'
             * Api_Group: 
                'kubectl apply -f Apps_deployment/Api-Group/'
-            * Authentication-Group:
+            * Authntaction-Group:
                'kubectl apply -f Apps_deployment/Authntaction-Group/
             * Image-Group:
                'kubectl apply -f Apps_deployment/Image-Group/'
@@ -248,11 +249,11 @@
              - I already put Issure with the Group of WebPortal because I have one app under the namespace 'frontend-service'
          - Network-Policy:
            **Informations:**
-             - Before starting to apply Network, there are two concepts: 'ingress', 'egress'
-                * Ingress in network policy -> (That means when you receive your friend) and (which door will receive your friend)--> that means (Ports).
-                * Egress in  network policy -> (That means when your friend goes) and (which door will reception you)--> that means (Ports).
+             - Before to start apply Networkpolicy there are two concepts 'ingress' , 'egress'
+                * Ingress in network policy -> (That meaning when reception your friend) and (which door will reception your friend)--> that mean(Ports).
+                * Egress in  network policy -> (That meaning when goes your friend) and (which door will reception you)--> that mean(Ports).
           9. Run NetworkPolicy
-              - I divided the file of group policy, and there are two YAML files it's outside the divide.
+              - I devided the file of grop policy and there are two yaml file it's outside the devided.
             * Policies Deny all :
                - It's important to put on your infrastructure from concept 'default security' to prevent all pods from communicating with each other.
                - After that, you can allow by specifying ports for each application
@@ -267,18 +268,82 @@
                   'kubectl -f Policy-Group/Policy-image-fromAndTo'
               * Network-Policy webportal:
                   'kubectl -f Policy-Group/Policy-webportal-fromAndTo/'
-              * Network-Policy Postgres-SQL:
+              * Network-Policy Pstgres-sql:
                   'kubectl -f Policy-Group/Policy-postgresql-fromAndTo/'
 
 
      **Instaltion Helm Chart & Prometheus Community Kubernetes Helm Charts**
         10. Helm Charts:
-            - Helm charts -> it's a collection of resources including configMaps, secrets, deployments & services, and anything required for deploying the Applications on Kubernetes.
+            - helm charts -> it's collections of resource incloud configMaps , secets , deplyment & services any thing that rquire for deployment the Applications on Kuberenets.
                * Helm install
                   'curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3'
                   'chmod 700 get_helm.sh'
                   './get_helm.sh'
 
+        12. Prometheus:
+            - Install Prometheus-community:
+               A. Add rep prometheus-community to helm & updated helm.
+                   'helm repo add prometheus-community https://prometheus-community.github.io/helm-charts'
+                   'helm repo update'
+               C. Install prometheus-stack with create namespace.
+                   'helm install prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring --create-namespace'
+
+                * Configuration Prometheus-community:
+                    - To configure Prometheus to scrape metrics from your applications, apply your ServiceMonitor resources. These resources define which services Prometheus should monitor.
+                       * ServiceMonitor(api, auth, image, webportal, postgres):
+                          - Link between Prometheus must configure 'serviceMonitor' which is specify to Prometheus.
+                             'kubectl apply -f Apps_deployment/prometheus-Configruation/apps-monitors.yml'
+
+                       * PrometheusRule:
+                          - Apply your PrometheusRule to set up alerting rules. These rules are used by Prometheus to generate alerts, which are then sent to Alertmanager.. 
+                             'kubectl apply -f Apps_deployment/prometheus-Configruation/app-alerts-rules.yml'
+
+                       * Alertmanager:
+                          - Configure Alertmanager to route alerts to Slack. This is done by creating an `alertmanager.yml` file with your Slack webhook URL and applying it as a Kubernetes Secret:
+                              1. use any editor 'nano', 'vi' to  set file *alertmanager.yml* this part.
+                                 ' slack_configs:
+                                  '- channel: '#Apps-Alerts'
+                                   api_url: 'https://hooks.slack.com/'
+                              *Note*
+                                  * Create your alertmanager.yml file with the Slack webhook URL.
+                                  - You must have accout on *slack* .
+                                  - Get the url *Incoming Webhooks*
+                                  - api_url: 'https://hooks.slack.com/'
+                          - Create the Secret from the configuration file.
+                             'kubectl create secret generic alertmanager-config --from-file=Apps_deployment/prometheus-Configruation/alertmanager.yml -n monitoring --dry-run=client -o yaml | kubectl apply -f -'
+                          - Update the Helm release to use the new Secret.
+                             'helm upgrade prometheus-stack prometheus-community/kube-prometheus-stack \
+                              --namespace monitoring \
+                              --set alertmanager.config.configmapName=alertmanager-config \
+                              --set alertmanager.config.templateSecretName=alertmanager-config'
+                           * Create ingress for Alertmanager to allow you to access over 'HTTPs' page insted of using 'port-forward'.
+                               'kubectl apply -f alertManager-ingress.yml'
+
+         # 13. Grafana:
+               - Once to setup & configuretion Prometheus and Alertmanager
+                  * Create ingress for Grafana to allow you to access over 'HTTPs' page insted of using 'port-forward'.
+                      'kubectl apply -f grafana-ingress.yaml'
+                       'https://grafana.local'
+                  1- There are two way to insert to 'visualization dashbord':
+                      A. Manual:
+                         1. Go to on the left bar 'Dashboards'.
+                         2. After open page Dashboards click the button 'New'.
+                         3. Then list drop choose 'import'.
+                         4. Finaly, import the files json dashbord.
+                         5. File has dashbord direcory 'Grafana_DashBoard'.
+                      B. Automated import dashbord to Grafana
+                         * Upgrading 'kube-prometheus-stack' chart to using the custom 'grafana-values.yml' file.
+                         1. Create configMap from dashbord file containe all dashbord files from dirctory 
+                           'kubectl create configmap my-grafana-dashboards --from-file=grafana_dashBoard/ -n monitoring'
+                         2. Add lable and Annotation these lable and Annotation is what the Grafana sidecar looks for to provision the dashboards.
+                           'kubectl label configmap my-grafana-dashboards grafana_dashboard="1" -n monitoring'
+                           'kubectl annotate configmap my-grafana-dashboards grafana_folder="Application Services" -n monitoring'
+                         3.Upgrade 'kube-prometheus-stack' to use the values file that enables the sidecar to detect these dashboards.
+                           'helm upgrade prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring -f grafana-values.yml'
+                         4. Finaly, this manner insted to import each dashbord manual.
+---
+- Lessons learned
+   
 
 
 
@@ -304,13 +369,15 @@
 │   │   ├── api-ingress.yml
 │   │   ├── api-pdb.yml
 │   │   └── api-service.yml
-│   ├── Authntaction-Group
+│   ├── Authentication-Group
 │   │   ├── apps-secret.yml
 │   │   ├── auth-deployment.yml
 │   │   ├── auth-hpa.yaml
 │   │   ├── auth-ingress.yml
 │   │   ├── auth-pdb.yml
 │   │   └── auth-service.yml
+│   ├── DashBord_Grafana
+│   │   └── grafana-values.yml
 │   ├── debug-pod-apps-services.yaml
 │   ├──  debug-pod-frotend.yml
 │   ├── Image-Group
@@ -320,7 +387,6 @@
 │   │   ├── image-pdb.yml
 │   │   └── image-service.yml
 │   ├── mountDatabase
-│   ├── namecpace.yml
 │   ├── Policy-Group
 │   │   ├── deny-apps-services-all.yml
 │   │   ├── deny-webportal-service-all.yml
@@ -350,7 +416,7 @@
 │   │   ├── postgres-pv.yml
 │   │   ├── postgres-secret.yml
 │   │   └── postgres-service.yml
-│   ├── Prometheus-Configuration
+│   ├── prometheus-Configruation
 │   │   ├── alertmanager.yml
 │   │   ├── app-alerts-rules.yml
 │   │   ├── apps-monitors.yml
@@ -368,17 +434,18 @@
 │   ├── index.js
 │   ├── package.json
 │   └── package-lock.json
+├── deploy_Apps_K8s.sh
 ├── Frontend_service
 │   ├── default.conf
 │   ├── frontend-service
 │   └── index.html
-├── grafana_dashBoard
-│   ├── Application API-1754752132896.json
-│   ├── Application Authentication-1754752149731.json
-│   ├── Application Image-1754752169119.json
-│   ├── Application WebPortal-1754752183088.json
-│   ├── Over All system-1754752225403.json
-│   └── PostgreSQL Database-1754752206458.json
+├── Grafana_DashBoard
+│   ├── Application-API-1754752132896.json
+│   ├── Application-Authentication-1754752149731.json
+│   ├── Application-Image-1754752169119.json
+│   ├── Application-WebPortal-1754752183088.json
+│   ├── Over-All-system-1754752225403.json
+│   └── PostgreSQL-Database-1754752206458.json
 ├── Image_Service
 │   ├── go.mod
 │   ├── go.sum
