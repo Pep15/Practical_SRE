@@ -7,17 +7,12 @@ DAEMON_FILE="/etc/docker/daemon.json"
 INSECURE_REGISTRIES_ENTRY="\"insecure-registries\": [\"${IP_ADDRESS}:${5000}\"]"
 ROOT_DIR="$(dirname "$0")"
 declare -A SERVICES_TO_BUILD=(
-    ["API_Service/api-service"]="api-service"
-    ["Auth_service/auth-service"]="auth-service"
-    ["Image_Service/image-service"]="image-service"
-    ["Frontend_service/frontend-service"]="webportal-service"
+  ["API_Service"]="api-service"
+  ["Auth_service"]="auth-service"
+  ["Image_Service"]="image-service"
+  ["Frontend_service"]="webportal-service"
 )
-declare -A DOCKERFILES=(
-    ["api-service"]="API_Service/api-service"
-    ["auth-service"]="Auth_service/auth-service"
-    ["image-service"]="Image_Service/image-service"
-    ["webportal-service"]="Frontend_service/frontend-service"
-)
+
 Deployment_FILES=(
   "Apps_deployment/Api-Group/"
   "Apps_deployment/Authentication-Group/"
@@ -140,30 +135,30 @@ echo "Environment setup script finished successfully."
 
 #--- Run Dokcer Registry ---
 
+cd "$ROOT_DIR"
+
 for service_dir in "${!SERVICES_TO_BUILD[@]}"; do
-    image_name="${SERVICES_TO_BUILD[$service_dir]}"
-    dockerfile_path="${DOCKERFILES[$image_name]}"
-    image_tag="${IP_ADDRESS}:${REGISTRY_PORT}/${image_name}:v1"
-    
-    echo "Processing service: $image_name"
+  image_name="${SERVICES_TO_BUILD[$service_dir]}"
+  image_tag="${IP_ADDRESS}:${REGISTRY_PORT}/${image_name}:v1"
+  
+  echo "Processing service: $image_name"
+  
+  # Navigate to the service's directory
+  cd "$ROOT_DIR/$service_dir"
+  
+  # Build the Docker image with the correct image name and tag
+  echo "Building Docker image: $image_tag"
+  docker build -f "$image_name" -t "$image_tag" .
+  
+  # Push the image to the local registry
+  echo "Pushing Docker image: $image_tag"
+  docker push "$image_tag"
+  
+  echo "Successfully built and pushed $image_name."
+  echo "----------------------------------------"
 
-    # أمر بناء الصورة
-    docker build -t "$image_tag" -f "${dockerfile_path}/Dockerfile" .
-    
-    # التحقق من نجاح أمر البناء قبل المتابعة
-    if [ $? -ne 0 ]; then
-        echo "ERROR: Failed to build Docker image for $image_name. Aborting."
-        exit 1
-    fi
-
-    # دفع الصورة إلى السجل
-    docker push "$image_tag"
-
-    # التحقق من نجاح أمر الدفع
-    if [ $? -ne 0 ]; then
-        echo "ERROR: Failed to push Docker image for $image_name. Aborting."
-        exit 1
-    fi
+  # Return to the root directory for the next iteration
+  cd "$ROOT_DIR"
 done
 echo "All Docker images have been built and pushed successfully."
 
