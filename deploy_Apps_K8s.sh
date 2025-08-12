@@ -142,7 +142,7 @@ else
 fi
 #--- Build Docker Image and Push# ---
 # Go to the root directory first
-cd "$ROOT_DIR"
+
 
 for service_path in "${!SERVICES_TO_BUILD[@]}"; do
   image_name="${SERVICES_TO_BUILD[$service_path]}"
