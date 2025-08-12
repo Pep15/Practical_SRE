@@ -118,7 +118,7 @@ echo "Environment setup script finished successfully."
 
 #--- Run Dokcer Registry ---
 echo "Run Dokcer Registry ..."
-docker run -d -p ${REGISTRY_PORT}:${$REGISTRY_PORT} --restart always --name registry registry:3
+docker run -d -p 5000:5000 --restart always --name registry registry:3
 echo "Registry is running"
 
 #--- Build Docker Image and Push# ---
