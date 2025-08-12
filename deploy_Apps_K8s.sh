@@ -75,8 +75,8 @@ echo "Configuring Docker daemon for insecure registry..."
 
 # Ensure the daemon.json file exists and is a valid JSON object
 if [ ! -f "$DAEMON_FILE" ]; then
-  echo "File $DAEMON_FILE does not exist. Creating it now with a basic JSON structure."
-  echo "{}" | sudo tee "$DAEMON_FILE"
+    echo "File $DAEMON_FILE does not exist. Creating it now with a basic JSON structure."
+    echo "{}" | sudo tee "$DAEMON_FILE"
 fi
 
 # Add the insecure-registries entry if it doesn't already exist
