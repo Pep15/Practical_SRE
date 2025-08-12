@@ -7,10 +7,10 @@ DAEMON_FILE="/etc/docker/daemon.json"
 INSECURE_REGISTRIES_ENTRY="\"insecure-registries\": [\"${IP_ADDRESS}:${5000}\"]"
 ROOT_DIR="$(dirname "$0")"
 declare -A DOCKERFILES=(
-    ["api-service"]="API_Service/api-service"
-    ["auth-service"]="Auth_service/auth-service"
-    ["image-service"]="Image_Service/image-service"
-    ["webportal-service"]="Frontend_service/frontend-service"
+    ["api-service"]="API_Service/api-service/Dockerfile"
+    ["auth-service"]="Auth_service/auth-service/Dockerfile"
+    ["image-service"]="Image_Service/image-service/Dockerfile"
+    ["webportal-service"]="Frontend_service/frontend-service/Dockerfile"
 )
 
 Deployment_FILES=(
@@ -134,23 +134,15 @@ fi
 echo "Environment setup script finished successfully."
 
 #--- Run Dokcer Registry ---
-echo "Running Docker Registry and building images..."
-if ! docker ps -a --format '{{.Names}}' | grep -q 'registry'; then
-    docker run -d -p 5000:5000 --restart always --name registry registry:3
-else
-    echo "Docker registry container is already running."
-fi
-#--- Build Docker Image and Push# ---
 for service_dir in "${!SERVICES_TO_BUILD[@]}"; do
     image_name="${SERVICES_TO_BUILD[$service_dir]}"
-    dockerfile_path="${DOCKERFILES[$image_name]}" # هنا التغيير
-    image_tag="${IP_ADDRESS}:${REGISTRY_PORT}/${image_name}:v1"
+    dockerfile_path="${DOCKERFILES[$image_name]}" 
+    image_tag="${IP_ADDRESS}:${REGISTRY_PORT}/${image_name}:v1" 
     
     echo "Processing service: $image_name"
     
     docker build -t "$image_tag" -f "$dockerfile_path" .
 done
-
 echo "All Docker images have been built and pushed successfully."
 
 
