@@ -6,13 +6,18 @@ REGISTRY_PORT="5000"
 DAEMON_FILE="/etc/docker/daemon.json"
 INSECURE_REGISTRIES_ENTRY="\"insecure-registries\": [\"${IP_ADDRESS}:${5000}\"]"
 ROOT_DIR="$(dirname "$0")"
-declare -A DOCKERFILES=(
-    ["api-service"]="API_Service/api-service/Dockerfile"
-    ["auth-service"]="Auth_service/auth-service/Dockerfile"
-    ["image-service"]="Image_Service/image-service/Dockerfile"
-    ["webportal-service"]="Frontend_service/frontend-service/Dockerfile"
+declare -A SERVICES_TO_BUILD=(
+    ["API_Service/api-service"]="api-service"
+    ["Auth_service/auth-service"]="auth-service"
+    ["Image_Service/image-service"]="image-service"
+    ["Frontend_service/frontend-service"]="webportal-service"
 )
-
+declare -A DOCKERFILES=(
+    ["api-service"]="API_Service/api-service"
+    ["auth-service"]="Auth_service/auth-service"
+    ["image-service"]="Image_Service/image-service"
+    ["webportal-service"]="Frontend_service/frontend-service"
+)
 Deployment_FILES=(
   "Apps_deployment/Api-Group/"
   "Apps_deployment/Authentication-Group/"
@@ -134,14 +139,31 @@ fi
 echo "Environment setup script finished successfully."
 
 #--- Run Dokcer Registry ---
+
 for service_dir in "${!SERVICES_TO_BUILD[@]}"; do
     image_name="${SERVICES_TO_BUILD[$service_dir]}"
-    dockerfile_path="${DOCKERFILES[$image_name]}" 
-    image_tag="${IP_ADDRESS}:${REGISTRY_PORT}/${image_name}:v1" 
+    dockerfile_path="${DOCKERFILES[$image_name]}"
+    image_tag="${IP_ADDRESS}:${REGISTRY_PORT}/${image_name}:v1"
     
     echo "Processing service: $image_name"
+
+    # أمر بناء الصورة
+    docker build -t "$image_tag" -f "${dockerfile_path}/Dockerfile" .
     
-    docker build -t "$image_tag" -f "$dockerfile_path" .
+    # التحقق من نجاح أمر البناء قبل المتابعة
+    if [ $? -ne 0 ]; then
+        echo "ERROR: Failed to build Docker image for $image_name. Aborting."
+        exit 1
+    fi
+
+    # دفع الصورة إلى السجل
+    docker push "$image_tag"
+
+    # التحقق من نجاح أمر الدفع
+    if [ $? -ne 0 ]; then
+        echo "ERROR: Failed to push Docker image for $image_name. Aborting."
+        exit 1
+    fi
 done
 echo "All Docker images have been built and pushed successfully."
 
