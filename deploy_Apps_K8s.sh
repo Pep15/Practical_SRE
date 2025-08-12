@@ -73,6 +73,9 @@ fi
 # Add the insecure-registries entry if it doesn't already exist
 if ! sudo grep -q "insecure-registries" "$DAEMON_FILE"; then
   echo "Adding insecure-registries entry to $DAEMON_FILE"
+else
+   echo "{\"insecure-registries\": [\"${IP_ADDRESS}:${REGISTRY_PORT}\"]}" | sudo tee "$DAEMON_FILE" > /dev/null
+else
   # Use a single sed command to insert the entry before the final '}'
   sudo sed -i.bak "s/}$/,\"insecure-registries\": [\"${IP_ADDRESS}:${REGISTRY_PORT}\"]}/" "$DAEMON_FILE"
   
