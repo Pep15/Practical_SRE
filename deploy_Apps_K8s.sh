@@ -44,12 +44,6 @@ fi
 echo "Using IP address: $IP_ADDRESS"
 echo "---"
 
-# Check if the script is run as root
-if [ "$EUID" -ne 0 ]; then
-  echo "Please run this script with sudo."
-  exit 1
-fi
-
 # --- install Curl ---
 sudo apt update
 sudo apt install -y curl
