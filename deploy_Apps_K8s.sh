@@ -91,7 +91,11 @@ else
     echo "insecure-registries entry already exists in $DAEMON_FILE. No changes made."
 fi
 
-# --- Step 3: Modify hosts file ---
+# -- install Minikube ---
+curl -LO https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64
+sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64
+minikube start --cpus=2 --memory=4096 --cni=calico --insecure-registry="${IP_ADDRESS}:${REGISTRY_PORT}
+# ---  Modify hosts file ---
 echo "Updating /etc/hosts file..."
 
 # Define the host entries to be added
