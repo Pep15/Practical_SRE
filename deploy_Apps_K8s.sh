@@ -64,7 +64,12 @@ else
     echo "Docker is already installed. Skipping installation."
 fi
 
-
+echo "Running Docker Registry and building images..."
+if ! docker ps -a --format '{{.Names}}' | grep -q 'registry'; then
+    docker run -d -p 5000:5000 --restart always --name registry registry:3
+else
+    echo "Docker registry container is already running."
+fi
 
 echo "Configuring Docker daemon for insecure registry..."
 
