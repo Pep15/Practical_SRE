@@ -7,10 +7,10 @@ DAEMON_FILE="/etc/docker/daemon.json"
 INSECURE_REGISTRIES_ENTRY="\"insecure-registries\": [\"${IP_ADDRESS}:${5000}\"]"
 ROOT_DIR="$(dirname "$0")"
 declare -A SERVICES_TO_BUILD=(
-    ["API_Service"]="api-service"
-    ["Auth_service"]="auth-service"
-    ["Image_Service"]="image-service"
-    ["Frontend_service"]="webportal-service"
+    ["API_Service/api-service"]="api-service"
+    ["Auth_service/auth-service"]="auth-service"
+    ["Image_Service/image-service"]="image-service"
+    ["Frontend_service/frontend-service"]="webportal-service"
 )
 
 Deployment_FILES=(
