@@ -16,7 +16,7 @@ declare -A DOCKERFILES=(
     ["api-service"]="Dockerfile"
     ["auth-service"]="Dockerfile"
     ["image-service"]="Dockerfile"
-    ["webportal-service"]="frontend-service"
+    ["webportal-service"]="Dockerfile"
 )
 Deployment_FILES=(
   "Apps_deployment/Api-Group/"
