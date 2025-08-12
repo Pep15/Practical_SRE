@@ -144,19 +144,14 @@ fi
 # Go to the root directory first
 cd "$ROOT_DIR"
 
-for service_dir in "${!SERVICES_TO_BUILD[@]}"; do
-  image_name="${SERVICES_TO_BUILD[$service_dir]}"
+for service_path in "${!SERVICES_TO_BUILD[@]}"; do
+  image_name="${SERVICES_TO_BUILD[$service_path]}"
   image_tag="${IP_ADDRESS}:${REGISTRY_PORT}/${image_name}:v1"
   
   echo "Processing service: $image_name"
   
-  # Build the Docker image, providing the correct path to the Dockerfile
-  echo "Building Docker image: $image_tag"
-  # This command builds the image from the project root but uses the Dockerfile
-  # from the specific service directory, avoiding 'cd' pathing issues.
-  docker build -f "$service_dir/$image_name" -t "$image_tag" "$service_dir"
+  docker build -f "$service_path/Dockerfile" -t "$image_tag" "$service_path"
   
-  # Push the image to the local registry
   echo "Pushing Docker image: $image_tag"
   docker push "$image_tag"
   
