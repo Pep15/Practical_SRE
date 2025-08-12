@@ -2,9 +2,10 @@
 set -e
 
 IP_ADDRESS=$(hostname -I | awk '{print $1}')
+REGISTRY_PORT="5000"
+DAEMON_FILE="/etc/docker/daemon.json"
 INSECURE_REGISTRIES_ENTRY="\"insecure-registries\": [\"${IP_ADDRESS}:${5000}\"]"
 ROOT_DIR="$(dirname "$0")"
-REGISTRY_PORT="5000"
 declare -A SERVICES_TO_BUILD=(
     ["API_Service"]="api-service"
     ["Auth_service"]="auth-service"
@@ -81,13 +82,21 @@ fi
 echo "Updating /etc/hosts file..."
 
 # Define the host entries to be added
-API_ENTRY="${IP_ADDRESS} api.local"
-AUTH_ENTRY="${IP_ADDRESS} auth.local"
-IMAGES_ENTRY="${IP_ADDRESS} images.local"
-WEBPORTAL_ENTRY="${IP_ADDRESS} webportal.local"
-ALERTMANAGER_ENTRY="${IP_ADDRESS} alertmanager.local"
-GRAFANA_ENTRY="${IP_ADDRESS} grafana.local"
+HOST_ENTRIES=$(cat <<EOF
+${IP_ADDRESS} grafana.local
+${IP_ADDRESS} alertmanager.local
+${IP_ADDRESS} api.local
+${IP_ADDRESS} auth.local
+${IP_ADDRESS} images.local
+${IP_ADDRESS} webportal.local
+EOF
+)
 
+if grep -q "# End of section" /etc/hosts; then
+    sudo sed -i "/# End of section/i ${HOST_ENTRIES}" /etc/hosts
+else
+    echo "$HOST_ENTRIES" | sudo tee -a /etc/hosts > /dev/null
+fi
 echo "Environment setup script finished successfully."
 
 #--- Run Dokcer Registry ---
@@ -151,7 +160,7 @@ echo "Creating Docker Registry secrets..."
 read -p "Please enter username: " Username
 echo "----------------"
 
-read -p "Please enter password: " Password
+read -sp "Please enter password: " Password
 echo "----------------"
 
 read -p "Please enter email: " Email
@@ -257,7 +266,7 @@ receivers:
   - name: 'slack-notifications'
     slack_configs:
       - channel: '#Apps-Alerts'
-        api_url: '$SLACK_WEBHOOK_URL'
+        api_url: "${SLACK_WEBHOOK_URL}"
         send_resolved: true
         title: '{{ template "slack.default.title" . }}'
         text: '{{ template "slack.default.text" . }}'
