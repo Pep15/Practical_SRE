@@ -215,7 +215,7 @@
            - Once to install Docker and configure install mninikube to run as container on docker.
             'curl -LO https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64'
              'sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64'
-             'minikube start --cpus=2 --memory=4096 --cni=calico --insecure-registry="your-registry-host(ip):5000"
+             'minikube start --cpus=2 --memory=4096 --cni=calico --insecure-registry="your-registry-host(ip):5000'
             . Start Minikube: --cpu=2, you specify 'CPU' usge on your mechine host.(I recomended to allocate if you does not specfiy will take resource of mechine). 
             . Start Minikube: --memory=4096, you specify 'Memory' usge on your mechine host.(I recomended to allocate if you does not specfiy will take resource of mechine).
             . Start Minikube: --cni=calico, you must specify a Container Network Interface (CNI) that supports Network Policies, such as Calico, Cilium, or Weave Net.
@@ -347,7 +347,7 @@
 
 
 
-
+x
 
 
 
