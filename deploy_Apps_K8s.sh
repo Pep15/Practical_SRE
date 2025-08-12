@@ -70,6 +70,11 @@ else
     echo "Docker is already installed. Skipping installation."
 fi
 
+Avoid_Typing_Sudo(){
+    usermod -aG docker ${USER}
+    su - ${USER}
+    sudo usermod -aG docker $(whoami)
+}
 
 echo "Configuring Docker daemon for insecure registry..."
 
@@ -92,15 +97,20 @@ else
 fi
 
 # -- install Minikube ---
-if ! command -v minikube &> /dev/null; then
+if [ "$EUID" -eq 0 ]; then
+  # Run installation steps only
+  if ! command -v minikube &> /dev/null; then
     curl -LO https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64
     sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64
-else
+  else
     echo "Minikube is already installed. Skipping installation."
+  fi
+else
+  # Run docker, minikube commands here (no sudo)
+  minikube start --driver=docker --cpus=2 --memory=4096 --ports=80:80 --ports=443:443 --cni=calico --insecure-registry="${IP_ADDRESS}:${REGISTRY_PORT}"
+  minikube addons enable ingress
+  minikube addons enable ingress-dns
 fi
-
-minikube start --driver=docker --cpus=2 --memory=4096 --ports=80:80 --ports=443:443 --cni=calico --insecure-registry="${IP_ADDRESS}:${REGISTRY_PORT}"
-minikube addons enable ingress && minikube addons enable ingress-dns
 
 # ---  Modify hosts file ---
 echo "Updating /etc/hosts file..."
