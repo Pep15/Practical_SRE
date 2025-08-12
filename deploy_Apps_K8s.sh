@@ -150,12 +150,11 @@ for service_dir in "${!SERVICES_TO_BUILD[@]}"; do
   
   echo "Processing service: $image_name"
   
-  # Navigate to the service's directory
-  cd "$ROOT_DIR/$service_dir"
-  
-  # Build the Docker image with the correct image name and tag
+  # Build the Docker image, providing the correct path to the Dockerfile
   echo "Building Docker image: $image_tag"
-  docker build -f "$image_name" -t "$image_tag" .
+  # This command builds the image from the project root but uses the Dockerfile
+  # from the specific service directory, avoiding 'cd' pathing issues.
+  docker build -f "$service_dir/$image_name" -t "$image_tag" "$service_dir"
   
   # Push the image to the local registry
   echo "Pushing Docker image: $image_tag"
@@ -163,9 +162,6 @@ for service_dir in "${!SERVICES_TO_BUILD[@]}"; do
   
   echo "Successfully built and pushed $image_name."
   echo "----------------------------------------"
-
-  # Return to the root directory for the next iteration
-  cd "$ROOT_DIR"
 done
 
 echo "All Docker images have been built and pushed successfully."
