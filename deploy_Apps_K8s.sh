@@ -50,7 +50,11 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
-# --- Step 2: Docker Installation and Configuration ---
+# --- install Curl ---
+sudo apt update
+sudo apt install -y curl
+
+# ---  Docker Installation and Configuration ---
 echo "Starting Docker installation and configuration..."
 
 # Installation (using an alternative method to avoid pipe errors)
