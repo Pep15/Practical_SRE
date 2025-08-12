@@ -76,10 +76,13 @@ echo "Configuring Docker daemon for insecure registry..."
 if ! grep -q "insecure-registries" "$DAEMON_FILE" 2>/dev/null; then
     echo "Adding insecure-registries entry to $DAEMON_FILE"
 
+    
     if [ ! -s "$DAEMON_FILE" ]; then
         echo "{\"insecure-registries\": [\"${IP_ADDRESS}:${REGISTRY_PORT}\"]}" | sudo tee "$DAEMON_FILE" >/dev/null
+ 
     elif grep -q '^{[[:space:]]*}$' "$DAEMON_FILE"; then
         sudo sed -i.bak "s|{}|{\"insecure-registries\": [\"${IP_ADDRESS}:${REGISTRY_PORT}\"]}|" "$DAEMON_FILE"
+ 
     else
         sudo sed -i.bak "s|}|,\"insecure-registries\": [\"${IP_ADDRESS}:${REGISTRY_PORT}\"]}|" "$DAEMON_FILE"
     fi
@@ -91,23 +94,28 @@ else
 fi
 
 # -- install Minikube ---
-if [ "$EUID" -eq 0 ]; then
-  # Run installation steps only
-  if ! command -v minikube &> /dev/null; then
-    curl -LO https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64
-    sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64
-    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-    chmod +x kubectl
-    sudo mv kubectl /usr/local/bin/
-  else
-    echo "Minikube is already installed. Skipping installation."
-  fi
+if ! command -v minikube &> /dev/null; then
+  echo "Installing Minikube..."
+  curl -LO https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64
+  sudo install minikube-linux-amd64 /usr/local/bin/minikube
+  rm minikube-linux-amd64
 else
-
-  minikube start --driver=docker --cpus=2 --memory=4096 --ports=80:80 --ports=443:443 --cni=calico --insecure-registry="${IP_ADDRESS}:${REGISTRY_PORT}"
-  minikube addons enable ingress
-  minikube addons enable ingress-dns
+  echo "Minikube is already installed. Skipping installation."
 fi
+
+if ! command -v kubectl &> /dev/null; then
+  echo "Installing kubectl..."
+  curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+  chmod +x kubectl
+  sudo mv kubectl /usr/local/bin/
+else
+  echo "kubectl is already installed. Skipping installation."
+fi
+
+echo "Starting minikube..."
+minikube start --driver=docker --cpus=2 --memory=4096 --ports=80:80 --ports=443:443 --cni=calico --insecure-registry="${IP_ADDRESS}:${REGISTRY_PORT}"
+minikube addons enable ingress
+minikube addons enable ingress-dns
 
 # ---  Modify hosts file ---
 echo "Updating /etc/hosts file..."
@@ -138,11 +146,12 @@ for service_dir in "${!SERVICES_TO_BUILD[@]}"; do
   image_tag="${IP_ADDRESS}:${REGISTRY_PORT}/${image_name}:v1"
 
   echo ""
-  echo "🔍 Building service: $service_dir  →  Image: $image_tag"
+  echo "Building service: $service_dir  →  Image: $image_tag"
 
   (
     if docker build -f "$service_path/$image_name" -t "$image_tag" "$service_path"; then
-      echo "Successfully built image: $image_tag"
+       docker push "$image_tag"
+      echo "Successfully built and push image: $image_tag"
     else
       echo "Build failed for image: $image_tag"
     fi
@@ -180,7 +189,7 @@ echo "Creating Docker Registry secrets..."
 read -p "Please enter username: " Username
 echo "----------------"
 
-read -sp "Please enter password: " Password
+read -p "Please enter password: " Password
 echo "----------------"
 
 read -p "Please enter email: " Email
@@ -189,7 +198,7 @@ echo "----------------"
 # Create the secret for the 'app-services' namespace
 echo "Creating secret 'my-registry-creds' in namespace 'app-services'..."
 kubectl create secret docker-registry my-registry-creds \
-  --docker-server=${IP_ADDRESS}:${$REGISTRY_PORT} \
+  --docker-server=${IP_ADDRESS}:${REGISTRY_PORT} \
   --docker-username=$Username \
   --docker-password=$Password \
   --docker-email=$Email \
@@ -198,7 +207,7 @@ kubectl create secret docker-registry my-registry-creds \
 # Create the secret for the 'frontend-service' namespace
 echo "Creating secret 'my-registry-creds' in namespace 'frontend-service'..."
 kubectl create secret docker-registry my-registry-creds \
-  --docker-server=${IP_ADDRESS}:${$REGISTRY_PORT} \
+  --docker-server=${IP_ADDRESS}:${REGISTRY_PORT} \
   --docker-username=$Username \
   --docker-password=$Password \
   --docker-email=$Email \
