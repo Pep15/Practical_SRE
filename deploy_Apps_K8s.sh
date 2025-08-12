@@ -289,14 +289,10 @@ grafana:
       label: "grafana_dashboard"
       labelValue: "1"
       folderAnnotation: "grafana_folder"
-      namespaceSelector:
-        any: true
-    minStartupSeconds: 60
-    configReloader:
-      enabled: true
-      extraArgs:
-        - "--url=http://prometheus-stack-grafana:3000"
-        - "--min-startup-seconds=60"
+      searchNamespace: ALL
+      provider:
+        foldersFromFilesStructure: true
+      initWait: 60
   ingress:
     enabled: true
     hosts:
