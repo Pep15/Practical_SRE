@@ -5,7 +5,7 @@ IP_ADDRESS=$(hostname -I | awk '{print $1}')
 REGISTRY_PORT="5000"
 DAEMON_FILE="/etc/docker/daemon.json"
 INSECURE_REGISTRIES_ENTRY="\"insecure-registries\": [\"${IP_ADDRESS}:${5000}\"]"
-ROOT_DIR="$(dirname "$0")"
+ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 declare -A SERVICES_TO_BUILD=(
   ["API_Service"]="api-service"
   ["Auth_service"]="auth-service"
@@ -21,13 +21,13 @@ Deployment_FILES=(
   "Apps_deployment/Postgresql-Group/"
 )
 NETWORK_POLICY_FILES=(
-  "Policy-Group/deny-apps-services-all.yml"
-  "Policy-Group/deny-webportal-service-all.yml"
-  "Policy-Group/Policy-api-fromAndTo/"
-  "Policy-Group/Policy-auth-fromAndTo/"
-  "Policy-Group/Policy-image-fromAndTo"
-  "Policy-Group/Policy-webportal-fromAndTo/"
-  "Policy-Group/Policy-postgresql-fromAndTo/"
+  "Apps_deployment/Policy-Group/deny-apps-services-all.yml"
+  "Apps_deployment/Policy-Group/deny-webportal-service-all.yml"
+  "Apps_deployment/Policy-Group/Policy-api-fromAndTo/"
+  "Apps_deployment/Policy-Group/Policy-auth-fromAndTo/"
+  "Apps_deployment/Policy-Group/Policy-image-fromAndTo/"
+  "Apps_deployment/Policy-Group/Policy-webportal-fromAndTo/"
+  "Apps_deployment/Policy-Group/Policy-postgresql-fromAndTo/"
 )
 
 
@@ -132,7 +132,8 @@ EOF
 )
 
 if grep -q "# End of section" /etc/hosts; then
-    sudo sed -i "/# End of section/i ${HOST_ENTRIES}" /etc/hosts
+
+    sudo sed -i '/# BEGIN CUSTOM HOSTS/,/# END CUSTOM HOSTS/d' /etc/hosts
 else
     echo "$HOST_ENTRIES" | sudo tee -a /etc/hosts > /dev/null
 fi
@@ -216,18 +217,22 @@ kubectl create secret docker-registry my-registry-creds \
 
 # --- Apply Self-signed Issuer ---
 echo "Applying self-signed issuer..."
-kubectl apply -f "${ROOT_DIR}/selfsigned-issuer.yml"
+kubectl apply -f "${ROOT_DIR}/Apps_deployment/selfsigned-issuer.yml"
 sleep 5
 
 
 #-- Apply Applications Deployment ---
-for deploy_file in "${Deployment_FILES[@]}";do
-  # The -f flag handles both single files and directoreies.
-  echo "Deloying apps: $deploy_file"
-  kubectl apply -f "$ROOT_DIR/$deploy_file"
-done
-echo "Deployment applied successfully."
+find "$ROOT_DIR/Apps_deployment" -type f \( -name "*.yml" -o -name "*.yaml" \) | while read -r yaml_file; do
+    echo "DEBUG: Processing -> $yaml_file"
 
+    grep -n "\${IP_ADDRESS}" "$yaml_file" || echo "No IP placeholder found."
+
+    sed -i "s|\${IP_ADDRESS}|192.168.8.24|g" "$yaml_file"
+done
+
+
+
+echo "Deployment applied successfully."
 
 
 # --- Apply Network policy ---
@@ -246,7 +251,7 @@ kubectl wait --for=condition=Ready pod -l app=api-service -n app-services --time
 kubectl wait --for=condition=Ready pod -l app=auth-service -n app-services --timeout=300s
 kubectl wait --for=condition=Ready pod -l app=image-service -n app-services --timeout=300s
 kubectl wait --for=condition=Ready pod -l app=postgres -n app-services --timeout=300s
-kubectl wait --for=condition=Ready pod -l app=webportal -n frontend-service --timeout=300s
+kubectl wait --for=condition=Ready pod -l app=webportal-service -n frontend-service --timeout=300s
 echo "All pods are ready."
 
 
@@ -265,12 +270,12 @@ kubectl wait --for=condition=Ready certificate webportal-tls-secret -n frontend-
 echo "Creating ConfigMaps for Grafana Dashboards..."
 kubectl create configmap my-grafana-dashboards --from-file="$ROOT_DIR/grafana_dashBoard/" -n monitoring
 
-# --- Step 2: Add Labels and Annotations to the ConfigMap ---
+# ---  Add Labels and Annotations to the ConfigMap ---
 echo "Adding labels and annotations to the Grafana dashboards ConfigMap..."
 kubectl label configmap my-grafana-dashboards grafana_dashboard="1" -n monitoring
 kubectl annotate configmap my-grafana-dashboards grafana_folder="Application Services" -n monitoring
 
-# --- Step 3: Configure Alertmanager with Slack Webhook ---
+# ---  Configure Alertmanager with Slack Webhook ---
 echo "Configuring Alertmanager with Slack webhook..."
 
 # Prompt the user for the Slack webhook URL

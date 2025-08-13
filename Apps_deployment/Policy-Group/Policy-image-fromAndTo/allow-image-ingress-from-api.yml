@@ -16,4 +16,4 @@ spec:
             app: api-service
     ports: 
       - protocol: TCP
-        port: 8081
+        port: 8082

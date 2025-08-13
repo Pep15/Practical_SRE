@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-auth-ingress-from-api
+  name: allow-auth-egress-to-postgres
   namespace: app-services
 spec:
   podSelector:
@@ -14,6 +14,21 @@ spec:
     - podSelector:
         matchLabels:
           app: postgres
-    ports:
+      namespaceSelector: 
+        matchLabels:
+          kubernetes.io/metadata.name: app-services
+    ports: 
       - protocol: TCP
         port: 5432
+  - to:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: kube-system
+        podSelector:
+          matchLabels:
+            k8s-app: kube-dns
+    ports:
+      - protocol: UDP
+        port: 53
+      - protocol: TCP
+        port: 53

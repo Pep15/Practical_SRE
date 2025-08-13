@@ -1,25 +1,22 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-webportal-egress-to-api
-  namespace: frontend-service
+  name: allow-api-egress-to-image
+  namespace: app-services
 spec:
   podSelector:
     matchLabels:
-      app: webportal-service
+      app: api-service
   policyTypes:
   - Egress
   egress:
   - to:
-    - podSelector:
-        matchLabels:
-          app: api-service
-      namespaceSelector: 
-        matchLabels:
-          kubernetes.io/metadata.name: app-services
-    ports: 
+      - podSelector:
+          matchLabels:
+            app: image-service
+    ports:
       - protocol: TCP
-        port: 8081
+        port: 8082
   - to:
       - namespaceSelector:
           matchLabels:

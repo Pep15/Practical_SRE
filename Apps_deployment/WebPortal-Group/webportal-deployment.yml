@@ -17,7 +17,7 @@ spec:
       - name: my-registry-creds
       containers:
       - name: webportal-service
-        image: 192.168.8.142:5000/webportal-service:v1
+        image: 192.168.8.24:5000/webportal-service:v1
         imagePullPolicy: Always
         ports:
         - containerPort: 8083

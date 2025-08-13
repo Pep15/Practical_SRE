@@ -11,22 +11,12 @@ spec:
   - Ingress
   ingress:
   - from:
-    - podSelector:
-        matchLabels:
-          app: webportal-service
-      namespaceSelector:
-        matchLabels:
-          kubernetes.io/metadata.name: frontend-service
-    ports:
-    - protocol: TCP
-      port: 8081
-  - from:
     - namespaceSelector:
         matchLabels:
-          name: ingress-nginx
+          kubernetes.io/metadata.name: frontend-service
       podSelector:
         matchLabels:
-          app.kubernetes.io/name: ingress-nginx
+          app: webportal-service
     ports:
     - protocol: TCP
       port: 8081

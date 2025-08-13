@@ -14,19 +14,6 @@ spec:
     - podSelector:
         matchLabels:
           app: image-service
-      namespaceSelector:
-        matchLabels:
-          kubernetes.io/metadata.name: app-services
     ports:
     - protocol: TCP
-      port: 8082
-  - from:
-    - namespaceSelector:
-        matchLabels:
-          name: ingress-nginx
-      podSelector:
-        matchLabels:
-          app.kubernetes.io/name: ingress-nginx
-    ports:
-    - protocol: TCP
-      port: 8082
+      port: 8081

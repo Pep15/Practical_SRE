@@ -8,5 +8,15 @@ spec:
   policyTypes:
   - Ingress
   - Egress
-  ingress: []     
-  egress: []
+  ingress: [] 
+  egress:
+  - to:
+    - ipBlock:
+        cidr: 10.96.0.10/32
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53
+      
+ 

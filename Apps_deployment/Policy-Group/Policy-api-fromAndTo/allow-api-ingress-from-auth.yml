@@ -11,20 +11,6 @@ spec:
   - Ingress
   ingress:
   - from:
-    - podSelector:
-        matchLabels:
-          app: auth-service
-    ports:
-    - protocol: TCP
-      port: 8080
-  - from:
-    - namespaceSelector:
-        matchLabels:
-          name: ingress-nginx
-      podSelector:
-        matchLabels:
-          app.kubernetes.io/name: ingress-nginx
-    ports:
-    - protocol: TCP
-      port: 8080
-
+      - podSelector:
+          matchLabels:
+            app: auth-service
