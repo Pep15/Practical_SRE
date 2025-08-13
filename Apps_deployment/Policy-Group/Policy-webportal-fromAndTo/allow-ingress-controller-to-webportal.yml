@@ -1,22 +1,22 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-api-ingress-from-webportal
-  namespace: app-services
+  name: allow-ingress-controller-to-webportal
+  namespace: frontend-service
 spec:
   podSelector:
     matchLabels:
-      app: api-service
+      app: webportal-service
   policyTypes:
   - Ingress
   ingress:
   - from:
     - namespaceSelector:
         matchLabels:
-          kubernetes.io/metadata.name: frontend-service
+          kubernetes.io/metadata.name: ingress-nginx
       podSelector:
         matchLabels:
-          app: webportal-service
+          app.kubernetes.io/name: ingress-nginx
     ports:
     - protocol: TCP
-      port: 8081
+      port: 8083

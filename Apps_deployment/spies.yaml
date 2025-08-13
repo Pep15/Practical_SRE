@@ -1,0 +1,27 @@
+# الجاسوس الأول: يراقب خروج الطلبات من API
+apiVersion: v1
+kind: Pod
+metadata:
+  name: spy-on-api
+  namespace: app-services
+  labels:
+    app: api-service 
+spec:
+  containers:
+  - name: debugger
+    image: nicolaka/netshoot
+    command: ["sleep", "3600"]
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: spy-on-auth
+  namespace: app-services
+  labels:
+    app: auth-service 
+spec:
+  containers:
+  - name: debugger
+    image: nicolaka/netshoot
+    command: ["sleep", "3600"]
