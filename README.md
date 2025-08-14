@@ -226,11 +226,14 @@ Kubernetes is a container orchestration platform designed to manage and scale la
 ## Setup Environment
 
 ### Prerequisites:
-* **Docker:** Manage applications using containers.
-* **Minikube:** To use a Kubernetes cluster (for a local development environment) or a cloud provider.
-* **kubectl:** Is the command-line tool for interacting with Kubernetes clusters.
-* **Helm:** A package manager for Kubernetes.
-* **Load Testing Tool:** using `hey`.
+
+| Tools | Description |
+| --- | --- |
+| `Docker` | Manage applications using containers. |
+| `Minikube` | To use a Kubernetes cluster (for a local development environment) or a cloud provider. |
+| `kubectl` | Is the command-line tool for interacting with Kubernetes clusters.|
+| `Helm` | A package manager for Kubernetes.|
+| `Load Testing Tool`| using `hey`. |
 
 ### Steps:
 #### Docker Installation and Configuration
