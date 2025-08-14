@@ -3,37 +3,20 @@ I set up a Kubernetes environment using Minikube, which serves as an ideal platf
 
 Application Services
 User Interface Service
-
-The user interface for login and registration using HTML and JavaScript.
-
-This interface integrates with the API to handle image uploads, register new users, validate login credentials, and display profiles of users.
+The user interface for login and registration using HTML and JavaScript. This interface integrates with the API to handle image uploads, register new users, validate login credentials, and display profiles of users.
 
 API Service
-
-The Application Programming Interface (API) is built using Python to handle data coming from users.
-
-The backend logic processes this data and communicates with other services, applying the Gateway Pattern to manage requests and responses efficiently.
+The Application Programming Interface (API) is built using Python to handle data coming from users. The backend logic processes this data and communicates with other services, applying the Gateway Pattern to manage requests and responses efficiently.
 
 Authentication Service
-
-The Authentication service is an internal component that verifies user credentials, such as usernames and passwords.
-
-It does not handle direct external requests; instead, it receives data from the main API service.
-
-Built with Python, it processes and validates login information to ensure secure access.
+The Authentication service is an internal component that verifies user credentials, such as usernames and passwords. It does not handle direct external requests; instead, it receives data from the main API service. Built with Python, it processes and validates login information to ensure secure access.
 
 Image Service
-
-Serves as a centralized storage zone for user images, providing access and retrieval capabilities.
-
-Built with Go to ensure performance and scalability.
+Serves as a centralized storage zone for user images, providing access and retrieval capabilities. Built with Go to ensure performance and scalability.
 
 Core Technologies
 Docker Containerization
-
-Docker is a containerization technology that allows you to package applications and their dependencies into isolated units called containers.
-
-I used Docker to build container images, which are then deployed, orchestrated, and managed by Kubernetes.
+Docker is a containerization technology that allows you to package applications and their dependencies into isolated units called containers. I used Docker to build container images, which are then deployed, orchestrated, and managed by Kubernetes.
 
 My Docker Images:
 
