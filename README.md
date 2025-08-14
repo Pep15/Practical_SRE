@@ -248,9 +248,12 @@ Kubernetes is a container orchestration platform designed to manage and scale la
                  "insecure-registries": ["your-registry-host-(IP):5000"]
             }
             ```
-        * Restart the Docker Engine: `sudo systemctl restart docker`
+        * Restart the Docker Engine:
+            ```bash
+            sudo systemctl restart docker
+            ```
 
-    > [! NOTE]
+    > [!NOTE]
     > If you use Docker Desktop, you can configure the code JSON format on it.
     > 1. Go to the settings icon in the right corner, click, then will pop up page.
     > 2. Then navigate to the 'Docker Engine' will see there is an empty box. Enter the command in the box.
