@@ -320,7 +320,7 @@ Once Docker is installed, you can install Minikube to run a local Kubernetes clu
 2.  **Start Minikube Cluster:**
     This command starts the cluster and connects it to your local insecure registry.
     ```bash
-    minikube start --cpus=2 --memory=4096 --cni=calico --insecure-registry="your-registry-host(ip):5000"
+    minikube start --cpus=2 --memory=4096 --cni=calico --ports=443:443 ports=80:80 --insecure-registry="your-registry-host(ip):5000"
     ```
 
 **Command Options Explained:**
@@ -331,5 +331,6 @@ Once Docker is installed, you can install Minikube to run a local Kubernetes clu
 | **`--memory=4096`** | Specifies the amount of memory (in MB) to allocate from your host machine. |
 | **`--cni=calico`** | You must specify a Container Network Interface (CNI) that supports Network Policies, such as Calico. |
 | **`--insecure-registry`**| Tells Minikube to trust your local Docker registry, allowing it to pull images from it. |
+| **`--ports`** | Export port |
 
 
