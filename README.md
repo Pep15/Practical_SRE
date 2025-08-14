@@ -158,7 +158,7 @@ Kubernetes is a container orchestration platform designed to manage and scale la
         ```bash
         watch -n1 kubectl describe deployment <name-of-deployment> -n <namespace>
         ```
-    * Concurrently, you observed the Pods with **'kubectl get'** Postgres and API services status.
+    * Concurrently, I observed the Pods with **'kubectl get'** Postgres and API services status.
         ```bash
         kubectl get pod -n <namespace> -l <label-of-pod-inside-yaml> -w
         ```
@@ -201,7 +201,7 @@ Kubernetes is a container orchestration platform designed to manage and scale la
         ```bash
         watch -n1 kubectl describe deployment <name-of-deployment> -n <namespace>
         ```
-    * Concurrently, you observed the HPA with **'kubectl get hpa'** Image-service utilize pod.
+    * Concurrently, I observed the HPA with **'kubectl get hpa'** Image-service utilize pod.
         ```bash
         kubectl get hpa <name-of-pod> -n <namespace>
         ```
