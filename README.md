@@ -221,5 +221,13 @@ Kubernetes is a container orchestration platform designed to manage and scale la
         * After the load test ended, Kubernetes automatically scaled down the Pods gradually based on the HPA settings.
         * Returning the replica count to the original number (2 Pods).
         * The Grafana dashboard returned to its normal state, indicating that the service had recovered and stabilized.
+----
+## Setup Environment
 
+### Prerequisites:
+* **Docker:** Manage applications using containers.
+* **Minikube:** To use a Kubernetes cluster (for a local development environment) or a cloud provider.
+* **kubectl:** Is the command-line tool for interacting with Kubernetes clusters.
+* **Helm:** A package manager for Kubernetes.
+* **Load Testing Tool:** using `hey`.
 
