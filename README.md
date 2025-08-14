@@ -102,10 +102,13 @@ Kubernetes is a container orchestration platform designed to manage and scale la
   2. Created a **Certificate Signing Request (CSR)** and generated the certificate.
   3. Allocated the certificate with the key to Kubernetes **secret tls**.
 
-> ⚠️ **Note:** There are three ways to generate certificates in Kubernetes:
-
-1. **Manual** 🛠️  
+> [!NOTE] There are three ways to generate certificates in Kubernetes:
+> 1. **Manual** 🛠️  
    - Use **OpenSSL** to generate certificates and manually create the TLS secret.
+
+
+
+
 
 2. **With Issuer and cert-manager** 📜  
    - Create Kubernetes objects (**Issuer** and **Certificate**) managed automatically by **cert-manager**.  
@@ -305,6 +308,5 @@ Kubernetes is a container orchestration platform designed to manage and scale la
         # Push image webportal-service:
         docker push your-registry-host(ip):5000/webportal-service:v1
         ```
-> [!NOTE]
-> Useful information that users should know, even when skimming content.
+
 
