@@ -102,11 +102,18 @@ Kubernetes is a container orchestration platform designed to manage and scale la
   2. Created a **Certificate Signing Request (CSR)** and generated the certificate.
   3. Allocated the certificate with the key to Kubernetes **secret tls**.
 
-> **Note:**  
-  > There are three ways to generate certificates in Kubernetes:  
-  > 1. **Manual**: Use OpenSSL and manually create the TLS secret.  
-  > 2. **With Issuer and cert-manager**: Create Kubernetes objects (**Issuer** and **Certificate**) managed by cert-manager (Implementation).  
-  > 3. **Automated via Ingress Annotations**: Create an **Issuer** and reference it in Ingress annotations (`cert-manager.io/issuer`) so cert-manager automatically generates the certificate.
+> ⚠️ **Note:** There are three ways to generate certificates in Kubernetes:
+
+1. **Manual** 🛠️  
+   - Use **OpenSSL** to generate certificates and manually create the TLS secret.
+
+2. **With Issuer and cert-manager** 📜  
+   - Create Kubernetes objects (**Issuer** and **Certificate**) managed automatically by **cert-manager**.  
+   - *(Implementation method used in this project)*
+
+3. **Automated via Ingress Annotations** 🚀  
+   - Create an **Issuer** and reference it in the Ingress annotations (`cert-manager.io/issuer`).  
+   - cert-manager automatically generates and manages the certificate.
 
 ---
 
