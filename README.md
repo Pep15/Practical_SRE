@@ -46,70 +46,97 @@
 
 ---
 
-### 7. Kubernetes Orchestration
-- It is a container orchestration platform designed to manage and scale large numbers of containers across a cluster of machines.
-- I used Kubernetes to run containers as **Deployments**, which control **Pods** and allow scaling up or down as needed.
-- Implemented **dynamic autoscaling (HPA)** to automatically add new pods to the cluster when resources are highly utilized.
-- Configured **Kubernetes Services** to route traffic to the Pods, using **ClusterIP** for internal communication between them.
-- Implemented **NetworkPolicies** to control network traffic between Pods, allowing only authorized communication and reducing unnecessary connections to enhance security.
-- Configured **livenessProbes** and **readinessProbes** to monitor Pod health and traffic readiness, ensuring that Pods are restarted in case of application failures or are marked as unavailable until ready.
-- Created a **Pod Disruption Budget (PDB)** to ensure that a minimum number of pods are kept running to maintain service availability during planned events or maintenance.
-- Used **Kubernetes Secrets** to securely store passwords and other sensitive data, passing them to the pods through the deployment configuration.
-- Implemented a **ConfigMap** to store non-sensitive configuration data, such as environment variables or application settings, and pass them to the pods.
-- Configured **Persistent Volume (PV)** and **Persistent Volume Claim (PVC)** objects to allocate and manage persistent storage for applications and databases.
+### Kubernetes Orchestration
 
-#### Ingress Controller
-- A component in Kubernetes that allows routing **HTTP/HTTPS** traffic to services.
-- Configured it to route traffic to service endpoints and secured it using self-signed **TLS** certificates.
+Kubernetes is a container orchestration platform designed to manage and scale large numbers of containers across a cluster of machines.  
 
-#### Issuer with cert-manager
-- **Issuer** → A Kubernetes object for releasing certificates.  
-- **cert-manager** → A Kubernetes controller responsible for managing TLS certificates, including self-signed ones, automatically within the cluster.  
-- Configured the issuer to release the certificate, then referenced it in the certificate object to create the **TLS secret**.
+**Implementation Steps:**
 
-#### OpenSSL with Secret TLS
-- **OpenSSL** → A tool that allows you to create **TLS self-signed certificates** locally.
-- Used the OpenSSL command to generate the **Private Key**.
-- Created a **Certificate Signing Request (CSR)** and generated the certificate.
-- Allocated the certificate with the key to a Kubernetes **secret tls**.
+1. **Deployed Containers as Deployments**
+   - Managed **Pods** and enabled scaling up or down as needed.
 
-**Note**  
-There are three ways to generate certificates in Kubernetes:
-1. **Manual**  
-   - Using OpenSSL to generate certificates and manually creating the TLS secret.  
-2. **With Issuer and cert-manager** (Implementation)  
-   - Creating Kubernetes objects (**Issuer** and **Certificate**) managed by cert-manager.  
-3. **Automated via Ingress Annotations**  
-   - Creating an **Issuer** and referencing it in the Ingress annotations (`cert-manager.io/issuer`) so cert-manager automatically generates the certificate.
+2. **Configured Horizontal Pod Autoscaler (HPA)**
+   - Enabled dynamic autoscaling to automatically add new Pods when resources are highly utilized.
+
+3. **Set Up Kubernetes Services**
+   - Configured **ClusterIP** services for internal communication between Pods.
+
+4. **Applied NetworkPolicies**
+   - Restricted network traffic to only authorized Pods, enhancing security and reducing unnecessary connections.
+
+5. **Configured Health Probes**
+   - Implemented **livenessProbes** to restart unhealthy Pods.
+   - Implemented **readinessProbes** to ensure Pods receive traffic only when ready.
+
+6. **Created Pod Disruption Budget (PDB)**
+   - Ensured a minimum number of Pods remain available during maintenance or node upgrades.
+
+7. **Managed Sensitive Data with Secrets**
+   - Stored passwords and other sensitive data in **Kubernetes Secrets**, securely passed to Pods.
+
+8. **Managed Non-Sensitive Configuration**
+   - Used **ConfigMaps** to store environment variables or application settings.
+
+9. **Provisioned Persistent Storage**
+   - Configured **Persistent Volumes (PV)** and **Persistent Volume Claims (PVC)** for applications and databases.
 
 ---
 
-### 8. Helm Charts for Kubernetes
-- **Helm** → The package manager for Kubernetes, allowing you to define, install, and manage Kubernetes applications using preconfigured charts.
+### Ingress Controller
+- Routes **HTTP/HTTPS** traffic to services.
+- Configured routing to service endpoints and secured it using self-signed **TLS certificates**.
+
+---
+
+### Issuer with cert-manager
+- **Issuer** → Kubernetes object used to release certificates.  
+- **cert-manager** → Kubernetes controller managing TLS certificates, including self-signed ones, automatically.  
+- Configured the **Issuer** and referenced it in the **Certificate** object to create the **TLS secret**.
+
+---
+
+### OpenSSL with Secret TLS
+- **OpenSSL** → Tool to generate TLS self-signed certificates locally.
+- Steps:
+  1. Generated **Private Key**.
+  2. Created a **Certificate Signing Request (CSR)** and generated the certificate.
+  3. Allocated the certificate with the key to Kubernetes **secret tls**.
+
+> **Note:**  
+> There are three ways to generate certificates in Kubernetes:  
+> 1. **Manual**: Use OpenSSL and manually create the TLS secret.  
+> 2. **With Issuer and cert-manager**: Create Kubernetes objects (**Issuer** and **Certificate**) managed by cert-manager (Implementation).  
+> 3. **Automated via Ingress Annotations**: Create an **Issuer** and reference it in Ingress annotations (`cert-manager.io/issuer`) so cert-manager automatically generates the certificate.
+
+---
+
+### Helm Charts for Kubernetes
+- **Helm** → Package manager for Kubernetes, allowing definition, installation, and management of applications using preconfigured charts.
 - Installed Helm charts.
-- Used Helm to install the **prometheus-community chart**, which includes a complete monitoring solution with:
+- Used Helm to deploy the **prometheus-community** chart, which bundles:
   - `Prometheus`
   - `AlertManager`
   - `Grafana`
 
 ---
 
-### 9. Prometheus, AlertManager, and Grafana
-- **Prometheus** → A monitoring tool that scrapes metrics and stores them in a time-series database (**TSDB**).
-- Configured Prometheus to scrape metrics from services and persist the collected data.
-- Created scrape configuration templates for specific services.
+### Prometheus, AlertManager, and Grafana
+- **Prometheus** → Monitoring tool that scrapes metrics and stores them in a time-series database (**TSDB**).  
+  - Configured Prometheus to scrape metrics from services and persist the data.  
+  - Templates defined which services Prometheus should scrape.
 
-- **AlertManager** → Works alongside Prometheus to group, route, and silence alerts before sending them to notification endpoints (e.g., email, Slack).
-- Configured alerting rules and routing/receivers.
+- **AlertManager** → Groups, routes, and silences alerts from Prometheus before sending them to endpoints like email or Slack.  
+  - Configured alerting rules and routing/receivers.
 
-- **Grafana** → A visualization tool for monitoring service metrics.
-- Configured Prometheus as a Grafana data source.
-- Created dashboards for:
-  - `Status Pods`
-  - `Histogram Bucket`
-  - `HTTP Request Count`
-  - `CPU Usage`
-  - `Memory Usage`
+- **Grafana** → Data visualization tool for creating dashboards to monitor service metrics.  
+  - Configured Prometheus as a data source.  
+  - Created dashboards for key metrics:
+    - `Status Pods`
+    - `Histogram Bucket`
+    - `HTTP Request Count`
+    - `CPU Usage`
+    - `Memory Usage`
 
-**Note**  
-Some services require an external **exporter** alongside the Pod to collect metrics. These exporters must be included in Prometheus scrape configurations.
+> **Note:**  
+> Some services require an external exporter alongside the Pod to collect metrics.  
+> These exporters must be defined in Prometheus scrape configurations for monitoring.
