@@ -441,6 +441,6 @@ Paasword=$(kubectl --namespace monitoring get secret prometheus-stack-grafana -o
 echo "User of Grafana Page: admin"
 echo "Password of Grafana Page:" ${Paasword}
 
-echo Remember to accept the self-signed certificate warning if prompted."
+echo "Remember to accept the self-signed certificate warning if prompted."
 
 echo "✅ Full deployment script finished successfully."
