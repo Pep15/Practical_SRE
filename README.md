@@ -261,13 +261,15 @@ Kubernetes is a container orchestration platform designed to manage and scale la
    
 3. Click 'Apply & restart'.
 
-3.  **Run Docker Registry**
+   
+3. **Run Docker Registry**
     * Docker image Registry it's a private registry to store your repository images.
     * Following the command to run the container registry:
-      ```bash
-      docker run -d -p 5000:5000 --restart always --name registry registry:2
-      ```
-    * `--restart always`: is the policy to reload the container even if there are issues with the registry container, or restart your machine.
+        ```bash
+        docker run -d -p 5000:5000 --restart always --name registry registry:2
+        ```
+        > **`--restart always`**: is the policy to reload the container even if there are issues with the registry container, or restart your machine.
+
 
 4. **Build Docker Image and Push**
     * Once the Docker daemon is configured, you can build and push to your local registry.
@@ -303,4 +305,6 @@ Kubernetes is a container orchestration platform designed to manage and scale la
         # Push image webportal-service:
         docker push your-registry-host(ip):5000/webportal-service:v1
         ```
+> [!NOTE]
+> Useful information that users should know, even when skimming content.
 
