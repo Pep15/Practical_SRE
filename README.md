@@ -231,3 +231,28 @@ Kubernetes is a container orchestration platform designed to manage and scale la
 * **Helm:** A package manager for Kubernetes.
 * **Load Testing Tool:** using `hey`.
 
+### Steps:
+#### Docker Installation and Configuration
+1.  **Install Docker:** Run the following command to install Docker on the local machine:
+    ```bash
+    curl -fsSL [https://get.docker.com](https://get.docker.com) -o get-docker.sh
+    sudo sh get-docker.sh
+    ```
+2.  **Configure Docker daemon for local Registry:**
+    * If you are planning to use a local Docker registry on your machine:
+        * Edit the Docker `daemon.json` file, which exists on path `/etc/docker/deamon.json`.
+        * If the file does not exist, create one.
+        * Add the following configuration and replace with your local IP.
+            ```json
+            {
+                 "insecure-registries": ["your-registry-host-(IP):5000"]
+            }
+            ```
+        * Restart the Docker Engine: `sudo systemctl restart docker`
+
+    > [!NOTE]
+    > If you use Docker Desktop, you can configure the code JSON format on it.
+    > 1. Go to the settings icon in the right corner, click, then will pop up page.
+    > 2. Then navigate to the 'Docker Engine' will see there is an empty box. Enter the command in the box.
+    > 3. Click 'Apply & restart'.
+
