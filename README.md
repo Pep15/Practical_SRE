@@ -149,3 +149,14 @@ Kubernetes is a container orchestration platform designed to manage and scale la
 
 ----
 
+# Failure Simulation and Recovery Verification
+
+## Steps of failure simulation and recovery verification
+
+### Database Failure with API Service
+
+#### Pre-Failure State Monitoring
+- I began by using the `watch` command-line tool with `kubectl describe` to monitor the Postgres database Deployment in the `app-services` namespace using:  
+  ```bash
+  watch -n1 kubectl describe deployment <name-of-deployment> -n <namespace>
+
