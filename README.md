@@ -150,7 +150,7 @@ Kubernetes is a container orchestration platform designed to manage and scale la
 ----
 
 # Failure Simulation and Recovery Verification
-
+--
 ## Steps of failure simulation and recovery verification
 
 ### Database Failure with API Service
