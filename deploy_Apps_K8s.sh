@@ -21,8 +21,6 @@ Deployment_FILES=(
   "Apps_deployment/Postgresql-Group/"
 )
 NETWORK_POLICY_FILES=(
-  "Apps_deployment/Policy-Group/deny-apps-services-all.yml"
-  "Apps_deployment/Policy-Group/deny-webportal-service-all.yml"
   "Apps_deployment/Policy-Group/Policy-api-fromAndTo/"
   "Apps_deployment/Policy-Group/Policy-auth-fromAndTo/"
   "Apps_deployment/Policy-Group/Policy-image-fromAndTo/"
@@ -55,14 +53,29 @@ echo "Starting Docker installation and configuration..."
 install_docker() {
     curl -fsSL https://get.docker.com -o get-docker.sh
     sudo sh get-docker.sh
+    rm get-docker.sh
     sleep 30
 }
+install_helm(){
+  curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+  chmod 700 get_helm.sh
+  ./get_helm.sh
+  rm get_helm.sh
+}
+
 
 if ! command -v docker &> /dev/null; then
     install_docker
 else
     echo "Docker is already installed. Skipping installation."
 fi
+
+if  ! command -v helm &> /dev/null; then
+     install_helm
+else 
+     echo "Helm is already installed. Skipping installation."
+fi
+
 
 echo "Running Docker Registry and building images..."
 if ! docker ps -a --format '{{.Names}}' | grep -q 'registry'; then
@@ -118,9 +131,9 @@ minikube addons enable ingress
 minikube addons enable ingress-dns
 
 # ---  Modify hosts file ---
+
 echo "Updating /etc/hosts file..."
 
-# Define the host entries to be added
 HOST_ENTRIES=$(cat <<EOF
 ${IP_ADDRESS} grafana.local
 ${IP_ADDRESS} alertmanager.local
@@ -131,13 +144,24 @@ ${IP_ADDRESS} webportal.local
 EOF
 )
 
-if grep -q "# End of section" /etc/hosts; then
 
-    sudo sed -i '/# BEGIN CUSTOM HOSTS/,/# END CUSTOM HOSTS/d' /etc/hosts
-else
-    echo "$HOST_ENTRIES" | sudo tee -a /etc/hosts > /dev/null
-fi
-echo "Environment setup script finished successfully."
+sudo sed -i.bak '/# BEGIN CUSTOM HOSTS/,/# END CUSTOM HOSTS/d' /etc/hosts
+
+cat <<EOF | sudo tee -a /etc/hosts > /dev/null
+# BEGIN CUSTOM HOSTS - Managed by SRE script
+$HOST_ENTRIES
+# END CUSTOM HOSTS
+EOF
+
+echo "Hosts file updated successfully."
+
+
+
+
+
+
+
+
 
 #--- Run Dokcer Registry ---
 
@@ -183,6 +207,7 @@ echo "Cert-manager ready."
 echo "Creating namespaces..."
 kubectl create namespace app-services || true
 kubectl create namespace frontend-service || true
+kubectl create namespace monitoring || true
 
 # --- Create docker registry secrets ---
 echo "Creating Docker Registry secrets..."
@@ -222,13 +247,24 @@ sleep 5
 
 
 #-- Apply Applications Deployment ---
-find "$ROOT_DIR/Apps_deployment" -type f \( -name "*.yml" -o -name "*.yaml" \) | while read -r yaml_file; do
-    echo "DEBUG: Processing -> $yaml_file"
-
-    grep -n "\${IP_ADDRESS}" "$yaml_file" || echo "No IP placeholder found."
-
-    sed -i "s|\${IP_ADDRESS}|192.168.8.24|g" "$yaml_file"
+find "$ROOT_DIR/Apps_deployment" \
+-path "*Policy-Group*" -prune -o \
+-path "*prometheus-Configruation*" -prune -o \
+-path "*DashBord_Grafana*" -prune -o \
+-name "debug-pod-*.yml" -prune -o \
+-name "debug-pod-*.yaml" -prune -o \
+-type f \( -name "*.yml" -o -name "*.yaml" \) -print | while read -r yaml_file; do
+    echo "DEBUG: Processing and applying -> $yaml_file"
+    
+    TEMP_FILE=$(mktemp)
+    sed "s|\${IP_ADDRESS}|${IP_ADDRESS}|g" "$yaml_file" > "$TEMP_FILE"
+    
+    kubectl apply -f "$TEMP_FILE"
+    
+    rm "$TEMP_FILE"
 done
+echo "Core deployments applied successfully."
+
 
 
 
@@ -262,23 +298,27 @@ sleep 60
 kubectl wait --for=condition=Ready certificate api-tls-secret -n app-services --timeout=300s || true
 kubectl wait --for=condition=Ready certificate auth-tls-secret -n app-services --timeout=300s || true
 kubectl wait --for=condition=Ready certificate image-tls-secret -n app-services --timeout=300s || true
-kubectl wait --for=condition=Ready certificate postgres-tls-secret -n app-services --timeout=300s || true
 kubectl wait --for=condition=Ready certificate webportal-tls-secret -n frontend-service --timeout=300s || true
 
+if ! kubectl get configmap -n monitoring -l grafana_dashboard=1; then
+        # ---  Create ConfigMaps for Grafana Dashboards ---
+    echo "Creating ConfigMaps for Grafana Dashboards..."
+    kubectl create configmap my-grafana-dashboards --from-file="$ROOT_DIR/Grafana_DashBoard/" -n monitoring
 
-# ---  Create ConfigMaps for Grafana Dashboards ---
-echo "Creating ConfigMaps for Grafana Dashboards..."
-kubectl create configmap my-grafana-dashboards --from-file="$ROOT_DIR/grafana_dashBoard/" -n monitoring
-
-# ---  Add Labels and Annotations to the ConfigMap ---
-echo "Adding labels and annotations to the Grafana dashboards ConfigMap..."
-kubectl label configmap my-grafana-dashboards grafana_dashboard="1" -n monitoring
-kubectl annotate configmap my-grafana-dashboards grafana_folder="Application Services" -n monitoring
+    # ---  Add Labels and Annotations to the ConfigMap ---
+    echo "Adding labels and annotations to the Grafana dashboards ConfigMap..."
+    kubectl label configmap my-grafana-dashboards grafana_dashboard="1" -n monitoring
+    kubectl annotate configmap my-grafana-dashboards grafana_folder="Application Services" -n monitoring
+  else
+      echo "my-grafana-dashboards already created..."
+  fi
+       
 
 # ---  Configure Alertmanager with Slack Webhook ---
 echo "Configuring Alertmanager with Slack webhook..."
 
-# Prompt the user for the Slack webhook URL
+if ! kubectl get secret -n monitoring  alertmanager-config &> /dev/null; then
+          # Prompt the user for the Slack webhook URL
 read -p "Please enter your Slack webhook URL: " SLACK_WEBHOOK_URL
 
 # Create a temporary alertmanager.yml file with the user-provided URL
@@ -307,18 +347,14 @@ receivers:
 templates:
   - '/etc/alertmanager/config/*.tmpl'
 EOF
-
-# Create a Kubernetes Secret from the temporary alertmanager file
+  # Create a Kubernetes Secret from the temporary alertmanager file
 echo "Creating alertmanager secret in monitoring namespace..."
 kubectl create secret generic alertmanager-config --from-file="$TEMP_ALERTMANAGER_FILE" -n monitoring --dry-run=client -o yaml | kubectl apply -f -
-
-# --- Step 4: Apply ServiceMonitor and PrometheusRule manifests ---
-echo "Applying ServiceMonitor and PrometheusRule manifests..."
-kubectl apply -f "$ROOT_DIR/prometheus-Configruation/apps-monitors.yml"
-kubectl apply -f "$ROOT_DIR/prometheus-Configruation/app-alerts-rules.yml"
-
-
-# --- Step 5: Install/Upgrade Helm Chart ---
+else
+    echo "the alertmanger already exists: " ${TEMP_ALERTMANAGER_FILE}
+fi
+        
+# ---  Install/Upgrade Helm Chart ---
 echo "Installing/upgrading kube-prometheus-stack with custom values..."
 
 # Use a values file to configure Helm
@@ -352,17 +388,41 @@ alertmanager:
     templateSecretName: alertmanager-config
 EOF
 
+echo "Adding Prometheus community Helm repository..."
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+
+
 # Check if the release already exists before installing
 if helm get release prometheus-stack -n monitoring &> /dev/null; then
-  helm upgrade prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring -f "$TEMP_VALUES_FILE"
+  if ! helm upgrade prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring -f "$TEMP_VALUES_FILE"; then
+     helm upgrade --install prometheus-stack prometheus-community/kube-prometheus-stack \
+      --namespace monitoring \
+      --create-namespace \
+      -f "$TEMP_VALUES_FILE"
+  fi
 else
   helm install prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring -f "$TEMP_VALUES_FILE"
 fi
 
-# --- Final Step: Cleanup ---
-# Remove temporary files
-rm "$TEMP_ALERTMANAGER_FILE" "$TEMP_VALUES_FILE"
+#  Apply ServiceMonitor and PrometheusRule manifests ---
+echo "Applying ServiceMonitor and PrometheusRule manifests..."
+kubectl apply -f "$ROOT_DIR/Apps_deployment/prometheus-Configruation/apps-monitors.yml"
+kubectl apply -f "$ROOT_DIR/Apps_deployment/prometheus-Configruation/app-alerts-rules.yml"
 
+
+
+
+# Remove temporary files
+if [ -f "$TEMP_ALERTMANAGER_FILE" ]; then
+    echo "Removing Alertmanager temp file: $TEMP_ALERTMANAGER_FILE"
+    rm "$TEMP_ALERTMANAGER_FILE"
+fi
+
+if [ -f "$TEMP_VALUES_FILE" ]; then
+    echo "Removing Helm values temp file: $TEMP_VALUES_FILE"
+    rm "$TEMP_VALUES_FILE"
+fi
 
 echo "Deployment script finished successfully!"
 echo "----------------------------------------"
@@ -373,7 +433,14 @@ echo "  https://images.local"
 echo "  https://webportal.local"
 echo "  https://alertmanager.local"
 echo "  https://grafana.local"
+echo "----------------------------------------"
 
-echo "Remember to accept the self-signed certificate warning if prompted."
+Paasword=$(kubectl --namespace monitoring get secret prometheus-stack-grafana -o jsonpath="{.data.admin-password}" | base64 --decode) &> /dev/null
 
-echo "--- Full deployment script finished successfully. ---"
+
+echo "User of Grafana Page: admin"
+echo "Password of Grafana Page:" ${Paasword}
+
+echo Remember to accept the self-signed certificate warning if prompted."
+
+echo "✅ Full deployment script finished successfully."

@@ -17,7 +17,7 @@ spec:
       - name: my-registry-creds
       containers:
       - name: auth-service
-        image: 192.168.8.24:5000/auth-service:v1
+        image: ${IP_ADDRESS}:5000/auth-service:v1
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
