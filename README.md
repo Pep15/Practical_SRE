@@ -1,7 +1,7 @@
 
-##Built and Deployed the Environment:
+# Built and Deployed the Environment:
 
-## 1.Infrastructure and Environment
+### 1.Infrastructure and Environment
 - I set up a Kubernetes environment using **Minikube**, which serves as an ideal platform for local development.
 - It provides a flexible space for application testing, troubleshooting, and experimentation.
 
