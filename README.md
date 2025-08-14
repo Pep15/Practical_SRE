@@ -308,5 +308,28 @@ Kubernetes is a container orchestration platform designed to manage and scale la
         # Push image webportal-service:
         docker push your-registry-host(ip):5000/webportal-service:v1
         ```
+#### Install and Configure Minikube
+Once Docker is installed, you can install Minikube to run a local Kubernetes cluster on your machine.
+
+1.  **Download and Install Minikube:**
+    ```bash
+    curl -LO [https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64](https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64)
+    sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64
+    ```
+
+2.  **Start Minikube Cluster:**
+    This command starts the cluster and connects it to your local insecure registry.
+    ```bash
+    minikube start --cpus=2 --memory=4096 --cni=calico --insecure-registry="your-registry-host(ip):5000"
+    ```
+
+**Command Options Explained:**
+
+| Flag | Description |
+| :--- | :--- |
+| **`--cpus=2`** | Specifies the number of CPU cores to allocate from your host machine. It's recommended to set this to avoid consuming all resources. |
+| **`--memory=4096`** | Specifies the amount of memory (in MB) to allocate from your host machine. |
+| **`--cni=calico`** | You must specify a Container Network Interface (CNI) that supports Network Policies, such as Calico. |
+| **`--insecure-registry`**| Tells Minikube to trust your local Docker registry, allowing it to pull images from it. |
 
 
