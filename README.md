@@ -20,7 +20,7 @@
 ### 4.Authentication Service
 - The Authentication service is an internal component that verifies user credentials, such as usernames and passwords.
 - It does not handle direct external requests; instead, it receives data from the main API service.
-- Built with **Python**, it processes and validates login information to ensure secure access.
+- Built with **`Python`**, it processes and validates login information to ensure secure access.
 
 
 
