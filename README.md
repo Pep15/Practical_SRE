@@ -261,3 +261,46 @@ Kubernetes is a container orchestration platform designed to manage and scale la
    
 3. Click 'Apply & restart'.
 
+3.  **Run Docker Registry**
+    * Docker image Registry it's a private registry to store your repository images.
+    * Following the command to run the container registry:
+      ```bash
+      docker run -d -p 5000:5000 --restart always --name registry registry:2
+      ```
+    * `--restart always`: is the policy to reload the container even if there are issues with the registry container, or restart your machine.
+
+4. **Build Docker Image and Push**
+    * Once the Docker daemon is configured, you can build and push to your local registry.
+    * **API_service:**
+        ```bash
+        cd API_Service/
+        # Docker Build api_service:
+        docker build -f api-service -t your-registry-host(ip):5000/api-service:v1 .
+        # Push image api_service:
+        docker push your-registry-host(ip):5000/api-service:v1
+        ```
+    * **Auth_service:**
+        ```bash
+        cd Auth_service/
+        # Docker Build auth-service:
+        docker build -f auth-service -t your-registry-host(ip):5000/auth-service:v1 .
+        # Push image auth-service:
+        docker push your-registry-host(ip):5000/auth-service:v1
+        ```
+    * **Image_Service:**
+        ```bash
+        cd Image_Service/
+        # Docker Build image-service:
+        docker build -f image-service -t your-registry-host(ip):5000/image-service:v1 .
+        # Push image-service:
+        docker push your-registry-host(ip):5000/image-service:v1
+        ```
+    * **Frontend_service:**
+        ```bash
+        cd Frontend_service/
+        # Docker Build Frontend-service:
+        docker build -f frontend-service -t your-registry-host(ip):5000/webportal-service:v1 .
+        # Push image webportal-service:
+        docker push your-registry-host(ip):5000/webportal-service:v1
+        ```
+
