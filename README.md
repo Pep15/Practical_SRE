@@ -151,7 +151,7 @@ Kubernetes is a container orchestration platform designed to manage and scale la
 ## Steps of failure simulation and recovery verification.
 
 ### Database Failure with API Service:
-[View Video](https://bit.ly/3UlgOTS)
+[View Database Failure with API Service Video](https://bit.ly/3UlgOTS)
 
 * **Pre-Failure State Monitoring:**
     * I began by using the **'watch'** command-line tool with **'kubectl describe'** to monitor the Postgres database Deployment in the app-services namespace using:
@@ -195,7 +195,7 @@ Kubernetes is a container orchestration platform designed to manage and scale la
 
 ### Simulating a high utilization in Requests to the Image Service.
 
-[View Video](https://bit.ly/4fuLQlW)
+[View Simulating a high utilization in Requests to the Image Service Video](https://bit.ly/4fuLQlW)
 * **Pre-Failure State Monitoring:**
     * started by monitoring the image-service Deployment in the app-services namespace using:
         ```bash
