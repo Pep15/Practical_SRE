@@ -471,6 +471,7 @@ Configure Alertmanager to route alerts to a notification service like Slack.
 
 .  **Create the `alertmanager.yml` file:**
     Create a file named `alertmanager.yml` with the following content, adding your specific Slack webhook URL.
+    
     ```yaml
     slack_configs:
     - channel: '#Apps-Alerts'
