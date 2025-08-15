@@ -6,20 +6,20 @@
 graph TD
     subgraph External
         User --> Browser
-        Browser --> |HTTPS Request| Ingress(Ingress Controller)
+        Browser --> |"HTTPS Request<br>(webportal,api,etc..)"| Ingress(Ingress Controllers)
     end
 
     subgraph "Kubernetes Cluster"
         subgraph "frontend-service"
-            WebPortal["webportal.local <br> App"]
+            WebPortal["Web Portal<br>webportal.local<br>App"]
             TLS_Secret_FE["TLS Secret"]
         end
 
         subgraph "app-services"
             K8s_Secrets["K8s Secrets"]
-            APIService["API Service <br> api.local <br> App"]
-            AuthService["Auth Service <br> auth.local <br> App"]
-            ImageService["Image Service <br> images.local <br> App"]
+            APIService["API Service<br>api.local<br>App"]
+            AuthService["Auth Service<br>auth.local<br>App"]
+            ImageService["Image Service<br>images.local<br>App"]
         end
     end
 
@@ -28,24 +28,27 @@ graph TD
         S3["Amazon S3"]
     end
 
-    %% Connections
-    Ingress --> |Routes to webportal-service| WebPortal
-    Ingress --> |Routes to Api-service| APIService
-    Ingress --> |Routes to Auth-service| AuthService
-    Ingress --> |Route to Image-service| ImageService
+    %% Connections from Ingress
+    Ingress --> |"Routes to webportal-service"| WebPortal
+    Ingress --> |"Routes to Api-service"| APIService
+    Ingress --> |"Route to Image-service"| ImageService
+    Ingress --> |"Routes to Auth-service"| AuthService
 
+    %% Secret Connections
     TLS_Secret_FE -.-> |"Read TLS Secret"| Ingress
     K8s_Secrets -.-> |"Read TLS Secret"| Ingress
+    K8s_Secrets -.-> |"Read Secret<br>DataBase & JWT"| APIService
+    K8s_Secrets -.-> |"Read Secret<br>DataBase"| AuthService
 
-    K8s_Secrets -.-> |"Read Secret <br> DataBase & JWT"| APIService
-    K8s_Secrets -.-> |"Read Secret <br> DataBase"| AuthService
-
+    %% Internal Connections
     WebPortal --> APIService
     APIService --> AuthService
     APIService --> ImageService
     APIService --> PostgreSQL
     AuthService --> PostgreSQL
     ImageService --> S3
+
+    %% Blocked Connection
     AuthService --x |"Block Connection"| ImageService
 ```
 ---
