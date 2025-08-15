@@ -450,6 +450,7 @@ We will use the `kube-prometheus-stack` chart from the prometheus-community repo
 To monitor your custom applications, you need to configure `ServiceMonitor`, `PrometheusRule`, and `Alertmanager`.
 
 1. **ServiceMonitor:**
+   
 To link Prometheus to your services, you must configure a `ServiceMonitor` resource. This tells Prometheus which services to scrape for metrics.
 * **Apply the ServiceMonitor for your applications** (api, auth, image, webportal, postgres):
     ```bash
@@ -457,6 +458,7 @@ To link Prometheus to your services, you must configure a `ServiceMonitor` resou
     ```
 
 2. **PrometheusRule:**
+   
 Apply `PrometheusRule` resources to define alerting rules. Prometheus uses these to generate alerts, which are then sent to Alertmanager.
 * **Apply the custom alert rules for your applications:**
     ```bash
@@ -464,6 +466,7 @@ Apply `PrometheusRule` resources to define alerting rules. Prometheus uses these
     ```
 
 4. **Alertmanager:**
+   
 Configure Alertmanager to route alerts to a notification service like Slack.
 
 .  **Create the `alertmanager.yml` file:**
@@ -479,11 +482,13 @@ Configure Alertmanager to route alerts to a notification service like Slack.
 > * The `api_url` is the secret URL you receive from Slack.
 
 .  **Create the Secret from the configuration file:**
+
     ```bash
     kubectl create secret generic alertmanager-config --from-file=Apps_deployment/prometheus-Configuration/alertmanager.yml -n monitoring --dry-run=client -o yaml | kubectl apply -f -
     ```
 
 .  **Update the Helm release to use the new Secret:**
+
     ```bash
     helm upgrade prometheus-stack prometheus-community/kube-prometheus-stack \
      --namespace monitoring \
@@ -493,6 +498,7 @@ Configure Alertmanager to route alerts to a notification service like Slack.
 
 .  **Create an ingress for Alertmanager:**
     This allows you to access the Alertmanager UI over HTTPS instead of using `port-forward`.
+    
     ```bash
     kubectl apply -f alertManager-ingress.yml
     ```
