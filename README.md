@@ -4,41 +4,56 @@
 
 ```mermaid
 graph TD
-    subgraph "User Interaction"
-        User[👤 User] --> Browser[🌐 Browser]
-    end
-
-    subgraph "External World"
-        Browser --> Ingress[🚪 Ingress Controller]
+    subgraph "External"
+        User[fa:fa-user User] --> Browser[fa:fa-window-maximize Browser]
+        Browser --> |HTTPS Request| Ingress(fa:fa-lock Ingress Controller)
     end
 
     subgraph "Kubernetes Cluster"
-        Ingress -->|"webportal.local"| FrontendNS[frontend-service Namespace]
-        Ingress -->|"api.local, images.local"| AppNS[app-services Namespace]
-
-        subgraph "frontend-service Namespace"
+        subgraph frontend-service
             direction LR
-            FrontendNS --> WebPortal(🖼️ Web Portal)
+            WebPortal["webportal.local <br> fa:fa-cube App"]
+            SecretFE[fa:fa-key TLS Secret]
         end
 
-        subgraph "app-services Namespace"
-            direction TB
-            WebPortal -->|HTTP Requests| APIService(⚙️ API Service)
-            APIService --> AuthService(🔑 Auth Service)
-            APIService --> ImageService(🖼️ Image Service)
-            APIService --> DB[(🗄️ PostgreSQL)]
-            AuthService --> DB
-            ImageService --> S3[☁️ Amazon S3]
+        subgraph app-services
+            APIService["fa:fa-cogs API Service <br> api.local <br> fa:fa-cube App"]
+            AuthService["fa:fa-shield-alt Auth Service <br> auth.local <br> fa:fa-cube App"]
+            ImageService["fa:fa-image Image Service <br> images.local <br> fa:fa-cube App"]
+            SecretBE[fa:fa-key K8s Secrets]
         end
 
-        subgraph "Security"
-            Secrets[🔒 K8s Secrets] -.->|DB Credentials| AuthService
-            Secrets -.->|DB & JWT Secret| APIService
-            Secrets -.->|S3 Credentials| ImageService
+        subgraph "External Dependencies"
+            PostgreSQL[fa:fa-database PostgreSQL]
+            S3[fa:fa-aws Amazon S3]
         end
+
+        Ingress -- "Routes to webportal-service" --> WebPortal
+        Ingress -- "Routes to Api-service" --> APIService
+        Ingress -- "Route to Image-service" --> ImageService
+        Ingress -- "Routes to Auth-service" --> AuthService
+
+        SecretFE -. "Read TLS Secret" .-> Ingress
+        SecretBE -. "Read TLS Secret" .-> Ingress
+
+        WebPortal --> APIService
+
+        APIService --> AuthService
+        APIService --> ImageService
+        APIService --> PostgreSQL
+        AuthService --> PostgreSQL
+
+        ImageService --> S3
+
+        SecretBE -. "Read Secret <br> DataBase & JWT" .-> APIService
+        SecretBE -. "Read Secret <br> DataBase" .-> AuthService
+
+        AuthService --x |Block Connection| ImageService
     end
-```
 
+    style Ingress fill:#f9f,stroke:#333,stroke-width:2px
+    style S3 fill:#FF9900,stroke:#333,stroke-width:2px
+```
 ---
 
 ### 1. Infrastructure and Environment
