@@ -572,7 +572,7 @@ To monitor your custom applications, you need to configure `ServiceMonitor`, `Pr
 </details>
 
 <details>
-<summary>Final Steps: Automation and Troubleshooting</summary>
+<summary>Final Steps: Automation</summary>
 
 ### Automated Setup Script
 1.  **Create the `docker` group (if it doesn't already exist):**
