@@ -465,7 +465,7 @@ Apply `PrometheusRule` resources to define alerting rules. Prometheus uses these
     kubectl apply -f Apps_deployment/prometheus-Configuration/app-alerts-rules.yml
     ```
 
-4.  **Alertmanager:**
+3.  **Alertmanager:**
     
     Configure Alertmanager to route alerts to a notification service like Slack by following these steps:
 
