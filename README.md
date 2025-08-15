@@ -4,14 +4,13 @@
 
 1.  [Overview](#overview)
 2.  [Architecture Diagram](#️-architecture-diagram)
-3.  [Technology Breakdown](#technology-breakdown)
-4.  [Setup Environment](#setup-environment)
-5.  [Deploying Objects to the Kubernetes Cluster](#deploying-objects-to-the-kubernetes-cluster)
-6.  [Helm and Prometheus Installation](#helm-and-prometheus-installation)
-7.  [Grafana Configuration](#grafana)
-8.  [Failure Simulation and Recovery](#steps-of-failure-simulation-and-recovery-verification)
-9.  [Automation and Troubleshooting](#final-steps-automation-and-troubleshooting)
-10. [Lessons Learned](#lessons-learned)
+3.  [Setup Environment](#setup-environment)
+4.  [Deploying Objects to the Kubernetes Cluster](#deploying-objects-to-the-kubernetes-cluster)
+5.  [Helm and Prometheus Installation](#helm-and-prometheus-installation)
+6.  [Grafana Configuration](#grafana)
+7.  [Failure Simulation and Recovery](#steps-of-failure-simulation-and-recovery-verification)
+8.  [Automation and Troubleshooting](#final-steps-automation-and-troubleshooting)
+9. [Lessons Learned](#lessons-learned)
 
 ## Overview
 
