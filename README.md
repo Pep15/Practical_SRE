@@ -44,38 +44,50 @@ Resilience & Auto-Scaling: High availability is ensured through Horizontal Pod A
 
 ## System Architecture & Implementation Details
 
-### 1. Infrastructure and Environment
+<details>
+<summary>1. Infrastructure and Environment</summary>
+
 - I set up a Kubernetes environment using **`Minikube`**, which serves as an ideal platform for local development.
 - It provides a flexible space for application testing, troubleshooting, and experimentation.
 
----
+</details>
 
-### 2. User Interface Service
+<details>
+<summary>2. User Interface Service</summary>
+
 - The user interface for login and registration using **`HTML`** and **`JavaScript`**.
 - This interface integrates with the API to handle image uploads, register new users, validate login credentials, and display profiles of users.
 
----
+</details>
 
-### 3. API Service
+<details>
+<summary>3. API Service</summary>
+
 - The Application Programming Interface (**`API`**) is built using **`Python`** to handle data coming from users.
 - The backend logic processes this data and communicates with other services, applying the **`Gateway Pattern`** to manage requests and responses efficiently.
 
----
+</details>
 
-### 4. Authentication Service
+<details>
+<summary>4. Authentication Service</summary>
+
 - The Authentication service is an internal component that verifies user credentials, such as usernames and passwords.
 - It does not handle direct external requests; instead, it receives data from the main API service.
 - Built with **`Python`**, it processes and validates login information to ensure secure access.
 
----
+</details>
 
-### 5. Image Service
+<details>
+<summary>5. Image Service</summary>
+
 - Serves as a centralized storage zone for user images, providing access and retrieval capabilities.
 - Built with **`Go`** to ensure performance and scalability.
 
----
+</details>
 
-### 6. Docker Containerization
+<details>
+<summary>6. Docker Containerization</summary>
+
 - **`Docker`** is a containerization technology that allows to package applications and their dependencies into isolated units called containers.
 - I used Docker to build container images, which are then deployed, orchestrated, and managed by **`Kubernetes`**.
 
@@ -86,9 +98,11 @@ Resilience & Auto-Scaling: High availability is ensured through Horizontal Pod A
 - `webportal-service`
 - **`Registry images`**: used to store the Docker images that are built internally.
 
----
+</details>
 
-### 7. Kubernetes Orchestration
+<details>
+<summary>7. Kubernetes Orchestration</summary>
+
 Kubernetes is a container orchestration platform designed to manage and scale large numbers of containers across a cluster of machines.
 
 **Implementation Steps:**
@@ -102,22 +116,28 @@ Kubernetes is a container orchestration platform designed to manage and scale la
 - **Managed Non-Sensitive Configuration** using **ConfigMaps**.
 - **Provisioned Persistent Storage** with **Persistent Volumes (PV)** and **Persistent Volume Claims (PVC)**.
 
----
+</details>
 
-### 8. Ingress Controller
+<details>
+<summary>8. Ingress Controller</summary>
+
 - Routes **HTTP/HTTPS** traffic to services.
 - Configured routing to service endpoints and secured it using self-signed **TLS certificates**.
 
----
+</details>
 
-### 9. Issuer with cert-manager
+<details>
+<summary>9. Issuer with cert-manager</summary>
+
 - **Issuer** → Kubernetes object used to release certificates.
 - **cert-manager** → Kubernetes controller managing TLS certificates, including self-signed ones, automatically.
 - Configured the **Issuer** and referenced it in the **Certificate** object to create the **TLS secret**.
 
----
+</details>
 
-### 10. OpenSSL with Secret TLS
+<details>
+<summary>10. OpenSSL with Secret TLS</summary>
+
 - **OpenSSL** → Tool to generate TLS self-signed certificates locally.
 - **Steps:**
     1. Generated **Private Key**.
@@ -130,15 +150,20 @@ Kubernetes is a container orchestration platform designed to manage and scale la
 > 2.  **With Issuer and cert-manager** 📜: Create Kubernetes objects (**Issuer** and **Certificate**) managed automatically by **cert-manager**. *(This method was used in the project)*.
 > 3.  **Automated via Ingress Annotations** 🚀: Create an **Issuer** and reference it in the Ingress annotations for fully automated management.
 
----
+</details>
 
-### 11. Helm Charts for Kubernetes
+<details>
+<summary>11. Helm Charts for Kubernetes</summary>
+
 - **Helm** → Package manager for Kubernetes, allowing definition, installation, and management of applications using preconfigured charts.
 - Installed Helm charts.
 - Used Helm to deploy the **prometheus-community** chart, which bundles:
     - `Prometheus`
     - `AlertManager`
     - `Grafana`
+
+</details>
+
 
 ---
 
@@ -415,8 +440,8 @@ Kubernetes is a container orchestration platform designed to manage and scale la
 
    | Type | Description |
    | :--- | :--- |
-   | Ingress in network policy | (That meaning when reception your friend) and (which door will reception your friend)--> that mean(Ports)|
-   | Egress in network policy  | (That meaning when goes your friend) and (which door will reception you) --> that mean(Ports) |
+   | Ingress in network policy | (That means when you receive your friend) and (Will you receive your friend at your door)--> that mean(Ports)|
+   | Egress in network policy  | (That means when you visit your friend) and (will receive you at his door) --> that mean(Ports) |
 
 7.  **Run NetworkPolicy**
     -   I divided the file of grop policy and there are two yaml file it's outside the divided.
@@ -577,7 +602,7 @@ To monitor your custom applications, you need to configure `ServiceMonitor`, `Pr
 
 </details>
 
-
+---
 ### Basic Troubleshooting
 If you encounter any issues with your pods, these are the first commands you should run to diagnose the problem.
 
