@@ -392,14 +392,7 @@ Once Docker is installed, you can install Minikube to run a local Kubernetes clu
 
 10.  **Run NetworkPolicy**
     -   I divided the file of grop policy and there are two yaml file it's outside the divided.
-        * **Policies Deny all :**
-            -   It's important to put on your infrastructure from concept 'default security' to prevent all pods from communicating with each other.
-            -   After that, you can allow by specifying ports for each application
-            * **Network Policy Deny:**
-                ```bash
-                kubectl -f Policy-Group/deny-apps-services-all.yml
-                kubectl -f Policy-Group/deny-webportal-service-all.yml
-                ```
+     
         * **Network-Policy Api:**
             ```bash
             kubectl -f Policy-Group/Policy-api-fromAndTo/
