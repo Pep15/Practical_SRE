@@ -448,7 +448,7 @@ Once Docker is installed, I can install Minikube to run a local Kubernetes clust
                     ```bash
                     kubectl apply -f Apps_deployment/prometheus-Configruation/app-alerts-rules.yml
                     ```
- 10. * **Alertmanager:**
+ * **Alertmanager:**
     - Configure Alertmanager to route alerts to Slack. This is done by creating an `alertmanager.yml` file and applying it as a Kubernetes Secret by following these steps:
 
         1.  **Create the `alertmanager.yml` file:**
