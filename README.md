@@ -581,11 +581,11 @@ Before running the deployment script, it's recommended to follow these one-time 
 If you encounter any issues with your pods, these are the first commands you should run to diagnose the problem.
 
   * **What it does:** Lists all pods in the specified namespace and shows their current status (e.g., `Running`, `Pending`, `CrashLoopBackOff`). This is the quickest way to see the overall health.
-   * `kubectl get pod -n <namespace>`
+    * `kubectl get pod -n <namespace>`
 
  * **What it does:** Provides detailed information about a specific pod, including recent events. This is extremely useful for figuring out *why* a pod isn't starting (e.g., image pull errors, resource issues).
-   * `kubectl describe pod <name-of-pod> -n <namespace>`
+    * `kubectl describe pod <name-of-pod> -n <namespace>`
  
  * **What it does:** Streams the live output (logs) from the application running inside the pod. This is essential for debugging application-level errors.
-   * `kubectl logs <name-of-pod> -n <namespace>`
+    * `kubectl logs <name-of-pod> -n <namespace>`
    
