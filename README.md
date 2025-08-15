@@ -415,7 +415,7 @@ Once Docker is installed, I can install Minikube to run a local Kubernetes clust
             ```
 ## Instaltion Helm Chart & Prometheus Community Kubernetes Helm Charts
 
-8. **Helm Charts:**
+10. **Helm Charts:**
     -   helm charts -> it's collections of resource incloud configMaps , secets , deplyment & services any thing that rquire for deployment the Applications on Kuberenets.
         * **Helm install**
             ```bash
@@ -424,8 +424,7 @@ Once Docker is installed, I can install Minikube to run a local Kubernetes clust
             ./get_helm.sh
             ```
 
-9. **Prometheus:**
-    
+12. **Prometheus:**
     -   **Install Prometheus-community:**
         A.  Add rep prometheus-community to helm & updated helm.
             ```bash
@@ -438,81 +437,47 @@ Once Docker is installed, I can install Minikube to run a local Kubernetes clust
             ```
 
     * **Configuration Prometheus-community:**
-        -   To configure Prometheus to scrape metrics from the applications, apply the ServiceMonitor resources. These resources define which services Prometheus should monitor.
+        -   To configure Prometheus to scrape metrics from your applications, apply your ServiceMonitor resources. These resources define which services Prometheus should monitor.
             * **ServiceMonitor(api, auth, image, webportal, postgres):**
                 -   Link between Prometheus must configure 'serviceMonitor' which is specify to Prometheus.
                     ```bash
                     kubectl apply -f Apps_deployment/prometheus-Configruation/apps-monitors.yml
                     ```
             * **PrometheusRule:**
-                -   Apply the PrometheusRule to set up alerting rules. These rules are used by Prometheus to generate alerts, which are then sent to Alertmanager..
+                -   Apply your PrometheusRule to set up alerting rules. These rules are used by Prometheus to generate alerts, which are then sent to Alertmanager..
                     ```bash
                     kubectl apply -f Apps_deployment/prometheus-Configruation/app-alerts-rules.yml
                     ```
-1.  **Alertmanager:**
-    -   Configure Alertmanager to route alerts to Slack. This is done by creating an `alertmanager.yml` file and applying it as a Kubernetes Secret by following these steps:
+            * **Alertmanager:**
+                - Configure Alertmanager to route alerts to Slack. This is done by creating an `alertmanager.yml` file and applying it as a Kubernetes Secret by following these steps:
 
-        1.  **Create the `alertmanager.yml` file:**
-            Use any text editor to create a file named `alertmanager.yml` with the following content.
-            ```yaml
-            slack_configs:
-            - channel: '#Apps-Alerts'
-              api_url: 'YOUR_SLACK_WEBHOOK_URL'
-            ```
-> [!TIP]
-> * You must have an account on Slack.
-> * Get the webhook URL from the **Incoming Webhooks** section in your Slack app settings.
-> * The `api_url` is the secret URL you get from Slack.
-        2.  **Create the Secret from the configuration file:**
-            ```bash
-            kubectl create secret generic alertmanager-config --from-file=Apps_deployment/prometheus-Configruation/alertmanager.yml -n monitoring --dry-run=client -o yaml | kubectl apply -f -
-            ```
-      3.  **Update the Helm release to use the new Secret:**
-            ```bash
-            helm upgrade prometheus-stack prometheus-community/kube-prometheus-stack \
-             --namespace monitoring \
-             --set alertmanager.config.configmapName=alertmanager-config \
-             --set alertmanager.config.templateSecretName=alertmanager-config
-            ```
-        4.  **Create an ingress for Alertmanager:**
-            This allows access over an HTTPS page instead of using `port-forward`.
-            ```bash
-            kubectl apply -f alertManager-ingress.yml
-            ```
----
-## 13. Grafana
-Once you have set up and configured Prometheus and Alertmanager, you can configure Grafana.
+                    1.  **Create the `alertmanager.yml` file:**
+                        Use any text editor to create a file named `alertmanager.yml` with the following content.
+                        ```yaml
+                        slack_configs:
+                        - channel: '#Apps-Alerts'
+                          api_url: 'YOUR_SLACK_WEBHOOK_URL'
+                        ```
+                        > [!TIP]
+                        > * You must have an account on Slack.
+                        > * Get the webhook URL from the **Incoming Webhooks** section in your Slack app settings.
+                        > * The `api_url` is the secret URL you get from Slack.
 
-* **Create an ingress for Grafana** to allow access over an HTTPS page instead of using `port-forward`.
-    ```bash
-    kubectl apply -f grafana-ingress.yaml
-    ```
-    You should then be able to access it at `https://grafana.local`.
+                    2.  **Create the Secret from the configuration file:**
+                        ```bash
+                        kubectl create secret generic alertmanager-config --from-file=Apps_deployment/prometheus-Configruation/alertmanager.yml -n monitoring --dry-run=client -o yaml | kubectl apply -f -
+                        ```
 
-* There are two ways to import visualization dashboards:
+                    3.  **Update the Helm release to use the new Secret:**
+                        ```bash
+                        helm upgrade prometheus-stack prometheus-community/kube-prometheus-stack \
+                         --namespace monitoring \
+                         --set alertmanager.config.configmapName=alertmanager-config \
+                         --set alertmanager.config.templateSecretName=alertmanager-config
+                        ```
 
-> [!TIP]
-> **A. Manual Method**
-> 1. In the left sidebar, navigate to **Dashboards**.
-> 2. On the Dashboards page, click the **New** button.
-> 3. From the dropdown list, choose **Import**.
-> 4. Finally, import the JSON dashboard files.
-> 5. The dashboard files are located in the `Grafana_DashBoard` directory.
-
-    **B. Automated Method**
-    You can automatically import dashboards by upgrading the `kube-prometheus-stack` chart with a custom `grafana-values.yml` file.
-
-    1.  **Create a ConfigMap** from the directory containing all your dashboard files.
-        ```bash
-        kubectl create configmap my-grafana-dashboards --from-file=Grafana_DashBoard/ -n monitoring
-        ```
-    2.  **Add a label and annotation.** The Grafana sidecar looks for this label and annotation to provision the dashboards.
-        ```bash
-        kubectl label configmap my-grafana-dashboards grafana_dashboard="1" -n monitoring
-        kubectl annotate configmap my-grafana-dashboards grafana_folder="Application Services" -n monitoring
-        ```
-    3.  **Upgrade the `kube-prometheus-stack`** to use the values file that enables the sidecar to detect these dashboards.
-        ```bash
-        helm upgrade prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring -f grafana-values.yml
-        ```
-    4.  This method avoids the need to import each dashboard manually.
+                    4.  **Create an ingress for Alertmanager:**
+                        This allows access over an HTTPS page instead of using `port-forward`.
+                        ```bash
+                        kubectl apply -f alertManager-ingress.yml
+                        ```
