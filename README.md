@@ -481,3 +481,40 @@ Once Docker is installed, you can install Minikube to run a local Kubernetes clu
             ```bash
             kubectl apply -f alertManager-ingress.yml
             ```
+
+ 11. * **Grafana**
+    Once you have set up and configured Prometheus and Alertmanager, you can configure Grafana.
+
+   1. **Create an ingress for Grafana** to allow access over an HTTPS page instead of using `port-forward`.**
+       ```bash
+       kubectl apply -f grafana-ingress.yaml
+       ```
+   - You should then be able to access it at `https://grafana.local`.
+
+  2. **There are two ways to import visualization dashboards:**
+
+      > [!TIP]
+      >**A. Manual Method**
+      > 1.  In the left sidebar, navigate to **Dashboards**.
+      > 2.  On the Dashboards page, click the **New** button.
+      > 3.  From the dropdown list, choose **Import**.
+      > 4.  Finally, import the JSON dashboard files.
+      > 5.  The dashboard files are located in the `Grafana_DashBoard` directory.
+
+3. **B. Automated Method:**
+    You can automatically import dashboards by upgrading the `kube-prometheus-stack` chart with a custom `grafana-values.yml` file.
+
+    1.  **Create a ConfigMap** from the directory containing all your dashboard files.
+        ```bash
+        kubectl create configmap my-grafana-dashboards --from-file=Grafana_DashBoard/ -n monitoring
+        ```
+    2.  **Add a label and annotation.** The Grafana sidecar looks for this label and annotation to provision the dashboards.
+        ```bash
+        kubectl label configmap my-grafana-dashboards grafana_dashboard="1" -n monitoring
+        kubectl annotate configmap my-grafana-dashboards grafana_folder="Application Services" -n monitoring
+        ```
+    3.  **Upgrade the `kube-prometheus-stack`** to use the values file that enables the sidecar to detect these dashboards.
+        ```bash
+        helm upgrade prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring -f grafana-values.yml
+        ```
+    4.  This method avoids the need to import each dashboard manually.
