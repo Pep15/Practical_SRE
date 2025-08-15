@@ -16,9 +16,7 @@
 ---
 
 <details>
-<summary>Overview</summary>
-
-## Overview
+<summary><strong> Project Overview</strong></summary>
 
 This project implements a complete Site Reliability Engineering (SRE) solution for a microservices application composed of three distinct services: a main API, an authentication service, and an image storage service.
 
