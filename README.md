@@ -589,3 +589,430 @@ If you encounter any issues with your pods, these are the first commands you sho
  * **What it does:** Streams the live output (logs) from the application running inside the pod. This is essential for debugging application-level errors.
     * `kubectl logs <name-of-pod> -n <namespace>`
    
+
+
+---
+
+# Cloud-Native Microservices Project on Kubernetes
+
+This project demonstrates the complete lifecycle of a resilient, observable, and scalable microservices application deployed on Kubernetes. It covers everything from containerization with Docker, deployment automation, advanced security configuration with Network Policies, to comprehensive monitoring with the Prometheus stack. The project also includes practical failure simulation scenarios to validate the system's reliability.
+
+## 🏛️ Architecture Diagram
+
+The following diagram illustrates the architecture of the system, showing how services communicate with each other and with external components.
+
+```mermaid
+graph TD
+    subgraph "User Interaction"
+        User[👤 User] --> Browser[🌐 Browser]
+    end
+
+    subgraph "External World"
+        Browser --> Ingress[🚪 Ingress Controller]
+    end
+
+    subgraph "Kubernetes Cluster"
+        Ingress -->|"webportal.local"| FrontendNS[frontend-service Namespace]
+        Ingress -->|"api.local, images.local"| AppNS[app-services Namespace]
+
+        subgraph "frontend-service Namespace"
+            direction LR
+            FrontendNS --> WebPortal(🖼️ Web Portal)
+        end
+
+        subgraph "app-services Namespace"
+            direction TB
+            WebPortal -->|HTTP Requests| APIService(⚙️ API Service)
+            APIService --> AuthService(🔑 Auth Service)
+            APIService --> ImageService(🖼️ Image Service)
+            APIService --> DB[(🗄️ PostgreSQL)]
+            AuthService --> DB
+            ImageService --> S3[☁️ Amazon S3]
+        end
+
+        subgraph "Security"
+            Secrets[🔒 K8s Secrets] -.->|DB Credentials| AuthService
+            Secrets -.->|DB & JWT Secret| APIService
+            Secrets -.->|S3 Credentials| ImageService
+        end
+    end
+✨ Key Features
+Microservices Architecture: A system composed of independent services (API, Auth, Image) written in different languages (Python, Go).
+
+Kubernetes Deployment: Container orchestration using Deployments, Services, and Namespaces.
+
+Auto-Scaling: Horizontal Pod Autoscaler (HPA) to handle traffic spikes automatically.
+
+Advanced Security: Service isolation with Network Policies and secure credential management with Kubernetes Secrets.
+
+Comprehensive Monitoring: Full observability stack with Prometheus, Grafana, and AlertManager.
+
+High Availability: Ensured with Liveness/Readiness Probes and PodDisruptionBudgets.
+
+Failure Simulation: Practical scenarios to test and verify system resilience and recovery.
+
+🛠️ Tech Stack
+Category	Technology	Description
+Orchestration	Kubernetes (Minikube)	To manage, deploy, and scale containerized applications.
+Containerization	Docker	To build and package applications into containers.
+Backend Services	Python, Go	Languages used for building backend microservices.
+Frontend Service	HTML, JavaScript	For the user-facing web portal.
+Monitoring	Prometheus, Grafana	To collect metrics and visualize them in dashboards.
+Alerting	AlertManager	To handle and route alerts from Prometheus.
+Package Manager	Helm	To manage and deploy Kubernetes applications using charts.
+
+Export to Sheets
+🚀 Getting Started
+This section provides detailed instructions on how to set up the environment and deploy the entire project from scratch.
+
+Prerequisites
+Tool	Description
+Docker	To manage applications using containers.
+Minikube	To run a local Kubernetes cluster.
+kubectl	The command-line tool for interacting with Kubernetes.
+Helm	A package manager for Kubernetes.
+hey	A load testing tool.
+
+Export to Sheets
+Installation and Deployment Steps
+Step 1: Docker Installation and Configuration
+Install Docker:
+
+Bash
+
+curl -fsSL [https://get.docker.com](https://get.docker.com) -o get-docker.sh
+sudo sh get-docker.sh
+Configure Docker Daemon for a Local Registry:
+To use a local Docker registry, edit the Docker daemon.json file (usually at /etc/docker/daemon.json). If it doesn't exist, create it. Add the following configuration, replacing the-registry-host-(IP) with your local machine's IP address.
+
+JSON
+
+{
+  "insecure-registries": ["the-registry-host-(IP):5000"]
+}
+Then, restart the Docker Engine:
+
+Bash
+
+sudo systemctl restart docker
+[!IMPORTANT]
+If you use Docker Desktop, you can configure this directly in Settings > Docker Engine.
+
+Run the Local Docker Registry:
+This command runs a private registry container to store your application images.
+
+Bash
+
+docker run -d -p 5000:5000 --restart always --name registry registry:2
+--restart always: This policy ensures the registry container restarts automatically if it fails or if the machine is rebooted.
+
+Build and Push Docker Images:
+Navigate to each service directory to build the image and push it to your local registry.
+
+<details>
+<summary><strong>Click here to view the build and push commands</strong></summary>
+
+API Service:
+
+Bash
+
+cd API_Service/
+docker build -f api-service -t the-registry-host(ip):5000/api-service:v1 .
+docker push the-registry-host(ip):5000/api-service:v1
+Auth Service:
+
+Bash
+
+cd Auth_service/
+docker build -f auth-service -t the-registry-host(ip):5000/auth-service:v1 .
+docker push the-registry-host(ip):5000/auth-service:v1
+Image Service:
+
+Bash
+
+cd Image_Service/
+docker build -f image-service -t the-registry-host(ip):5000/image-service:v1 .
+docker push the-registry-host(ip):5000/image-service:v1
+Frontend Service:
+
+Bash
+
+cd Frontend_service/
+docker build -f frontend-service -t the-registry-host(ip):5000/webportal-service:v1 .
+docker push the-registry-host(ip):5000/webportal-service:v1
+</details>
+
+Step 2: Minikube Installation and Setup
+Download and Install Minikube:
+
+Bash
+
+curl -LO [https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64](https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64)
+sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64
+Start the Minikube Cluster:
+This command starts the cluster and connects it to the local insecure registry.
+
+Bash
+
+minikube start --cpus=2 --memory=4096 --cni=calico --ports=443:443 --ports=80:80 --insecure-registry="the-registry-host(ip):5000"
+Step 3: Deploying Applications to the Kubernetes Cluster
+Create Namespaces:
+
+Bash
+
+kubectl create namespace app-services
+kubectl create namespace frontend-service
+Create a Docker Registry Secret:
+This allows Kubernetes to pull images from your private registry.
+
+Bash
+
+# For app-services namespace
+kubectl create secret docker-registry my-registry-creds --docker-server=the-registry-host(ip):5000 --docker-username=<username> --docker-password=<Password> --docker-email=<email> -n app-services
+
+# For frontend-service namespace
+kubectl create secret docker-registry my-registry-creds --docker-server=the-registry-host(ip):5000 --docker-username=<username> --docker-password=<Password> --docker-email=<email> -n frontend-service
+Apply Deployment Manifests:
+The manifest files have been grouped for easier deployment.
+
+Issuer Certification:
+
+Bash
+
+kubectl apply -f Apps_deployment/selfsigned-issuer.yml
+Postgresql Group:
+
+Bash
+
+mkdir -p Apps_deployment/mountDatabase
+kubectl apply -f Apps_deployment/Postgresql-Group/
+API Group:
+
+Bash
+
+kubectl apply -f Apps_deployment/Api-Group/
+Authentication Group:
+
+Bash
+
+kubectl apply -f Apps_deployment/Authentication-Group/
+Image Group:
+
+Bash
+
+kubectl apply -f Apps_deployment/Image-Group/
+WebPortal Group:
+
+Bash
+
+kubectl apply -f Apps_deployment/WebPortal-Group/
+Step 4: Applying Network Policies
+[!TIP]
+Network Policy Concepts:
+
+Ingress: Rules for incoming traffic to a Pod.
+
+Egress: Rules for outgoing traffic from a Pod.
+
+Network-Policy API:
+
+Bash
+
+kubectl apply -f Policy-Group/Policy-api-fromAndTo/
+Network-Policy Auth:
+
+Bash
+
+kubectl apply -f Policy-Group/Policy-auth-fromAndTo/
+Network-Policy Image:
+
+Bash
+
+kubectl apply -f Policy-Group/Policy-image-fromAndTo/
+Network-Policy WebPortal:
+
+Bash
+
+kubectl apply -f Policy-Group/Policy-webportal-fromAndTo/
+Network-Policy Postgresql:
+
+Bash
+
+kubectl apply -f Policy-Group/Policy-postgresql-fromAndTo/
+📊 Monitoring and Alerting Setup
+1. Install Helm
+Bash
+
+curl -fsSL -o get_helm.sh [https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3](https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3)
+chmod 700 get_helm.sh
+./get_helm.sh
+2. Install the Prometheus Stack
+We will use the kube-prometheus-stack chart, which bundles Prometheus, Grafana, and Alertmanager.
+
+Add the Prometheus community repository:
+
+Bash
+
+helm repo add prometheus-community [https://prometheus-community.github.io/helm-charts](https://prometheus-community.github.io/helm-charts)
+helm repo update
+Install the chart:
+
+Bash
+
+helm install prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring --create-namespace
+3. Configure Prometheus Components
+ServiceMonitor: This tells Prometheus which services to scrape for metrics.
+
+Bash
+
+kubectl apply -f Apps_deployment/prometheus-Configuration/apps-monitors.yml
+PrometheusRule: These resources define the alerting rules.
+
+Bash
+
+kubectl apply -f Apps_deployment/prometheus-Configuration/app-alerts-rules.yml
+Alertmanager: Configure Alertmanager to route alerts to Slack.
+
+Create an alertmanager.yml file with your Slack webhook URL.
+
+YAML
+
+slack_configs:
+  - channel: '#Apps-Alerts'
+    api_url: 'YOUR_SLACK_WEBHOOK_URL'
+Create a Kubernetes secret from this file:
+
+Bash
+
+kubectl create secret generic alertmanager-config --from-file=Apps_deployment/prometheus-Configuration/alertmanager.yml -n monitoring --dry-run=client -o yaml | kubectl apply -f -
+Upgrade the Helm release to use the new secret:
+
+Bash
+
+helm upgrade prometheus-stack prometheus-community/kube-prometheus-stack \
+  --namespace monitoring \
+  --set alertmanager.config.configmapName=alertmanager-config \
+  --set alertmanager.config.templateSecretName=alertmanager-config
+Create an Ingress for the Alertmanager UI:
+
+Bash
+
+kubectl apply -f alertManager-ingress.yml
+4. Configure Grafana
+Create an Ingress for Grafana: to access it via https://grafana.local.
+
+Bash
+
+kubectl apply -f grafana-ingress.yaml
+Import Dashboards Automatically:
+
+Create a ConfigMap from the dashboard JSON files:
+
+Bash
+
+kubectl create configmap my-grafana-dashboards --from-file=Grafana_DashBoard/ -n monitoring
+Add a label and annotation so the Grafana sidecar can find them:
+
+Bash
+
+kubectl label configmap my-grafana-dashboards grafana_dashboard="1" -n monitoring
+kubectl annotate configmap my-grafana-dashboards grafana_folder="Application Services" -n monitoring
+Upgrade the Helm release to enable dashboard provisioning:
+
+Bash
+
+helm upgrade prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring -f grafana-values.yml
+💥 Failure Simulation and Recovery Verification
+Scenario 1: Database Failure with API Service
+View Video: Database Failure with API Service
+
+Pre-Failure State Monitoring:
+The state of the Postgres and API service deployments and pods was monitored using watch kubectl describe and kubectl get pod. Grafana dashboards and AlertManager showed a normal operational state.
+
+Simulating the Failure:
+The database was taken offline by scaling its deployment down to zero replicas.
+
+Bash
+
+kubectl scale deployment <name-of-deployment> --replicas=0 -n <namespace>
+This action terminated the database Pod, causing the API service to lose its database connection.
+
+Verifying Recovery:
+
+Failure Detection: AlertManager fired Pending alerts for PostgresExporterHighScrapeLatency and APIServiceDown. Frontend login attempts failed, and the Grafana dashboard showed the API service as "Down".
+
+Service Restoration: The service was restored by scaling the database deployment back to one replica. All services returned to a normal state, and alerts were cleared.
+
+Bash
+
+kubectl scale deployment <name-of-deployment> --replicas=1 -n <namespace>
+Scenario 2: High Request Utilization on the Image Service
+View Video: Simulating high utilization on the Image Service
+
+Pre-Failure State Monitoring:
+The Image service was running with 2 replicas, and Grafana showed low CPU and memory usage.
+
+Simulating the Failure:
+A large number of requests were generated using the hey load testing tool.
+
+Bash
+
+hey -n 100000 -c 100 [https://images.local/uploads/](https://images.local/uploads/)<image-name>.png
+As CPU usage crossed the threshold defined in the Horizontal Pod Autoscaler (HPA), Kubernetes automatically scaled up the replicas for the image-service, peaking at 18 before stabilizing at 10 Pods.
+
+Verifying Recovery:
+
+Service Restoration: After the load test ended, the HPA automatically scaled the pods back down to the original count of 2. The Grafana dashboard returned to its normal state, indicating a full recovery.
+
+🤖 Automation and Troubleshooting
+Automated Setup Script
+To automate the entire deployment, a script is provided. Before running it, it's recommended to add your user to the docker group to avoid using sudo.
+
+sudo groupadd docker
+
+sudo usod -aG docker $USER
+
+su - ${USER} (or simply log out and log back in for the changes to take effect).
+
+Run the Deployment Script:
+
+[!NOTE]
+Do not run the script as sudo.
+
+Bash
+
+./deploy_Apps_K8s.sh
+Basic Troubleshooting
+If you encounter issues, use these commands to diagnose them:
+
+Check the status of all pods in a namespace:
+
+Bash
+
+kubectl get pod -n <namespace>
+Get detailed information and events for a specific pod:
+
+Bash
+
+kubectl describe pod <name-of-pod> -n <namespace>
+Stream the logs from a container within a pod:
+
+Bash
+
+kubectl logs -f <name-of-pod> -n <namespace>
+🎓 Lessons Learned & Future Improvements
+Lessons Learned:
+
+The Power of Isolation: Using Namespaces and Network Policies is crucial for building a secure and manageable multi-service environment.
+
+Observability is Key: Without a robust monitoring stack like Prometheus and Grafana, diagnosing issues under load or during a failure would be incredibly difficult.
+
+Declarative Automation Works: The HPA demonstrated its effectiveness in handling unpredictable traffic spikes without any manual intervention, ensuring service availability.
+
+Suggestions for Improvement:
+
+Implement GitOps: Adopting a GitOps workflow with tools like ArgoCD or Flux would automate deployments from a Git repository, ensuring the cluster state always matches the desired configuration.
+
+Add Distributed Tracing: Integrating a tool like Jaeger or Zipkin would provide deep insights into request flows across microservices, making it easier to identify performance bottlenecks.
+
+Automate TLS Certificates: Instead of self-signed certificates, integrate Let's Encrypt with cert-manager to automatically provision and renew trusted TLS certificates for Ingress resources.
