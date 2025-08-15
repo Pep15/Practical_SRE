@@ -473,10 +473,10 @@ Configure Alertmanager to route alerts to a notification service like Slack.
     - channel: '#Apps-Alerts'
       api_url: 'YOUR_SLACK_WEBHOOK_URL'
     ```
-    > [!TIP]
-    > * You must have an account on **Slack**.
-    > * Get the webhook URL from the **Incoming Webhooks** section in your Slack app settings.
-    > * The `api_url` is the secret URL you receive from Slack.
+> [!TIP]
+> * You must have an account on **Slack**.
+> * Get the webhook URL from the **Incoming Webhooks** section in your Slack app settings.
+> * The `api_url` is the secret URL you receive from Slack.
 
 2.  **Create the Secret from the configuration file:**
     ```bash
