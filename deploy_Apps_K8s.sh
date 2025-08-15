@@ -155,14 +155,6 @@ EOF
 
 echo "Hosts file updated successfully."
 
-
-
-
-
-
-
-
-
 #--- Run Dokcer Registry ---
 
 for service_dir in "${!SERVICES_TO_BUILD[@]}"; do
