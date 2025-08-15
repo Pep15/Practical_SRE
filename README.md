@@ -448,11 +448,12 @@ Once Docker is installed, I can install Minikube to run a local Kubernetes clust
                     ```bash
                     kubectl apply -f Apps_deployment/prometheus-Configruation/app-alerts-rules.yml
                     ```
-  10. * **Alertmanager:**
-    - Configure Alertmanager to route alerts to Slack. This is done by creating an `alertmanager.yml` file and applying it as a Kubernetes Secret by following these steps:
+ 10. * **Alertmanager:**
+   - Configure Alertmanager to route alerts to Slack. This is done by creating an `alertmanager.yml` file and applying it as a Kubernetes Secret by following these steps:
 
         1.  **Create the `alertmanager.yml` file:**
             Use any text editor to create a file named `alertmanager.yml` with the following content.
+            
             ```yaml
             slack_configs:
             - channel: '#Apps-Alerts'
@@ -463,12 +464,12 @@ Once Docker is installed, I can install Minikube to run a local Kubernetes clust
             > * Get the webhook URL from the **Incoming Webhooks** section in your Slack app settings.
             > * the `api_url` will be similar to: `https://hooks.slack.com/...`
 
-        2.  **Create the Secret from the configuration file:**
+        3.  **Create the Secret from the configuration file:**
             ```bash
             kubectl create secret generic alertmanager-config --from-file=Apps_deployment/prometheus-Configruation/alertmanager.yml -n monitoring --dry-run=client -o yaml | kubectl apply -f -
             ```
 
-        3.  **Update the Helm release to use the new Secret:**
+        4.  **Update the Helm release to use the new Secret:**
             ```bash
             helm upgrade prometheus-stack prometheus-community/kube-prometheus-stack \
              --namespace monitoring \
@@ -476,7 +477,7 @@ Once Docker is installed, I can install Minikube to run a local Kubernetes clust
              --set alertmanager.config.templateSecretName=alertmanager-config
             ```
 
-        4.  **Create an ingress for Alertmanager:**
+        5.  **Create an ingress for Alertmanager:**
             This allows access over an HTTPS page instead of using `port-forward`.
             ```bash
             kubectl apply -f alertManager-ingress.yml
