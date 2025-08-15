@@ -465,41 +465,37 @@ Apply `PrometheusRule` resources to define alerting rules. Prometheus uses these
     kubectl apply -f Apps_deployment/prometheus-Configuration/app-alerts-rules.yml
     ```
 
-4. **Alertmanager:**
-   
-Configure Alertmanager to route alerts to a notification service like Slack.
-
-.  **Create the `alertmanager.yml` file:**
-    Create a file named `alertmanager.yml` with the following content, adding your specific Slack webhook URL.
+4.  **Alertmanager:**
     
-    ```yaml
-    slack_configs:
-    - channel: '#Apps-Alerts'
-      api_url: 'YOUR_SLACK_WEBHOOK_URL'
-    ```
-> [!TIP]
-> * You must have an account on **Slack**.
-> * Get the webhook URL from the **Incoming Webhooks** section in your Slack app settings.
-> * The `api_url` is the secret URL you receive from Slack.
+    Configure Alertmanager to route alerts to a notification service like Slack by following these steps:
 
-.  **Create the Secret from the configuration file:**
+    1.  **Create the `alertmanager.yml` file:**
+        Create a file named `alertmanager.yml` with the following content, adding your specific Slack webhook URL.
+        ```yaml
+        slack_configs:
+        - channel: '#Apps-Alerts'
+          api_url: 'YOUR_SLACK_WEBHOOK_URL'
+        ```
+        > [!TIP]
+        > * You must have an account on **Slack**.
+        > * Get the webhook URL from the **Incoming Webhooks** section in your Slack app settings.
+        > * The `api_url` is the secret URL you receive from Slack.
 
-    ```bash
-    kubectl create secret generic alertmanager-config --from-file=Apps_deployment/prometheus-Configuration/alertmanager.yml -n monitoring --dry-run=client -o yaml | kubectl apply -f -
-    ```
+    2.  **Create the Secret from the configuration file:**
+        ```bash
+        kubectl create secret generic alertmanager-config --from-file=Apps_deployment/prometheus-Configuration/alertmanager.yml -n monitoring --dry-run=client -o yaml | kubectl apply -f -
+        ```
 
-.  **Update the Helm release to use the new Secret:**
+    3.  **Update the Helm release to use the new Secret:**
+        ```bash
+        helm upgrade prometheus-stack prometheus-community/kube-prometheus-stack \
+         --namespace monitoring \
+         --set alertmanager.config.configmapName=alertmanager-config \
+         --set alertmanager.config.templateSecretName=alertmanager-config
+        ```
 
-    ```bash
-    helm upgrade prometheus-stack prometheus-community/kube-prometheus-stack \
-     --namespace monitoring \
-     --set alertmanager.config.configmapName=alertmanager-config \
-     --set alertmanager.config.templateSecretName=alertmanager-config
-    ```
-
-.  **Create an ingress for Alertmanager:**
-    This allows you to access the Alertmanager UI over HTTPS instead of using `port-forward`.
-    
-    ```bash
-    kubectl apply -f alertManager-ingress.yml
-    ```
+    4.  **Create an ingress for Alertmanager:**
+        This allows you to access the Alertmanager UI over HTTPS instead of using `port-forward`.
+        ```bash
+        kubectl apply -f alertManager-ingress.yml
+        ```
