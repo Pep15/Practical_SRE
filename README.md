@@ -459,10 +459,10 @@ Once Docker is installed, I can install Minikube to run a local Kubernetes clust
             - channel: '#Apps-Alerts'
               api_url: 'YOUR_SLACK_WEBHOOK_URL'
             ```
- > [!TIP]
- > * You must have an account on Slack.
- > * Get the webhook URL from the **Incoming Webhooks** section in your Slack app settings.
- > * the `api_url` will be similar to: `https://hooks.slack.com/...`
+             > [!TIP]
+             > * You must have an account on Slack.
+             > * Get the webhook URL from the **Incoming Webhooks** section in your Slack app settings.
+             > * the `api_url` will be similar to: `https://hooks.slack.com/...`
 
         3.  **Create the Secret from the configuration file:**
             ```bash
@@ -494,13 +494,13 @@ Once Docker is installed, I can install Minikube to run a local Kubernetes clust
 
   2. **There are two ways to import visualization dashboards:**   
 
-> [!TIP]
-> **A. Manual Method**
-> 1.  In the left sidebar, navigate to **Dashboards**.
-> 2.  On the Dashboards page, click the **New** button.
-> 3.  From the dropdown list, choose **Import**.
-> 4.  Finally, import the JSON dashboard files.
-> 5.  The dashboard files are located in the `Grafana_DashBoard` directory.
+      > [!TIP]
+      > **A. Manual Method**
+      > 1.  In the left sidebar, navigate to **Dashboards**.
+      > 2.  On the Dashboards page, click the **New** button.
+      > 3.  From the dropdown list, choose **Import**.
+      > 4.  Finally, import the JSON dashboard files.
+      > 5.  The dashboard files are located in the `Grafana_DashBoard` directory.
 
 3. **Automated Method:**
    
