@@ -20,7 +20,7 @@
 
 <a id="project-overview"></a>
 <details>
-<summary><strong> Project Overview</strong></summary>
+<summary><strong> Project Overview </strong></summary>
 
 This project implements a complete Site Reliability Engineering (SRE) solution for a microservices application composed of three distinct services: a main API, an authentication service, and an image storage service.
 
@@ -40,6 +40,7 @@ Resilience & Auto-Scaling: High availability is ensured through Horizontal Pod A
 </details>
 
 ---
+<a id="System Architecture & Implementation Details"></a>
 ## System Architecture & Implementation Details
 
 <details>
