@@ -448,7 +448,7 @@ Once Docker is installed, I can install Minikube to run a local Kubernetes clust
                     ```bash
                     kubectl apply -f Apps_deployment/prometheus-Configruation/app-alerts-rules.yml
                     ```
- * **Alertmanager:**
+* **Alertmanager:**
     - Configure Alertmanager to route alerts to Slack. This is done by creating an `alertmanager.yml` file and applying it as a Kubernetes Secret by following these steps:
 
         1.  **Create the `alertmanager.yml` file:**
@@ -482,32 +482,30 @@ Once Docker is installed, I can install Minikube to run a local Kubernetes clust
             kubectl apply -f alertManager-ingress.yml
             ```
 
+---
+## 13. Grafana
+Once you have set up and configured Prometheus and Alertmanager, you can configure Grafana.
 
+* **Create an ingress for Grafana** to allow access over an HTTPS page instead of using `port-forward`.
+    ```bash
+    kubectl apply -f grafana-ingress.yaml
+    ```
+    You should then be able to access it at `https://grafana.local`.
 
- 11. * **Grafana**
-    Once I have set up and configured Prometheus and Alertmanager, I can configure Grafana.
+* There are two ways to import visualization dashboards:
 
-   1. **Create an ingress for Grafana** to allow access over an HTTPS page instead of using `port-forward`.**
-       ```bash
-       kubectl apply -f grafana-ingress.yaml
-       ```
-   - Should then be able to access it at `https://grafana.local`.
+> [!TIP]
+> **A. Manual Method**
+> 1. In the left sidebar, navigate to **Dashboards**.
+> 2. On the Dashboards page, click the **New** button.
+> 3. From the dropdown list, choose **Import**.
+> 4. Finally, import the JSON dashboard files.
+> 5. The dashboard files are located in the `Grafana_DashBoard` directory.
 
-  2. **There are two ways to import visualization dashboards:**   
+    **B. Automated Method**
+    You can automatically import dashboards by upgrading the `kube-prometheus-stack` chart with a custom `grafana-values.yml` file.
 
-      > [!TIP]
-      > **A. Manual Method**
-      > 1.  In the left sidebar, navigate to **Dashboards**.
-      > 2.  On the Dashboards page, click the **New** button.
-      > 3.  From the dropdown list, choose **Import**.
-      > 4.  Finally, import the JSON dashboard files.
-      > 5.  The dashboard files are located in the `Grafana_DashBoard` directory.
-
-3. **Automated Method:**
-   
-    I can automatically import dashboards by upgrading the `kube-prometheus-stack` chart with a custom `grafana-values.yml` file.
-
-    1.  **Create a ConfigMap** from the directory containing all the dashboard files.
+    1.  **Create a ConfigMap** from the directory containing all your dashboard files.
         ```bash
         kubectl create configmap my-grafana-dashboards --from-file=Grafana_DashBoard/ -n monitoring
         ```
