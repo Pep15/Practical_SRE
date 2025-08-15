@@ -413,3 +413,66 @@ Once Docker is installed, you can install Minikube to run a local Kubernetes clu
             ```bash
             kubectl -f Policy-Group/Policy-postgresql-fromAndTo/
             ```
+## Instaltion Helm Chart & Prometheus Community Kubernetes Helm Charts
+
+8. **Helm Charts:**
+    -   helm charts -> it's collections of resource incloud configMaps , secets , deplyment & services any thing that rquire for deployment the Applications on Kuberenets.
+        * **Helm install**
+            ```bash
+            curl -fsSL -o get_helm.sh [https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3](https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3)
+            chmod 700 get_helm.sh
+            ./get_helm.sh
+            ```
+
+9. **Prometheus:**
+    -   **Install Prometheus-community:**
+        A.  Add rep prometheus-community to helm & updated helm.
+            ```bash
+            helm repo add prometheus-community [https://prometheus-community.github.io/helm-charts](https://prometheus-community.github.io/helm-charts)
+            helm repo update
+            ```
+        C.  Install prometheus-stack with create namespace.
+            ```bash
+            helm install prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring --create-namespace
+            ```
+
+    * **Configuration Prometheus-community:**
+        -   To configure Prometheus to scrape metrics from your applications, apply your ServiceMonitor resources. These resources define which services Prometheus should monitor.
+            * **ServiceMonitor(api, auth, image, webportal, postgres):**
+                -   Link between Prometheus must configure 'serviceMonitor' which is specify to Prometheus.
+                    ```bash
+                    kubectl apply -f Apps_deployment/prometheus-Configruation/apps-monitors.yml
+                    ```
+            * **PrometheusRule:**
+                -   Apply your PrometheusRule to set up alerting rules. These rules are used by Prometheus to generate alerts, which are then sent to Alertmanager..
+                    ```bash
+                    kubectl apply -f Apps_deployment/prometheus-Configruation/app-alerts-rules.yml
+                    ```
+            * **Alertmanager:**
+                -   Configure Alertmanager to route alerts to Slack. This is done by creating an `alertmanager.yml` file with your Slack webhook URL and applying it as a Kubernetes Secret:
+                    1.  use any editor 'nano', 'vi' to set file *alertmanager.yml* this part.
+                        ```yaml
+                        slack_configs:
+                        - channel: '#Apps-Alerts'
+                          api_url: '[https://hooks.slack.com/](https://hooks.slack.com/)'
+                        ```
+>[!TIP]
+> Create your alertmanager.yml file with the Slack webhook URL.
+                    -   You must have accout on *slack* .
+                    -   Get the url *Incoming Webhooks*
+                    -   api_url: 'https://hooks.slack.com/'
+                -   Create the Secret from the configuration file.
+                    ```bash
+                    kubectl create secret generic alertmanager-config --from-file=Apps_deployment/prometheus-Configruation/alertmanager.yml -n monitoring --dry-run=client -o yaml | kubectl apply -f -
+                    ```
+                -   Update the Helm release to use the new Secret.
+                    ```bash
+                    helm upgrade prometheus-stack prometheus-community/kube-prometheus-stack \
+                     --namespace monitoring \
+                     --set alertmanager.config.configmapName=alertmanager-config \
+                     --set alertmanager.config.templateSecretName=alertmanager-config
+                    ```
+                * Create ingress for Alertmanager to allow you to access over 'HTTPs' page insted of using 'port-forward'.
+                    ```bash
+                    kubectl apply -f alertManager-ingress.yml
+                    ```
