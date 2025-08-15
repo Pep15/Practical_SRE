@@ -486,11 +486,13 @@ Apply `PrometheusRule` resources to define alerting rules. Prometheus uses these
 
 
  1.  **Create the Secret from the configuration file:**
+    
          ```bash
-        kubectl create secret generic alertmanager-config --from-file=Apps_deployment/prometheus-Configuration/alertmanager.yml -n monitoring --dry-run=client -o yaml | kubectl apply -f -
+           kubectl create secret generic alertmanager-config --from-file=Apps_deployment/prometheus-Configuration/alertmanager.yml -n monitoring --dry-run=client -o yaml | kubectl apply -f -
          ```
 
 3.  **Update the Helm release to use the new Secret:**
+   
         ```bash
         helm upgrade prometheus-stack prometheus-community/kube-prometheus-stack \
          --namespace monitoring \
@@ -498,8 +500,9 @@ Apply `PrometheusRule` resources to define alerting rules. Prometheus uses these
          --set alertmanager.config.templateSecretName=alertmanager-config
         ```
 
-4.  **Create an ingress for Alertmanager:**
+5.  **Create an ingress for Alertmanager:**
         This allows you to access the Alertmanager UI over HTTPS instead of using `port-forward`.
+    
         ```bash
         kubectl apply -f alertManager-ingress.yml
         ```
