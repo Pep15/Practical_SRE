@@ -526,6 +526,7 @@ Once you have set up and configured Prometheus and Alertmanager, you can configu
 > 5.  The dashboard files are located in the `Grafana_DashBoard` directory.
 
 **B. Automated Method**
+
    You can automatically import dashboards by upgrading the `kube-prometheus-stack` chart with a custom `grafana-values.yml` file.
 
    1.  **Create a ConfigMap** from the directory containing all your dashboard files.
