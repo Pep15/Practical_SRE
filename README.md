@@ -2,15 +2,12 @@
 
 ## Table of Contents
 
-1.  [Overview](#overview)
-2.  [Architecture Diagram](#️-architecture-diagram)
+1.  [Architecture Diagram](#️-architecture-diagram)
+2.  [Overview](#overview)
 3.  [System Architecture & Implementation Details](#System-Architecture-&-Implementation-Details)
-4.  [Setup Environment](#setup-environment)
-5.  [Deploying Objects to the Kubernetes Cluster](#deploying-objects-to-the-kubernetes-cluster)
-6.  [Helm and Prometheus Installation](#helm-and-prometheus-installation)
-7.  [Grafana Configuration](#grafana)
-8.  [Failure Simulation and Recovery](#steps-of-failure-simulation-and-recovery-verification)
-9.  [Automation and Troubleshooting](#final-steps-automation-and-troubleshooting)
+4.  [Steps of failure simulation and recovery verification](#Steps-of-failure-simulation-and-recovery-verification)
+5.  [Setup Environment](#setup-environment)
+6.  [Basic Troubleshooting](Basic-Troubleshooting)
 10. [Lessons Learned](#lessons-learned)
 
 ---
