@@ -166,6 +166,7 @@ Steps of failure simulation and recovery verification.
 
 <details>
 <summary><strong>Database Failure with API Service:<summary><strong>
+
 [View Database Failure with API Service Video](https://bit.ly/3UlgOTS)
 
 * **Pre-Failure State Monitoring:**
@@ -205,7 +206,7 @@ Steps of failure simulation and recovery verification.
             ```bash
             kubectl scale deployment <name-of-deployment> --replicas=<number-scale> -n <namespace>
             ```
-</details>
+      </details>
 
 ---
 
