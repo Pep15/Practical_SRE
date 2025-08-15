@@ -15,6 +15,12 @@
 
 ---
 
+## 🏛️ Architecture Diagram
+
+![Architecture Diagram](./Architecture%20Diagram/Architecture_Diagram_SRE.png)
+
+---
+
 <details>
 <summary><strong> Project Overview</strong></summary>
 
@@ -35,13 +41,7 @@ Resilience & Auto-Scaling: High availability is ensured through Horizontal Pod A
 
 </details>
 
-
 ---
-## 🏛️ Architecture Diagram
-
-![Architecture Diagram](./Architecture%20Diagram/Architecture_Diagram_SRE.png)
----
-
 ## System Architecture & Implementation Details
 
 <details>
@@ -59,6 +59,7 @@ Resilience & Auto-Scaling: High availability is ensured through Horizontal Pod A
 - This interface integrates with the API to handle image uploads, register new users, validate login credentials, and display profiles of users.
 
 </details>
+
 
 <details>
 <summary>3. API Service</summary>
