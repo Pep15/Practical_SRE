@@ -331,7 +331,7 @@ Once Docker is installed, I can install Minikube to run a local Kubernetes clust
 | **`--memory=4096`** | Specifies the amount of memory (in MB) to allocate from the host machine. |
 | **`--cni=calico`** |  Must specify a Container Network Interface (CNI) that supports Network Policies, such as Calico. |
 | **`--insecure-registry`**| Tells Minikube to trust the local Docker registry, allowing it to pull images from it. |
-| **`--ports`** | Export port |
+| **`--ports=`** | Export port |
 
 
 ## Deploying Objects to the Kubernetes Cluster
