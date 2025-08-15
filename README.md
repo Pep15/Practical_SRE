@@ -448,32 +448,36 @@ Once Docker is installed, you can install Minikube to run a local Kubernetes clu
                     ```bash
                     kubectl apply -f Apps_deployment/prometheus-Configruation/app-alerts-rules.yml
                     ```
-            * **Alertmanager:**
-                -   Configure Alertmanager to route alerts to Slack. This is done by creating an **alertmanager.yml** file with your Slack webhook URL and applying it as a Kubernetes Secret:
-                    1.  use any editor 'nano', 'vi' to edit file *alertmanager.yml* this part.
-                        ```yaml
-                        slack_configs:
-                        - channel: '#Apps-Alerts'
-                          api_url: '[https://hooks.slack.com/]'
-                        ```
-> [!TIP]
-> * Create your `alertmanager.yml` file with the Slack webhook URL.
-> * You must have an account on Slack.
-> * Get the URL from **Incoming Webhooks**.
-> * Your `api_url` will be similar to: `https://hooks.slack.com/...`
+  * **Alertmanager:**
+    - Configure Alertmanager to route alerts to Slack. This is done by creating an `alertmanager.yml` file and applying it as a Kubernetes Secret by following these steps:
 
-* **Create the Secret from the configuration file:**
-    ```bash
-    kubectl create secret generic alertmanager-config --from-file=Apps_deployment/prometheus-Configruation/alertmanager.yml -n monitoring --dry-run=client -o yaml | kubectl apply -f -
-    ```
-* **Update the Helm release to use the new Secret:**
-    ```bash
-    helm upgrade prometheus-stack prometheus-community/kube-prometheus-stack \
-     --namespace monitoring \
-     --set alertmanager.config.configmapName=alertmanager-config \
-     --set alertmanager.config.templateSecretName=alertmanager-config
-    ```
-* **Create an ingress for Alertmanager** to allow access over an HTTPS page instead of using `port-forward`.
-    ```bash
-    kubectl apply -f alertManager-ingress.yml
-    ```
+        1.  **Create the `alertmanager.yml` file:**
+            Use any text editor to create a file named `alertmanager.yml` with the following content.
+            ```yaml
+            slack_configs:
+            - channel: '#Apps-Alerts'
+              api_url: 'YOUR_SLACK_WEBHOOK_URL'
+            ```
+            > [!TIP]
+            > * You must have an account on Slack.
+            > * Get the webhook URL from the **Incoming Webhooks** section in your Slack app settings.
+            > * Your `api_url` will be similar to: `https://hooks.slack.com/...`
+
+        2.  **Create the Secret from the configuration file:**
+            ```bash
+            kubectl create secret generic alertmanager-config --from-file=Apps_deployment/prometheus-Configruation/alertmanager.yml -n monitoring --dry-run=client -o yaml | kubectl apply -f -
+            ```
+
+        3.  **Update the Helm release to use the new Secret:**
+            ```bash
+            helm upgrade prometheus-stack prometheus-community/kube-prometheus-stack \
+             --namespace monitoring \
+             --set alertmanager.config.configmapName=alertmanager-config \
+             --set alertmanager.config.templateSecretName=alertmanager-config
+            ```
+
+        4.  **Create an ingress for Alertmanager:**
+            This allows access over an HTTPS page instead of using `port-forward`.
+            ```bash
+            kubectl apply -f alertManager-ingress.yml
+            ```
