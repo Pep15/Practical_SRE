@@ -162,28 +162,27 @@ Kubernetes is a container orchestration platform designed to manage and scale la
     - `Grafana`
 
 </details>
+<details>
+<summary> 12. Prometheus, AlertManager, and Grafana</summary>
 
-
----
-
-### 12. Prometheus, AlertManager, and Grafana
 - **Prometheus** → Monitoring tool that scrapes metrics and stores them in a time-series database (**TSDB**).
-    - Configured Prometheus to scrape metrics from services and persist the data.
-    - Templates defined which services Prometheus should scrape.
+   - Configured Prometheus to scrape metrics from services and persist the data.
+   - Templates defined which services Prometheus should scrape.
 - **AlertManager** → Groups, routes, and silences alerts from Prometheus before sending them to endpoints like email or Slack.
-    - Configured alerting rules and routing/receivers.
+   - Configured alerting rules and routing/receivers.
 - **Grafana** → Data visualization tool for creating dashboards to monitor service metrics.
-    - Configured Prometheus as a data source.
-    - Created dashboards for key metrics:
-        - `Status Pods`
-        - `Histogram Bucket`
-        - `HTTP Request Count`
-        - `CPU Usage`
-        - `Memory Usage`
+   - Configured Prometheus as a data source.
+   - Created dashboards for key metrics:
+     - `Status Pods`
+     - `Histogram Bucket`
+     - `HTTP Request Count`
+     - `CPU Usage`
+     - `Memory Usage`
 
 > [!NOTE]
 > Some services require an **external exporter** alongside the Pod to collect metrics. These exporters must be included in **Prometheus scrape configurations** to ensure proper monitoring.
 
+</details>
 ----
 
 ## Steps of failure simulation and recovery verification. 
