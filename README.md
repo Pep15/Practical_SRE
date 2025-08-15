@@ -448,8 +448,8 @@ Once Docker is installed, I can install Minikube to run a local Kubernetes clust
                     ```bash
                     kubectl apply -f Apps_deployment/prometheus-Configruation/app-alerts-rules.yml
                     ```
-* **Alertmanager:**
-    - Configure Alertmanager to route alerts to Slack. This is done by creating an `alertmanager.yml` file and applying it as a Kubernetes Secret by following these steps:
+1.  **Alertmanager:**
+    -   Configure Alertmanager to route alerts to Slack. This is done by creating an `alertmanager.yml` file and applying it as a Kubernetes Secret by following these steps:
 
         1.  **Create the `alertmanager.yml` file:**
             Use any text editor to create a file named `alertmanager.yml` with the following content.
@@ -481,7 +481,6 @@ Once Docker is installed, I can install Minikube to run a local Kubernetes clust
             ```bash
             kubectl apply -f alertManager-ingress.yml
             ```
-
 ---
 ## 13. Grafana
 Once you have set up and configured Prometheus and Alertmanager, you can configure Grafana.
