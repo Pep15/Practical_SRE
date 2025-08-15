@@ -3,7 +3,7 @@
 ## Table of Contents
 
 1.  [Architecture Diagram](#️-architecture-diagram)
-2.  [Project-Overview](#-Project-Overview)
+2.  [Project-Overview](#حroject-Overview)
 3.  [System Architecture & Implementation Details](#System-Architecture-&-Implementation-Details)
 4.  [Steps of failure simulation and recovery verification](#Steps-of-failure-simulation-and-recovery-verification)
 5.  [Setup Environment](#setup-environment)
@@ -78,7 +78,7 @@ Resilience & Auto-Scaling: High availability is ensured through Horizontal Pod A
 <details>
 <summary>5. Image Service</summary>
 
-- Serves as a centralized storage zone for user images, providing access and retrieval capabilities.
+- Servies as a centralized storage zone for user images, providing access and retrieval capabilities.
 - Built with **`Go`** to ensure performance and scalability.
 
 </details>
