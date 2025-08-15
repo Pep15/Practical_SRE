@@ -503,6 +503,7 @@ Once Docker is installed, I can install Minikube to run a local Kubernetes clust
 > 5.  The dashboard files are located in the `Grafana_DashBoard` directory.
 
 3. **Automated Method:**
+   
     I can automatically import dashboards by upgrading the `kube-prometheus-stack` chart with a custom `grafana-values.yml` file.
 
     1.  **Create a ConfigMap** from the directory containing all the dashboard files.
