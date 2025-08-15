@@ -458,10 +458,10 @@ Once Docker is installed, I can install Minikube to run a local Kubernetes clust
             - channel: '#Apps-Alerts'
               api_url: 'YOUR_SLACK_WEBHOOK_URL'
             ```
-            > [!TIP]
-            > * You must have an account on Slack.
-            > * Get the webhook URL from the **Incoming Webhooks** section in your Slack app settings.
-            > * The `api_url` is the secret URL you get from Slack.
+> [!TIP]
+> * You must have an account on Slack.
+> * Get the webhook URL from the **Incoming Webhooks** section in your Slack app settings.
+> * The `api_url` is the secret URL you get from Slack.
 
         2.  **Create the Secret from the configuration file:**
             ```bash
