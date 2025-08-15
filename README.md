@@ -2,7 +2,7 @@
 
 ## 🏛️ Architecture Diagram
 
-![Architecture Diagram]()
+![Architecture Diagram](Architecture\ Diagram/Architecture_Diagram_SRE.png)
 ---
 
 ### 1. Infrastructure and Environment
