@@ -162,79 +162,90 @@ Kubernetes is a container orchestration platform designed to manage and scale la
 
 ----
 
-## Steps of failure simulation and recovery verification.
+## Steps of failure simulation and recovery verification. 
 
- <details>
- <summary><strong> Database Failure with API Service:</strong></summary>
-   [View Database Failure with API Service Video](https://bit.ly/3UlgOTS)
+<details> 
+<summary><strong>Database Failure with API Service:</strong></summary>  
 
-   * **Pre-Failure State Monitoring:**
-      * I began by using the **'watch'** command-line tool with **'kubectl describe'** to monitor the Postgres database Deployment in the app-services namespace using:
-         ```bash
-            watch -n1 kubectl describe deployment <name-of-deployment> -n <namespace>
-         ```
-      * Concurrently, I observed the Pods with **'kubectl get'** Postgres and API services status.
-           ```bash
-           kubectl get pod -n <namespace> -l <label-of-pod-inside-yaml> -w
-           ```
-        * `-w --> is watch for changes.`
-      * Then, I used **'kubectl logs -f'** to print the logs for a container in a pod resource streamly.
-          ```bash
-          kubectl logs -f <name-of-pod> -n <namespace>
-         ```
-      * Grafana dashboards and AlertManager showed a normal operational state (the database dashboard was **"Up"** and no active alerts existed). A new user was successfully registered via the frontend (webportal.local), confirming that all services were functioning correctly.
+[View Database Failure with API Service Video](https://bit.ly/3UlgOTS)  
 
-   * **Simulating the Failure:**
-      * To simulate a database failure, I scaled down the Postgres Deployment to zero replicas using **'kubectl scale deployment'**.
-          ```bash
-           kubectl scale deployment <name-of-deployment> --replicas=<number-scale> -n <namespace>
-          ```
-      * This action terminated the database Pod, causing the API service to lose its connection to the database.
+* **Pre-Failure State Monitoring:**  
+   * I began by using the **`watch`** command-line tool with **`kubectl describe`** to monitor the Postgres database Deployment in the `app-services` namespace using:  
+     ```bash
+     watch -n1 kubectl describe deployment <name-of-deployment> -n <namespace>
+     ```  
+   * Concurrently, I observed the Pods with **`kubectl get`** Postgres and API services status:  
+     ```bash
+     kubectl get pod -n <namespace> -l <label-of-pod-inside-yaml> -w
+     ```  
+     * `-w --> is watch for changes.`  
+   * Then, I used **`kubectl logs -f`** to print the logs for a container in a pod resource streamly:  
+     ```bash
+     kubectl logs -f <name-of-pod> -n <namespace>
+     ```  
+   * Grafana dashboards and AlertManager showed a normal operational state (the database dashboard was **"Up"** and no active alerts existed).  
+     A new user was successfully registered via the frontend (`webportal.local`), confirming that all services were functioning correctly.  
 
-   * **Verifying Recovery:**
-      * **Failure Detection:**
-          * AlertManager detected the failure, initially showing a **Pending**.
-          * Alert **Pending**:
-              1.  `PostgresExporterHighScrapeLatency`
-              2.  `APIServiceDown`
-      * **Frontend failed:**
-        * Attempts to log in through the frontend failed with a **"Failed to communicate with Auth service"** error.
-        * The Grafana dashboard for the API service also showed a **"Down"** status.
-      * **Service Restoration:**
-        * Restored the service by scaling the database replicas back to one using **'kubectl scale deployment'**.
-            ```bash
-            kubectl scale deployment <name-of-deployment> --replicas=<number-scale> -n <namespace>
-            ```
-      </details>
-      <details>
-      <summary><strong>Simulating a high utilization in Requests to the Image Service.</strong></summary>
-      [View Simulating a high utilization in Requests to the Image Service Video](https://bit.ly/4fuLQlW)
-      * **Pre-Failure State Monitoring:**
-       * started by monitoring the image-service Deployment in the app-services namespace using:
-          ```bash
-          watch -n1 kubectl describe deployment <name-of-deployment> -n <namespace>
-          ```
-      * Concurrently, I observed the HPA with **'kubectl get hpa'** Image-service utilize pod.
-         ```bash
-           kubectl get hpa <name-of-pod> -n <namespace>
-         ```
-      ** The service initially had 2 replicas. The Grafana dashboards showed low CPU and memory usage for the service.**
+* **Simulating the Failure:**  
+   * To simulate a database failure, I scaled down the Postgres Deployment to zero replicas using **`kubectl scale deployment`**:  
+     ```bash
+     kubectl scale deployment <name-of-deployment> --replicas=<number-scale> -n <namespace>
+     ```  
+   * This action terminated the database Pod, causing the API service to lose its connection to the database.  
 
-      * **Simulating the Failure:**
-        * I used the **'hey'** tool to generate and send a large number of requests:
-           ```bash
-           hey -n 100000 -c 100 https://images.local/uploads/<image-name>.png
-           ```
-          * Due to the high utilization in CPU usage exceeding the threshold defined in the Horizontal Pod Autoscaler (HPA), Kubernetes automatically scaled up the replicas for the image-service.
-          * The deployment's replica count increased from 2 to 10, then to 18, before stabilizing at 10 Pods.
-          * The Grafana dashboard clearly showed a sharp increase in CPU usage, Memory usage,http requests, followed by a decrease as the new Pods were added.
+* **Verifying Recovery:**  
+   * **Failure Detection:**  
+     * AlertManager detected the failure, initially showing a **Pending**.  
+     * Alert **Pending**:  
+       1. `PostgresExporterHighScrapeLatency`  
+       2. `APIServiceDown`  
+   * **Frontend failed:**  
+     * Attempts to log in through the frontend failed with a **"Failed to communicate with Auth service"** error.  
+     * The Grafana dashboard for the API service also showed a **"Down"** status.  
+   * **Service Restoration:**  
+     * Restored the service by scaling the database replicas back to one using **`kubectl scale deployment`**:  
+       ```bash
+       kubectl scale deployment <name-of-deployment> --replicas=<number-scale> -n <namespace>
+       ```  
 
-      * **Verifying Recovery:**
-          * **Service Restoration:**
-            * After the load test ended, Kubernetes automatically scaled down the Pods gradually based on the HPA settings.
-            * Returning the replica count to the original number (2 Pods).
-            * The Grafana dashboard returned to its normal state, indicating that the service had recovered and stabilized.
-      </details>
+</details>  
+
+---
+
+<details> 
+<summary><strong>Simulating a high utilization in Requests to the Image Service:</strong></summary>  
+
+[View Simulating a high utilization in Requests to the Image Service Video](https://bit.ly/4fuLQlW)  
+
+* **Pre-Failure State Monitoring:**  
+   * Started by monitoring the `image-service` Deployment in the `app-services` namespace using:  
+     ```bash
+     watch -n1 kubectl describe deployment <name-of-deployment> -n <namespace>
+     ```  
+   * Concurrently, I observed the HPA with **`kubectl get hpa`** Image-service utilize pod:  
+     ```bash
+     kubectl get hpa <name-of-pod> -n <namespace>
+     ```  
+   * The service initially had 2 replicas.  
+     The Grafana dashboards showed low CPU and memory usage for the service.  
+
+* **Simulating the Failure:**  
+   * I used the **`hey`** tool to generate and send a large number of requests:  
+     ```bash
+     hey -n 100000 -c 100 https://images.local/uploads/<image-name>.png
+     ```  
+   * Due to the high utilization in CPU usage exceeding the threshold defined in the Horizontal Pod Autoscaler (HPA), Kubernetes automatically scaled up the replicas for the image-service.  
+   * The deployment's replica count increased from 2 to 10, then to 18, before stabilizing at 10 Pods.  
+   * The Grafana dashboard clearly showed a sharp increase in CPU usage, memory usage, and HTTP requests, followed by a decrease as the new Pods were added.  
+
+* **Verifying Recovery:**  
+   * **Service Restoration:**  
+     * After the load test ended, Kubernetes automatically scaled down the Pods gradually based on the HPA settings.  
+     * Returning the replica count to the original number (2 Pods).  
+     * The Grafana dashboard returned to its normal state, indicating that the service had recovered and stabilized.  
+
+</details>  
+
 ----
 ## Setup Environment
 
