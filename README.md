@@ -183,6 +183,7 @@ Kubernetes is a container orchestration platform designed to manage and scale la
 > Some services require an **external exporter** alongside the Pod to collect metrics. These exporters must be included in **Prometheus scrape configurations** to ensure proper monitoring.
 
 </details>
+
 ----
 
 ## Steps of failure simulation and recovery verification. 
