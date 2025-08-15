@@ -34,27 +34,27 @@ graph TD
 
     %% --- Connections ---
 
-    %% User Flow
+    %% User Flow (Solid line)
     User -- "HTTPS Request" --> Ingress
 
-    %% Ingress & Frontend
-    Ingress -- "Routes to webportal-service" --> WebPortal
+    %% Ingress & Frontend (Dashed lines for routing and secrets)
+    Ingress -. "Routes to webportal-service" .-> WebPortal
     Ingress -.->|Read TLS Secret| K8sTlsSecret
     WebPortal -.->|Read TLS Secret| K8sTlsSecret
 
-    %% Frontend to Backend
-    WebPortal -- "Routes to Api-service" --> ApiService
-    WebPortal -- "Route to image-service" --> ImageService
+    %% Frontend to Backend (Dashed lines for routing)
+    WebPortal -. "Routes to Api-service" .-> ApiService
+    WebPortal -. "Route to image-service" .-> ImageService
 
-    %% Backend Services
+    %% Backend Services (Dashed/Crossed lines as per diagram)
     ApiService -.-> AuthService
     ApiService -- "Stock Connection X" ---x ImageService
     
-    %% Secret Reads in Backend
+    %% Secret Reads in Backend (Dashed lines)
     AuthService -.->|Read Secret DataBase| K8sAppSecret
     ApiService -.->|Read Secret DataBase & JWT| K8sAppSecret
 
-    %% Backend to External
+    %% Backend to External (Solid lines as per diagram)
     AuthService --> PostgreSQL
     ApiService --> PostgreSQL
     ImageService --> S3
