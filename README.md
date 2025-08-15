@@ -34,7 +34,7 @@
 ---
 
 ### 6. Docker Containerization
-- **`Docker`** is a containerization technology that allows you to package applications and their dependencies into isolated units called containers.
+- **`Docker`** is a containerization technology that allows to package applications and their dependencies into isolated units called containers.
 - I used Docker to build container images, which are then deployed, orchestrated, and managed by **`Kubernetes`**.
 
 #### My Docker Images
@@ -171,7 +171,7 @@ Kubernetes is a container orchestration platform designed to manage and scale la
     * Grafana dashboards and AlertManager showed a normal operational state (the database dashboard was **"Up"** and no active alerts existed). A new user was successfully registered via the frontend (webportal.local), confirming that all services were functioning correctly.
 
 * **Simulating the Failure:**
-    * To simulate a database failure, you scaled down the Postgres Deployment to zero replicas using **'kubectl scale deployment'**.
+    * To simulate a database failure, I scaled down the Postgres Deployment to zero replicas using **'kubectl scale deployment'**.
         ```bash
         kubectl scale deployment <name-of-deployment> --replicas=<number-scale> -n <namespace>
         ```
@@ -243,13 +243,13 @@ Kubernetes is a container orchestration platform designed to manage and scale la
     sudo sh get-docker.sh
     ```
 2.  **Configure Docker daemon for local Registry:**
-    * If you are planning to use a local Docker registry on your machine:
+    * I'm planning to use a local Docker registry on the machine:
         * Edit the Docker `daemon.json` file, which exists on path `/etc/docker/deamon.json`.
         * If the file does not exist, create one.
-        * Add the following configuration and replace with your local IP.
+        * Add the following configuration and replace with the local IP.
             ```json
             {
-                 "insecure-registries": ["your-registry-host-(IP):5000"]
+                 "insecure-registries": ["the-registry-host-(IP):5000"]
             }
             ```
         * Restart the Docker Engine:
@@ -259,57 +259,57 @@ Kubernetes is a container orchestration platform designed to manage and scale la
 
 
 > [!IMPORTANT]
-> If you use Docker Desktop, you can configure the code JSON format on it.
+> If I use Docker Desktop, I can configure the code JSON format on it.
 > 1. Go to the settings icon in the right corner, click, then will pop up page.
 > 2. Then navigate to the 'Docker Engine' will see there is an empty box. Enter the command in the box.
 > 3. Click 'Apply & restart'.
 
    
 3. **Run Docker Registry**
-    * Docker image Registry it's a private registry to store your repository images.
+    * Docker image Registry it's a private registry to store the repository images.
     * Following the command to run the container registry:
         ```bash
         docker run -d -p 5000:5000 --restart always --name registry registry:2
         ```
-        > **`--restart always`**: is the policy to reload the container even if there are issues with the registry container, or restart your machine.
+        > **`--restart always`**: is the policy to reload the container even if there are issues with the registry container, or restart the machine.
 
 
 4. **Build Docker Image and Push**
-    * Once the Docker daemon is configured, you can build and push to your local registry.
+    * Once the Docker daemon is configured, I can build and push to the local registry.
     * **API_service:**
         ```bash
         cd API_Service/
         # Docker Build api_service:
-        docker build -f api-service -t your-registry-host(ip):5000/api-service:v1 .
+        docker build -f api-service -t the-registry-host(ip):5000/api-service:v1 .
         # Push image api_service:
-        docker push your-registry-host(ip):5000/api-service:v1
+        docker push the-registry-host(ip):5000/api-service:v1
         ```
     * **Auth_service:**
         ```bash
         cd Auth_service/
         # Docker Build auth-service:
-        docker build -f auth-service -t your-registry-host(ip):5000/auth-service:v1 .
+        docker build -f auth-service -t the-registry-host(ip):5000/auth-service:v1 .
         # Push image auth-service:
-        docker push your-registry-host(ip):5000/auth-service:v1
+        docker push the-registry-host(ip):5000/auth-service:v1
         ```
     * **Image_Service:**
         ```bash
         cd Image_Service/
         # Docker Build image-service:
-        docker build -f image-service -t your-registry-host(ip):5000/image-service:v1 .
+        docker build -f image-service -t the-registry-host(ip):5000/image-service:v1 .
         # Push image-service:
-        docker push your-registry-host(ip):5000/image-service:v1
+        docker push the-registry-host(ip):5000/image-service:v1
         ```
     * **Frontend_service:**
         ```bash
         cd Frontend_service/
         # Docker Build Frontend-service:
-        docker build -f frontend-service -t your-registry-host(ip):5000/webportal-service:v1 .
+        docker build -f frontend-service -t the-registry-host(ip):5000/webportal-service:v1 .
         # Push image webportal-service:
-        docker push your-registry-host(ip):5000/webportal-service:v1
+        docker push the-registry-host(ip):5000/webportal-service:v1
         ```
 5. ####  Install and Configure Minikube
-Once Docker is installed, you can install Minikube to run a local Kubernetes cluster on your machine.
+Once Docker is installed, I can install Minikube to run a local Kubernetes cluster on the machine.
 
 1.  **Download and Install Minikube:**
     ```bash
@@ -318,19 +318,19 @@ Once Docker is installed, you can install Minikube to run a local Kubernetes clu
     ```
 
 2.  **Start Minikube Cluster:**
-    This command starts the cluster and connects it to your local insecure registry.
+    This command starts the cluster and connects it to the local insecure registry.
     ```bash
-    minikube start --cpus=2 --memory=4096 --cni=calico --ports=443:443 ports=80:80 --insecure-registry="your-registry-host(ip):5000"
+    minikube start --cpus=2 --memory=4096 --cni=calico --ports=443:443 ports=80:80 --insecure-registry="the-registry-host(ip):5000"
     ```
 
 **Command Options Explained:**
 
 | Flag | Description |
 | :--- | :--- |
-| **`--cpus=2`** | Specifies the number of CPU cores to allocate from your host machine. It's recommended to set this to avoid consuming all resources. |
-| **`--memory=4096`** | Specifies the amount of memory (in MB) to allocate from your host machine. |
-| **`--cni=calico`** | You must specify a Container Network Interface (CNI) that supports Network Policies, such as Calico. |
-| **`--insecure-registry`**| Tells Minikube to trust your local Docker registry, allowing it to pull images from it. |
+| **`--cpus=2`** | Specifies the number of CPU cores to allocate from the host machine. It's recommended to set this to avoid consuming all resources. |
+| **`--memory=4096`** | Specifies the amount of memory (in MB) to allocate from the host machine. |
+| **`--cni=calico`** |  Must specify a Container Network Interface (CNI) that supports Network Policies, such as Calico. |
+| **`--insecure-registry`**| Tells Minikube to trust the local Docker registry, allowing it to pull images from it. |
 | **`--ports`** | Export port |
 
 
@@ -342,10 +342,10 @@ Once Docker is installed, you can install Minikube to run a local Kubernetes clu
         kubectl create namespace apps-services
         kubectl create namespace frontend-service
         ```
-    -   Run following, To define your registry in Kubernetes, it's recommended to use a Secret for securely storing credentials, instead of including them directly in your configuration files. This approach enhances security and makes your configurations more manageable.
+    -   Run following, To define the registry in Kubernetes, it's recommended to use a Secret for securely storing credentials, instead of including them directly in the configuration files. This approach enhances security and makes the configurations more manageable.
         ```bash
-        kubectl create secret docker-registry my-registry-creds --docker-server=your-registry-host(ip):5000 --docker-username=<username> --docker-password=<Password>  --docker-email=<email>  -n app-services
-        kubectl create secret docker-registry my-registry-creds --docker-server=your-registry-host(ip):5000 --docker-username=<username> --docker-password=<Password>  --docker-email=<email>  -n frontend-service
+        kubectl create secret docker-registry my-registry-creds --docker-server=the-registry-host(ip):5000 --docker-username=<username> --docker-password=<Password>  --docker-email=<email>  -n app-services
+        kubectl create secret docker-registry my-registry-creds --docker-server=the-registry-host(ip):5000 --docker-username=<username> --docker-password=<Password>  --docker-email=<email>  -n frontend-service
         ```
     * I divided the files to easy apply the deployments
         * **Issuer Certification:**
@@ -437,14 +437,14 @@ Once Docker is installed, you can install Minikube to run a local Kubernetes clu
             ```
 
     * **Configuration Prometheus-community:**
-        -   To configure Prometheus to scrape metrics from your applications, apply your ServiceMonitor resources. These resources define which services Prometheus should monitor.
+        -   To configure Prometheus to scrape metrics from the applications, apply the ServiceMonitor resources. These resources define which services Prometheus should monitor.
             * **ServiceMonitor(api, auth, image, webportal, postgres):**
                 -   Link between Prometheus must configure 'serviceMonitor' which is specify to Prometheus.
                     ```bash
                     kubectl apply -f Apps_deployment/prometheus-Configruation/apps-monitors.yml
                     ```
             * **PrometheusRule:**
-                -   Apply your PrometheusRule to set up alerting rules. These rules are used by Prometheus to generate alerts, which are then sent to Alertmanager..
+                -   Apply the PrometheusRule to set up alerting rules. These rules are used by Prometheus to generate alerts, which are then sent to Alertmanager..
                     ```bash
                     kubectl apply -f Apps_deployment/prometheus-Configruation/app-alerts-rules.yml
                     ```
@@ -461,7 +461,7 @@ Once Docker is installed, you can install Minikube to run a local Kubernetes clu
             > [!TIP]
             > * You must have an account on Slack.
             > * Get the webhook URL from the **Incoming Webhooks** section in your Slack app settings.
-            > * Your `api_url` will be similar to: `https://hooks.slack.com/...`
+            > * the `api_url` will be similar to: `https://hooks.slack.com/...`
 
         2.  **Create the Secret from the configuration file:**
             ```bash
@@ -483,22 +483,15 @@ Once Docker is installed, you can install Minikube to run a local Kubernetes clu
             ```
 
  11. * **Grafana**
-    Once you have set up and configured Prometheus and Alertmanager, you can configure Grafana.
+    Once I have set up and configured Prometheus and Alertmanager, I can configure Grafana.
 
    1. **Create an ingress for Grafana** to allow access over an HTTPS page instead of using `port-forward`.**
        ```bash
        kubectl apply -f grafana-ingress.yaml
        ```
-   - You should then be able to access it at `https://grafana.local`.
+   - Should then be able to access it at `https://grafana.local`.
 
-  2. **There are two ways to import visualization dashboards:**
-
-
-      
-        > [!TIP]
-        > * You must have an account on Slack.
-        > * Get the webhook URL from the **Incoming Webhooks** section in your Slack app settings.
-        > * Your `api_url` will be similar to: `https://hooks.slack.com/...`
+  2. **There are two ways to import visualization dashboards:**   
 
       > [!TIP]
       > **A. Manual Method**
@@ -509,9 +502,9 @@ Once Docker is installed, you can install Minikube to run a local Kubernetes clu
       > 5.  The dashboard files are located in the `Grafana_DashBoard` directory.
 
 3. **Automated Method:**
-    You can automatically import dashboards by upgrading the `kube-prometheus-stack` chart with a custom `grafana-values.yml` file.
+    I can automatically import dashboards by upgrading the `kube-prometheus-stack` chart with a custom `grafana-values.yml` file.
 
-    1.  **Create a ConfigMap** from the directory containing all your dashboard files.
+    1.  **Create a ConfigMap** from the directory containing all the dashboard files.
         ```bash
         kubectl create configmap my-grafana-dashboards --from-file=Grafana_DashBoard/ -n monitoring
         ```
