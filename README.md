@@ -1,5 +1,18 @@
 # Built and Deployed the Environment
 
+## Table of Contents
+
+1.  [Overview](#overview)
+2.  [Architecture Diagram](#️-architecture-diagram)
+3.  [Technology Breakdown](#technology-breakdown)
+4.  [Setup Environment](#setup-environment)
+5.  [Deploying Objects to the Kubernetes Cluster](#deploying-objects-to-the-kubernetes-cluster)
+6.  [Helm and Prometheus Installation](#helm-and-prometheus-installation)
+7.  [Grafana Configuration](#grafana)
+8.  [Failure Simulation and Recovery](#steps-of-failure-simulation-and-recovery-verification)
+9.  [Automation and Troubleshooting](#final-steps-automation-and-troubleshooting)
+10. [Lessons Learned](#lessons-learned)
+
 ## Overview
 
 This project implements a complete Site Reliability Engineering (SRE) solution for a microservices application composed of three distinct services: a main API, an authentication service, and an image storage service.
