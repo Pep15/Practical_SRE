@@ -40,7 +40,7 @@ Resilience & Auto-Scaling: High availability is ensured through Horizontal Pod A
 </details>
 
 ---
-<a id="System Architecture & Implementation Details"></a>
+<a id="System-Architecture-&-Implementation-Details"></a>
 ## System Architecture & Implementation Details
 
 <details>
