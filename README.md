@@ -449,7 +449,7 @@ Once Docker is installed, you can install Minikube to run a local Kubernetes clu
                     kubectl apply -f Apps_deployment/prometheus-Configruation/app-alerts-rules.yml
                     ```
             * **Alertmanager:**
-                -   Configure Alertmanager to route alerts to Slack. This is done by creating an `alertmanager.yml` file with your Slack webhook URL and applying it as a Kubernetes Secret:
+                -   Configure Alertmanager to route alerts to Slack. This is done by creating an **alertmanager.yml** file with your Slack webhook URL and applying it as a Kubernetes Secret:
                     1.  use any editor 'nano', 'vi' to edit file *alertmanager.yml* this part.
                         ```yaml
                         slack_configs:
@@ -464,18 +464,18 @@ Once Docker is installed, you can install Minikube to run a local Kubernetes clu
 
 
 
-                -   Create the Secret from the configuration file.
+  *  **Genrate the Secret from the configuration file **alertmanager.yml**.
                     ```bash
                     kubectl create secret generic alertmanager-config --from-file=Apps_deployment/prometheus-Configruation/alertmanager.yml -n monitoring --dry-run=client -o yaml | kubectl apply -f -
                     ```
-                -   Update the Helm release to use the new Secret.
+    *  **Update the Helm release to use the new Secret**.
                     ```bash
                     helm upgrade prometheus-stack prometheus-community/kube-prometheus-stack \
                      --namespace monitoring \
                      --set alertmanager.config.configmapName=alertmanager-config \
                      --set alertmanager.config.templateSecretName=alertmanager-config
                     ```
-                * Create ingress for Alertmanager to allow you to access over 'HTTPs' page insted of using 'port-forward'.
+    * **Create ingress for Alertmanager to allow you to access over 'HTTPs' page insted of using 'port-forward'.**
                     ```bash
                     kubectl apply -f alertManager-ingress.yml
                     ```
