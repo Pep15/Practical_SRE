@@ -571,7 +571,7 @@ Before running the deployment script, it's recommended to follow these one-time 
 
 4.  **Run the Deployment Script:**
     Now you can run the infrastructure deployment script.
-    > [!NOTE]
+> [!NOTE]
 > Do not run the script as `sudo`.
   ```bash
   ./deploy_Apps_K8s.sh
