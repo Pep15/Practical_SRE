@@ -566,16 +566,16 @@ Before running the deployment script, it's recommended to follow these one-time 
     ```bash
     su - ${USER}
     ```
-    > [!WARNING]
-    > **Important:** You must **log out and log back in** for the new group membership to take full effect.
+   > [!WARNING]
+   > **Important:** You must **log out and log back in** for the new group membership to take full effect.
 
 4.  **Run the Deployment Script:**
     Now you can run the infrastructure deployment script.
     > [!NOTE]
-    > Do not run the script as `sudo`.
-    ```bash
-    ./deploy_Apps_K8s.sh
-    ```
+> Do not run the script as `sudo`.
+  ```bash
+  ./deploy_Apps_K8s.sh
+  ```
 
 ### Basic Troubleshooting
 If you encounter any issues with your pods, these are the first commands you should run to diagnose the problem.
