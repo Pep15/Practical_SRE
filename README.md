@@ -494,14 +494,14 @@ Once Docker is installed, you can install Minikube to run a local Kubernetes clu
   2. **There are two ways to import visualization dashboards:**
 
       > [!TIP]
-      >**A. Manual Method**
+      > **A. Manual Method**
       > 1.  In the left sidebar, navigate to **Dashboards**.
       > 2.  On the Dashboards page, click the **New** button.
       > 3.  From the dropdown list, choose **Import**.
       > 4.  Finally, import the JSON dashboard files.
       > 5.  The dashboard files are located in the `Grafana_DashBoard` directory.
 
-3. **B. Automated Method:**
+3. **Automated Method:**
     You can automatically import dashboards by upgrading the `kube-prometheus-stack` chart with a custom `grafana-values.yml` file.
 
     1.  **Create a ConfigMap** from the directory containing all your dashboard files.
