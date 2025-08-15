@@ -12,6 +12,8 @@
 8.  [Automation and Troubleshooting](#final-steps-automation-and-troubleshooting)
 9. [Lessons Learned](#lessons-learned)
 
+<details>
+
 ## Overview
 
 This project implements a complete Site Reliability Engineering (SRE) solution for a microservices application composed of three distinct services: a main API, an authentication service, and an image storage service.
@@ -29,6 +31,8 @@ The core objective is to build a production-grade environment on Kubernetes that
 * **Security:** The environment is secured using **Network Policies** for traffic control, **Secrets** for credentials management, and an **Ingress** with self-signed TLS certificates.
 
 * **Resilience & Auto-Scaling:** High availability is ensured through **Horizontal Pod Autoscalers (HPA)**, Liveness/Readiness probes, and verified through practical failure simulation tests (e.g., database failure, high traffic).
+  
+</details>
 ---
 ## 🏛️ Architecture Diagram
 
