@@ -2,63 +2,7 @@
 
 ## 🏛️ Architecture Diagram
 
-```mermaid
-graph TD
-    subgraph " "
-        User[("fa:fa-user User<br>Browser")]
-    end
-
-    subgraph " "
-        Ingress(("fa:fa-lock Ingress Controllers"))
-    end
-    
-    K8sTlsSecret(fa:fa-key TLS Secret)
-
-    subgraph frontend-service
-        style frontend-service fill:#e6f2ff,stroke:#333,stroke-width:2px
-        WebPortal("webportal.local<br>App")
-    end
-
-    subgraph app-services
-        style app-services fill:#e6f2ff,stroke:#333,stroke-width:2px
-        K8sAppSecret(fa:fa-key App Secrets)
-        ApiService("fa:fa-cogs API Service")
-        AuthService("fa:fa-shield-alt Auth Service")
-        ImageService("fa:fa-image Image Service")
-    end
-
-    subgraph "External Services"
-        PostgreSQL[("fa:fa-database PostgreSQL")]
-        S3[("fa:fa-cloud-upload Amazon S3")]
-    end
-
-    %% --- Connections ---
-
-    %% User Flow (Solid line)
-    User -- "HTTPS Request" --> Ingress
-
-    %% Ingress & Frontend (Dashed lines for routing and secrets)
-    Ingress -. "Routes to webportal-service" .-> WebPortal
-    Ingress -.->|Read TLS Secret| K8sTlsSecret
-    WebPortal -.->|Read TLS Secret| K8sTlsSecret
-
-    %% Frontend to Backend (Dashed lines for routing)
-    WebPortal -. "Routes to Api-service" .-> ApiService
-    WebPortal -. "Route to image-service" .-> ImageService
-
-    %% Backend Services (Dashed/Crossed lines as per diagram)
-    ApiService -.-> AuthService
-    ApiService -- "Stock Connection X" ---x ImageService
-    
-    %% Secret Reads in Backend (Dashed lines)
-    AuthService -.->|Read Secret DataBase| K8sAppSecret
-    ApiService -.->|Read Secret DataBase & JWT| K8sAppSecret
-
-    %% Backend to External (Solid lines as per diagram)
-    AuthService --> PostgreSQL
-    ApiService --> PostgreSQL
-    ImageService --> S3
-```
+here digram
 ---
 
 ### 1. Infrastructure and Environment
