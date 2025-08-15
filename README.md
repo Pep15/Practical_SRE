@@ -643,3 +643,108 @@ If you encounter any issues with your pods, these are the first commands you sho
   3. Utilize Helm Charts to automate the deployment process for all applications.
   4. Establish a CI/CD pipeline with clearly defined stages, ensuring a smooth and continuous workflow where each stage builds upon the previous one.
 
+---
+# File structure
+
+```bash
+
+.
+├── API_Service
+│   ├── api-service
+│   ├── config.py
+│   ├── main.py
+│   ├── models.py
+│   └── requirements.txt
+├── Apps_deployment
+│   ├──  debug-pod-frotend.yml
+│   ├── Api-Group
+│   │   ├── api-deployment.yml
+│   │   ├── api-hpa.yml
+│   │   ├── api-ingress.yml
+│   │   ├── api-pdb.yml
+│   │   └── api-service.yml
+│   ├── Authentication-Group
+│   │   ├── apps-secret.yml
+│   │   ├── auth-deployment.yml
+│   │   ├── auth-hpa.yaml
+│   │   ├── auth-ingress.yml
+│   │   ├── auth-pdb.yml
+│   │   └── auth-service.yml
+│   ├── DashBord_Grafana
+│   │   └── grafana-values.yml
+│   ├── debug-pod-apps-services.yaml
+│   ├── Image-Group
+│   │   ├── image-deployment.yml
+│   │   ├── image-hpa.yml
+│   │   ├── image-ingress.yml
+│   │   ├── image-pdb.yml
+│   │   └── image-service.yml
+│   ├── Policy-Group
+│   │   ├── Policy-api-fromAndTo
+│   │   │   ├── allow-api-egress-consolidated.yml
+│   │   │   └── allow-api-ingress-consolidated.yml
+│   │   ├── Policy-auth-fromAndTo
+│   │   │   ├── allow-auth-egress-consolidated.yml
+│   │   │   └── allow-auth-ingress-consolidated.yml
+│   │   ├── Policy-image-fromAndTo
+│   │   │   ├── allow-image-egress-to-api.yml
+│   │   │   └── allow-image-ingress-consolidated.yml
+│   │   ├── Policy-postgresql-fromAndTo
+│   │   │   ├── allow-postgresql-ingress-from-api.yml
+│   │   │   ├── allow-postgresql-ingress-from-auth.yml
+│   │   │   └── deny-postgresql-egress-to-all.yml
+│   │   └── Policy-webportal-fromAndTo
+│   │       ├── allow-ingress-controller-to-webportal.yml
+│   │       └── allow-webportal-egress-to-api.yml
+│   ├── Postgresql-Group
+│   │   ├── postgres-config.yml
+│   │   ├── postgres-deployment.yml
+│   │   ├── postgres-exporter-deployment.yml
+│   │   ├── postgres-exporter-service.yml
+│   │   ├── postgres-pv.yml
+│   │   ├── postgres-pvc.yml
+│   │   ├── postgres-secret.yml
+│   │   └── postgres-service.yml
+│   ├── prometheus-Configruation
+│   │   ├── alertManager-ingress.yml
+│   │   ├── alertmanager.yml
+│   │   ├── app-alerts-rules.yml
+│   │   ├── apps-monitors.yml
+│   │   └── webhook-certificate.yml
+│   ├── selfsigned-issuer.yml
+│   └── WebPortal-Group
+│       ├── webportal-certificate.yml
+│       ├── webportal-config.yml
+│       ├── webportal-deployment.yml
+│       ├── webportal-ingress.yml
+│       ├── webportal-issuer.yml
+│       └── webportal-service.yml
+├── Architecture Diagram
+│   └── Architecture_Diagram_SRE.png
+├── Auth_service
+│   ├── auth-service
+│   ├── index.js
+│   ├── package-lock.json
+│   └── package.json
+├── deploy_Apps_K8s.sh
+├── Frontend_service
+│   ├── default.conf
+│   ├── index.html
+│   └── webportal-service
+├── Grafana_DashBoard
+│   ├── Application-API-1754752132896.json
+│   ├── Application-Authentication-1754752149731.json
+│   ├── Application-Image-1754752169119.json
+│   ├── Application-WebPortal-1754752183088.json
+│   ├── Over-All-system-1754752225403.json
+│   └── PostgreSQL-Database-1754752206458.json
+├── Image_Service
+│   ├── go.mod
+│   ├── go.sum
+│   ├── image-service
+│   └── main.go
+├── README.md
+└── Reports of Projecte
+    ├── HPA_Result.jpg
+    └── ResultOfImageService.jpg
+```
