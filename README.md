@@ -12,7 +12,7 @@
 8.  [Automation and Troubleshooting](#final-steps-automation-and-troubleshooting)
 9. [Lessons Learned](#lessons-learned)
 
-<details>
+<Overview>
 
 ## Overview
 
@@ -32,7 +32,7 @@ The core objective is to build a production-grade environment on Kubernetes that
 
 * **Resilience & Auto-Scaling:** High availability is ensured through **Horizontal Pod Autoscalers (HPA)**, Liveness/Readiness probes, and verified through practical failure simulation tests (e.g., database failure, high traffic).
   
-</details>
+</Overview>
 ---
 ## 🏛️ Architecture Diagram
 
