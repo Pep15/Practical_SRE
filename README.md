@@ -336,7 +336,7 @@ Once Docker is installed, you can install Minikube to run a local Kubernetes clu
 
 ## Deploying Objects to the Kubernetes Cluster
 
-8.  **Runs Deployment on Kubernetes cluster**
+5.  **Runs Deployment on Kubernetes cluster**
     -   Run 'namespace' to allocate each objects for the namespace
         ```bash
         kubectl create namespace apps-services
@@ -390,7 +390,7 @@ Once Docker is installed, you can install Minikube to run a local Kubernetes clu
    | Ingress in network policy | (That meaning when reception your friend) and (which door will reception your friend)--> that mean(Ports)|
    | Egress in network policy  | (That meaning when goes your friend) and (which door will reception you) --> that mean(Ports) |
 
-10.  **Run NetworkPolicy**
+6.  **Run NetworkPolicy**
     -   I divided the file of grop policy and there are two yaml file it's outside the divided.
      
         * **Network-Policy Api:**
