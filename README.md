@@ -3,7 +3,7 @@
 ## Table of Contents
 
 1.  [Architecture Diagram](#️-architecture-diagram)
-2.  [Project-Overview](#حroject-Overview)
+2.  [Project-Overview](#project-Overview)
 3.  [System Architecture & Implementation Details](#System-Architecture-&-Implementation-Details)
 4.  [Steps of failure simulation and recovery verification](#Steps-of-failure-simulation-and-recovery-verification)
 5.  [Setup Environment](#setup-environment)
