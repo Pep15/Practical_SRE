@@ -425,6 +425,7 @@ Once Docker is installed, I can install Minikube to run a local Kubernetes clust
             ```
 
 9. **Prometheus:**
+    
     -   **Install Prometheus-community:**
         A.  Add rep prometheus-community to helm & updated helm.
             ```bash
@@ -462,20 +463,17 @@ Once Docker is installed, I can install Minikube to run a local Kubernetes clust
 > * You must have an account on Slack.
 > * Get the webhook URL from the **Incoming Webhooks** section in your Slack app settings.
 > * The `api_url` is the secret URL you get from Slack.
-
         2.  **Create the Secret from the configuration file:**
             ```bash
             kubectl create secret generic alertmanager-config --from-file=Apps_deployment/prometheus-Configruation/alertmanager.yml -n monitoring --dry-run=client -o yaml | kubectl apply -f -
             ```
-
-        3.  **Update the Helm release to use the new Secret:**
+      3.  **Update the Helm release to use the new Secret:**
             ```bash
             helm upgrade prometheus-stack prometheus-community/kube-prometheus-stack \
              --namespace monitoring \
              --set alertmanager.config.configmapName=alertmanager-config \
              --set alertmanager.config.templateSecretName=alertmanager-config
             ```
-
         4.  **Create an ingress for Alertmanager:**
             This allows access over an HTTPS page instead of using `port-forward`.
             ```bash
