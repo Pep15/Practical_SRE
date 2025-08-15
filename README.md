@@ -17,7 +17,7 @@ The core objective is to build a production-grade environment on Kubernetes that
 * **Security:** The environment is secured using **Network Policies** for traffic control, **Secrets** for credentials management, and an **Ingress** with self-signed TLS certificates.
 
 * **Resilience & Auto-Scaling:** High availability is ensured through **Horizontal Pod Autoscalers (HPA)**, Liveness/Readiness probes, and verified through practical failure simulation tests (e.g., database failure, high traffic).
-
+---
 ## 🏛️ Architecture Diagram
 
 ![Architecture Diagram](./Architecture%20Diagram/Architecture_Diagram_SRE.png)
