@@ -385,10 +385,10 @@ Once Docker is installed, you can install Minikube to run a local Kubernetes clu
 > Before to start apply Networkpolicy there are two concepts 'ingress' , 'egress'
        
 
-   | Flag | Description |
+   | Type | Description |
    | :--- | :--- |
-            * Ingress in network policy -> (That meaning when reception your friend) and (which door will reception your friend)--> that mean(Ports).
-            * Egress in network policy -> (That meaning when goes your friend) and (which door will reception you)--> that mean(Ports).
+   | Ingress in network policy | (That meaning when reception your friend) and (which door will reception your friend)--> that mean(Ports)|
+   | Egress in network policy  | (That meaning when goes your friend) and (which door will reception you) --> that mean(Ports) |
 
 10.  **Run NetworkPolicy**
     -   I divided the file of grop policy and there are two yaml file it's outside the divided.
