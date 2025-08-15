@@ -463,19 +463,18 @@ Once Docker is installed, you can install Minikube to run a local Kubernetes clu
 -   api_url: `https://hooks.slack.com/`
 
 
-
-  *  **Genrate the Secret from the configuration file **alertmanager.yml**.
+     *  **Genrate the Secret from the configuration file **alertmanager.yml**.
                     ```bash
-                    kubectl create secret generic alertmanager-config --from-file=Apps_deployment/prometheus-Configruation/alertmanager.yml -n monitoring --dry-run=client -o yaml | kubectl apply -f -
+                    kubectl create secret generic alertmanager-config --from-file=Apps_deployment/prometheus-Configruation/alertmanager.yml -n monitoring --dry-run=client -o yaml |    kubectl apply -f -
                     ```
-    *  **Update the Helm release to use the new Secret**.
+       *  **Update the Helm release to use the new Secret**.
                     ```bash
                     helm upgrade prometheus-stack prometheus-community/kube-prometheus-stack \
                      --namespace monitoring \
                      --set alertmanager.config.configmapName=alertmanager-config \
                      --set alertmanager.config.templateSecretName=alertmanager-config
                     ```
-    * **Create ingress for Alertmanager to allow you to access over 'HTTPs' page insted of using 'port-forward'.**
+       * **Create ingress for Alertmanager to allow you to access over 'HTTPs' page insted of using 'port-forward'.**
                     ```bash
                     kubectl apply -f alertManager-ingress.yml
                     ```
