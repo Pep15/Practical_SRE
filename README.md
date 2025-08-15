@@ -493,6 +493,13 @@ Once Docker is installed, you can install Minikube to run a local Kubernetes clu
 
   2. **There are two ways to import visualization dashboards:**
 
+
+      
+        > [!TIP]
+        > * You must have an account on Slack.
+        > * Get the webhook URL from the **Incoming Webhooks** section in your Slack app settings.
+        > * Your `api_url` will be similar to: `https://hooks.slack.com/...`
+
       > [!TIP]
       > **A. Manual Method**
       > 1.  In the left sidebar, navigate to **Dashboards**.
