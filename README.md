@@ -334,3 +334,86 @@ Once Docker is installed, you can install Minikube to run a local Kubernetes clu
 | **`--ports`** | Export port |
 
 
+## Deploying Objects to the Kubernetes Cluster
+
+8.  **Runs Deployment on Kubernetes cluster**
+    -   Run 'namespace' to allocate each objects for the namespace
+        ```bash
+        kubectl create namespace apps-services
+        kubectl create namespace frontend-service
+        ```
+    -   Run following, To define your registry in Kubernetes, it's recommended to use a Secret for securely storing credentials, instead of including them directly in your configuration files. This approach enhances security and makes your configurations more manageable.
+        ```bash
+        kubectl create secret docker-registry my-registry-creds --docker-server=your-registry-host(ip):5000 --docker-username=<username> --docker-password=<Password>  --docker-email=<email>  -n app-services
+        kubectl create secret docker-registry my-registry-creds --docker-server=your-registry-host(ip):5000 --docker-username=<username> --docker-password=<Password>  --docker-email=<email>  -n frontend-service
+        ```
+    * I divided the files to easy apply the deployments
+        * **Issuer Certification:**
+            -   I put the 'self-signed-issuer.yml' in the global file because most apps are following the namespace apps-services
+                ```bash
+                kubectl -f Apps_deployment/selfsigned-issuer.yml
+                ```
+        * **Postgresql-Group:**
+            -   Create empty file to store data of database.
+                ```bash
+                mkdir -p Apps_deployment/mountDatabase
+                ```
+            -   I sterted with 'Databse' most apps is depends on the Database postgres , ConfigMap , Secret.
+                ```bash
+                kubectl -f Apps_deployment/Postgresql-Group/
+                ```
+        * **Api_Group:**
+            ```bash
+            kubectl apply -f Apps_deployment/Api-Group/
+            ```
+        * **Authentication-Group:**
+            ```bash
+            kubectl apply -f Apps_deployment/Authentication-Group/
+            ```
+        * **Image-Group:**
+            ```bash
+            kubectl apply -f Apps_deployment/Image-Group/
+            ```
+        * **WebPortal-Group:**
+            ```bash
+            kubectl -f Apps_deployment/WebPortal-Group/
+            ```
+            -   I already put Issuer with the Group of WebPortal because I have one app under the namespace 'frontend-service'
+    -   **Network-Policy:**
+       > [!TIP]
+        -   Before to start apply Networkpolicy there are two concepts 'ingress' , 'egress'
+       > | Flag | Description |
+         | :--- | :--- |
+            * Ingress in network policy -> (That meaning when reception your friend) and (which door will reception your friend)--> that mean(Ports).
+            * Egress in network policy -> (That meaning when goes your friend) and (which door will reception you)--> that mean(Ports).
+
+9.  **Run NetworkPolicy**
+    -   I divided the file of grop policy and there are two yaml file it's outside the divided.
+        * **Policies Deny all :**
+            -   It's important to put on your infrastructure from concept 'default security' to prevent all pods from communicating with each other.
+            -   After that, you can allow by specifying ports for each application
+            * **Network Policy Deny:**
+                ```bash
+                kubectl -f Policy-Group/deny-apps-services-all.yml
+                kubectl -f Policy-Group/deny-webportal-service-all.yml
+                ```
+        * **Network-Policy Api:**
+            ```bash
+            kubectl -f Policy-Group/Policy-api-fromAndTo/
+            ```
+        * **Network-Policy Auth:**
+            ```bash
+            kubectl -f Policy-Group/Policy-auth-fromAndTo/
+            ```
+        * **Network-Policy Image:**
+            ```bash
+            kubectl -f Policy-Group/Policy-image-fromAndTo
+            ```
+        * **Network-Policy webportal:**
+            ```bash
+            kubectl -f Policy-Group/Policy-webportal-fromAndTo/
+            ```
+        * **Network-Policy Postgresql:**
+            ```bash
+            kubectl -f Policy-Group/Policy-postgresql-fromAndTo/
+            ```
