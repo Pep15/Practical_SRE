@@ -381,13 +381,15 @@ Once Docker is installed, you can install Minikube to run a local Kubernetes clu
             -   I already put Issuer with the Group of WebPortal because I have one app under the namespace 'frontend-service'
     -   **Network-Policy:**
        > [!TIP]
-        -   Before to start apply Networkpolicy there are two concepts 'ingress' , 'egress'
-       > | Flag | Description |
+       > Before to start apply Networkpolicy there are two concepts 'ingress' , 'egress'
+       
+
+     | Flag | Description |
          | :--- | :--- |
             * Ingress in network policy -> (That meaning when reception your friend) and (which door will reception your friend)--> that mean(Ports).
             * Egress in network policy -> (That meaning when goes your friend) and (which door will reception you)--> that mean(Ports).
 
-9.  **Run NetworkPolicy**
+10.  **Run NetworkPolicy**
     -   I divided the file of grop policy and there are two yaml file it's outside the divided.
         * **Policies Deny all :**
             -   It's important to put on your infrastructure from concept 'default security' to prevent all pods from communicating with each other.
