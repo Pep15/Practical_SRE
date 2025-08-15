@@ -543,3 +543,48 @@ Once you have set up and configured Prometheus and Alertmanager, you can configu
         helm upgrade prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring -f grafana-values.yml
         ```
  **This method avoids the need to import each dashboard manually.**
+
+ ---
+ ## Final Steps: Automation and Troubleshooting
+
+Here are the final steps for automating the deployment with a script and how to perform basic troubleshooting.
+
+### Automated Setup Script
+Before running the deployment script, it's recommended to follow these one-time steps to configure Docker permissions. This allows you to run Docker commands as your current user without needing `sudo` every time.
+
+1.  **Create the `docker` group (if it doesn't already exist):**
+    ```bash
+    sudo groupadd docker
+    ```
+
+2.  **Add your user to the `docker` group:**
+    ```bash
+    sudo usermod -aG docker $USER
+    ```
+
+3.  **Apply the new group membership:**
+    ```bash
+    su - ${USER}
+    ```
+    > [!WARNING]
+    > **Important:** You must **log out and log back in** for the new group membership to take full effect.
+
+4.  **Run the Deployment Script:**
+    Now you can run the infrastructure deployment script.
+    > [!NOTE]
+    > Do not run the script as `sudo`.
+    ```bash
+    ./deploy_Apps_K8s.sh
+    ```
+
+### Basic Troubleshooting
+If you encounter any issues with your pods, these are the first commands you should run to diagnose the problem.
+
+* `kubectl get pod -n <namespace>`
+    * **What it does:** Lists all pods in the specified namespace and shows their current status (e.g., `Running`, `Pending`, `CrashLoopBackOff`). This is the quickest way to see the overall health.
+
+* `kubectl describe pod <name-of-pod> -n <namespace>`
+    * **What it does:** Provides detailed information about a specific pod, including recent events. This is extremely useful for figuring out *why* a pod isn't starting (e.g., image pull errors, resource issues).
+
+* `kubectl logs <name-of-pod> -n <namespace>`
+    * **What it does:** Streams the live output (logs) from the application running inside the pod. This is essential for debugging application-level errors.
