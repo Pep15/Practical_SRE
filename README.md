@@ -205,6 +205,7 @@ Kubernetes is a container orchestration platform designed to manage and scale la
             ```bash
             kubectl scale deployment <name-of-deployment> --replicas=<number-scale> -n <namespace>
             ```
+      </details>
       <details>
       <summary><strong>Simulating a high utilization in Requests to the Image Service.</strong></summary>
       [View Simulating a high utilization in Requests to the Image Service Video](https://bit.ly/4fuLQlW)
