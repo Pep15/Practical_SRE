@@ -450,18 +450,16 @@ Once Docker is installed, you can install Minikube to run a local Kubernetes clu
                     ```
             * **Alertmanager:**
                 -   Configure Alertmanager to route alerts to Slack. This is done by creating an `alertmanager.yml` file with your Slack webhook URL and applying it as a Kubernetes Secret:
-                    1.  use any editor 'nano', 'vi' to set file *alertmanager.yml* this part.
+                    1.  use any editor 'nano', 'vi' to edit file *alertmanager.yml* this part.
                         ```yaml
                         slack_configs:
                         - channel: '#Apps-Alerts'
-                          api_url: '[https://hooks.slack.com/](https://hooks.slack.com/)'
+                          api_url: '[https://hooks.slack.com/]'
                         ```
 >[!TIP]
 > Create your alertmanager.yml file with the Slack webhook URL.
--   You must have accout on *slack* .
-  
--   Get the url *Incoming Webhooks*.
-  
+-   You must have accout on *slack* .  
+-   Get the url *Incoming Webhooks*.  
 -   api_url: `https://hooks.slack.com/`
 
 
