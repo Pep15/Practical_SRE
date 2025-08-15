@@ -41,6 +41,8 @@ Resilience & Auto-Scaling: High availability is ensured through Horizontal Pod A
 ![Architecture Diagram](./Architecture%20Diagram/Architecture_Diagram_SRE.png)
 ---
 
+## System Architecture & Implementation Details
+
 ### 1. Infrastructure and Environment
 - I set up a Kubernetes environment using **`Minikube`**, which serves as an ideal platform for local development.
 - It provides a flexible space for application testing, troubleshooting, and experimentation.
@@ -85,105 +87,77 @@ Resilience & Auto-Scaling: High availability is ensured through Horizontal Pod A
 
 ---
 
-### Kubernetes Orchestration
-
+### 7. Kubernetes Orchestration
 Kubernetes is a container orchestration platform designed to manage and scale large numbers of containers across a cluster of machines.
 
 **Implementation Steps:**
-
-1. **Deployed Containers as Deployments**
-   - Managed **Pods** and enabled scaling up or down as needed.
-
-2. **Configured Horizontal Pod Autoscaler (HPA)**
-   - Enabled dynamic autoscaling to automatically add new Pods when resources are highly utilized.
-
-3. **Set Up Kubernetes Services**
-   - Configured **ClusterIP** services for internal communication between Pods.
-
-4. **Applied NetworkPolicies**
-   - Restricted network traffic to only authorized Pods, enhancing security and reducing unnecessary connections.
-
-5. **Configured Health Probes**
-   - Implemented **livenessProbes** to restart unhealthy Pods.
-   - Implemented **readinessProbes** to ensure Pods receive traffic only when ready.
-
-6. **Created Pod Disruption Budget (PDB)**
-   - Ensured a minimum number of Pods remain available during maintenance or node upgrades.
-
-7. **Managed Sensitive Data with Secrets**
-   - Stored passwords and other sensitive data in **Kubernetes Secrets**, securely passed to Pods.
-
-8. **Managed Non-Sensitive Configuration**
-   - Used **ConfigMaps** to store environment variables or application settings.
-
-9. **Provisioned Persistent Storage**
-   - Configured **Persistent Volumes (PV)** and **Persistent Volume Claims (PVC)** for applications and databases.
+- **Deployed Containers as Deployments** to manage **Pods** and enable scaling.
+- **Configured Horizontal Pod Autoscaler (HPA)** for dynamic autoscaling.
+- **Set Up Kubernetes Services** using **ClusterIP** for internal communication.
+- **Applied NetworkPolicies** to restrict traffic for enhanced security.
+- **Configured Health Probes** (**livenessProbes** and **readinessProbes**) to ensure pod health.
+- **Created Pod Disruption Budget (PDB)** to ensure minimum availability during maintenance.
+- **Managed Sensitive Data with Secrets** for passwords and credentials.
+- **Managed Non-Sensitive Configuration** using **ConfigMaps**.
+- **Provisioned Persistent Storage** with **Persistent Volumes (PV)** and **Persistent Volume Claims (PVC)**.
 
 ---
 
-### Ingress Controller
+### 8. Ingress Controller
 - Routes **HTTP/HTTPS** traffic to services.
 - Configured routing to service endpoints and secured it using self-signed **TLS certificates**.
 
 ---
 
-### Issuer with cert-manager
+### 9. Issuer with cert-manager
 - **Issuer** → Kubernetes object used to release certificates.
 - **cert-manager** → Kubernetes controller managing TLS certificates, including self-signed ones, automatically.
 - Configured the **Issuer** and referenced it in the **Certificate** object to create the **TLS secret**.
 
 ---
 
-### OpenSSL with Secret TLS
+### 10. OpenSSL with Secret TLS
 - **OpenSSL** → Tool to generate TLS self-signed certificates locally.
-- Steps:
-  1. Generated **Private Key**.
-  2. Created a **Certificate Signing Request (CSR)** and generated the certificate.
-  3. Allocated the certificate with the key to Kubernetes **secret tls**.
+- **Steps:**
+    1. Generated **Private Key**.
+    2. Created a **Certificate Signing Request (CSR)** and generated the certificate.
+    3. Allocated the certificate with the key to Kubernetes **secret tls**.
 
 > [!NOTE]
 > There are three ways to generate certificates in Kubernetes:
-> 1. **Manual** 🛠️
->    - Use **OpenSSL** to generate certificates and manually create the TLS secret.
-> 2. **With Issuer and cert-manager** 📜
->    - Create Kubernetes objects (**Issuer** and **Certificate**) managed automatically by **cert-manager**.
->    - *(Implementation method used in this project)*
-> 3. **Automated via Ingress Annotations** 🚀
->    - Create an **Issuer** and reference it in the Ingress annotations (`cert-manager.io/issuer`).
->    - cert-manager automatically generates and manages the certificate.
+> 1.  **Manual** 🛠️: Use **OpenSSL** to generate certificates and manually create the TLS secret.
+> 2.  **With Issuer and cert-manager** 📜: Create Kubernetes objects (**Issuer** and **Certificate**) managed automatically by **cert-manager**. *(This method was used in the project)*.
+> 3.  **Automated via Ingress Annotations** 🚀: Create an **Issuer** and reference it in the Ingress annotations for fully automated management.
 
 ---
 
-### Helm Charts for Kubernetes
+### 11. Helm Charts for Kubernetes
 - **Helm** → Package manager for Kubernetes, allowing definition, installation, and management of applications using preconfigured charts.
 - Installed Helm charts.
 - Used Helm to deploy the **prometheus-community** chart, which bundles:
-  - `Prometheus`
-  - `AlertManager`
-  - `Grafana`
+    - `Prometheus`
+    - `AlertManager`
+    - `Grafana`
 
 ---
 
-### Prometheus, AlertManager, and Grafana
+### 12. Prometheus, AlertManager, and Grafana
 - **Prometheus** → Monitoring tool that scrapes metrics and stores them in a time-series database (**TSDB**).
-  - Configured Prometheus to scrape metrics from services and persist the data.
-  - Templates defined which services Prometheus should scrape.
-
+    - Configured Prometheus to scrape metrics from services and persist the data.
+    - Templates defined which services Prometheus should scrape.
 - **AlertManager** → Groups, routes, and silences alerts from Prometheus before sending them to endpoints like email or Slack.
-  - Configured alerting rules and routing/receivers.
-
+    - Configured alerting rules and routing/receivers.
 - **Grafana** → Data visualization tool for creating dashboards to monitor service metrics.
-  - Configured Prometheus as a data source.
-  - Created dashboards for key metrics:
-    - `Status Pods`
-    - `Histogram Bucket`
-    - `HTTP Request Count`
-    - `CPU Usage`
-    - `Memory Usage`
+    - Configured Prometheus as a data source.
+    - Created dashboards for key metrics:
+        - `Status Pods`
+        - `Histogram Bucket`
+        - `HTTP Request Count`
+        - `CPU Usage`
+        - `Memory Usage`
 
 > [!NOTE]
-> Some services require an **external exporter** alongside the Pod to collect metrics.
-> These exporters must be included in **Prometheus scrape configurations** to ensure proper monitoring.
+> Some services require an **external exporter** alongside the Pod to collect metrics. These exporters must be included in **Prometheus scrape configurations** to ensure proper monitoring.
 
 ----
 ## Steps of failure simulation and recovery verification.
