@@ -458,10 +458,14 @@ Once Docker is installed, you can install Minikube to run a local Kubernetes clu
                         ```
 >[!TIP]
 > Create your alertmanager.yml file with the Slack webhook URL.
-
 -   You must have accout on *slack* .
+  
 -   Get the url *Incoming Webhooks*.
+  
 -   api_url: `https://hooks.slack.com/`
+
+
+
                 -   Create the Secret from the configuration file.
                     ```bash
                     kubectl create secret generic alertmanager-config --from-file=Apps_deployment/prometheus-Configruation/alertmanager.yml -n monitoring --dry-run=client -o yaml | kubectl apply -f -
