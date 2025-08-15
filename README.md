@@ -4,52 +4,60 @@
 
 ```mermaid
 graph TD
-    subgraph External
-        User --> Browser
-        Browser --> |"HTTPS Request<br>(webportal,api,etc..)"| Ingress(Ingress Controllers)
+    subgraph " "
+        User[("fa:fa-user User<br>Browser")]
     end
 
-    subgraph "Kubernetes Cluster"
-        subgraph "frontend-service"
-            WebPortal["Web Portal<br>webportal.local<br>App"]
-            TLS_Secret_FE["TLS Secret"]
-        end
+    subgraph " "
+        Ingress(("fa:fa-lock Ingress Controllers"))
+    end
+    
+    K8sTlsSecret(fa:fa-key TLS Secret)
 
-        subgraph "app-services"
-            K8s_Secrets["K8s Secrets"]
-            APIService["API Service<br>api.local<br>App"]
-            AuthService["Auth Service<br>auth.local<br>App"]
-            ImageService["Image Service<br>images.local<br>App"]
-        end
+    subgraph frontend-service
+        style frontend-service fill:#e6f2ff,stroke:#333,stroke-width:2px
+        WebPortal("webportal.local<br>App")
     end
 
-    subgraph "External Dependencies"
-        PostgreSQL
-        S3["Amazon S3"]
+    subgraph app-services
+        style app-services fill:#e6f2ff,stroke:#333,stroke-width:2px
+        K8sAppSecret(fa:fa-key App Secrets)
+        ApiService("fa:fa-cogs API Service")
+        AuthService("fa:fa-shield-alt Auth Service")
+        ImageService("fa:fa-image Image Service")
     end
 
-    %% Connections from Ingress
-    Ingress --> |"Routes to webportal-service"| WebPortal
-    Ingress --> |"Routes to Api-service"| APIService
-    Ingress --> |"Route to Image-service"| ImageService
-    Ingress --> |"Routes to Auth-service"| AuthService
+    subgraph "External Services"
+        PostgreSQL[("fa:fa-database PostgreSQL")]
+        S3[("fa:fa-cloud-upload Amazon S3")]
+    end
 
-    %% Secret Connections
-    TLS_Secret_FE -.-> |"Read TLS Secret"| Ingress
-    K8s_Secrets -.-> |"Read TLS Secret"| Ingress
-    K8s_Secrets -.-> |"Read Secret<br>DataBase & JWT"| APIService
-    K8s_Secrets -.-> |"Read Secret<br>DataBase"| AuthService
+    %% --- Connections ---
 
-    %% Internal Connections
-    WebPortal --> APIService
-    APIService --> AuthService
-    APIService --> ImageService
-    APIService --> PostgreSQL
+    %% User Flow
+    User -- "HTTPS Request" --> Ingress
+
+    %% Ingress & Frontend
+    Ingress -- "Routes to webportal-service" --> WebPortal
+    Ingress -.->|Read TLS Secret| K8sTlsSecret
+    WebPortal -.->|Read TLS Secret| K8sTlsSecret
+
+    %% Frontend to Backend
+    WebPortal -- "Routes to Api-service" --> ApiService
+    WebPortal -- "Route to image-service" --> ImageService
+
+    %% Backend Services
+    ApiService -.-> AuthService
+    ApiService -- "Stock Connection X" ---x ImageService
+    
+    %% Secret Reads in Backend
+    AuthService -.->|Read Secret DataBase| K8sAppSecret
+    ApiService -.->|Read Secret DataBase & JWT| K8sAppSecret
+
+    %% Backend to External
     AuthService --> PostgreSQL
+    ApiService --> PostgreSQL
     ImageService --> S3
-
-    %% Blocked Connection
-    AuthService --x |"Block Connection"| ImageService
 ```
 ---
 
