@@ -33,6 +33,8 @@ Security: The environment is secured using Network Policies for traffic control,
 Resilience & Auto-Scaling: High availability is ensured through Horizontal Pod Autoscalers (HPA), Liveness/Readiness probes, and verified through practical failure simulation tests (e.g., database failure, high traffic).
 
 </details>
+
+
 ---
 ## 🏛️ Architecture Diagram
 
