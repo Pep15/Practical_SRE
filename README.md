@@ -590,16 +590,17 @@ If you encounter any issues with your pods, these are the first commands you sho
     ```bash
     kubectl logs -f <name-of-pod> -n <namespace>
 ---
-- Lessons learned:
-1. Ensuring Environment Configuration Consistency (HTTP vs. HTTPS).
-2. Handling URL Routing within the Backend Logic.
-3. The Interaction Between the Ingress Controller, Endpoints, and Readiness Probes.
-4. The Role of Services and Ports in Internal Routing.
-5. Configuring cert-manager with an Issuer for Certificate Management.
-6. The Role of Annotations in Kubernetes for Tool-Specific Configuration.
-7. Effective NetworkPolicy Configuration for Micro-segmentation.
-8. Prometheus Service Discovery Using Labels and ServiceMonitor Selectors.
-9. Creating Visual Dashboards in Grafana and Using Template Variables.
+## Lessons Learned
+
+1.  Ensuring Environment Configuration Consistency (HTTP vs. HTTPS).
+2.  Handling URL Routing within the Backend Logic.
+3.  The Interaction Between the Ingress Controller, Endpoints, and Readiness Probes.
+4.  The Role of Services and Ports in Internal Routing.
+5.  Configuring cert-manager with an Issuer for Certificate Management.
+6.  The Role of Annotations in Kubernetes for Tool-Specific Configuration.
+7.  Effective NetworkPolicy Configuration for Micro-segmentation.
+8.  Prometheus Service Discovery Using Labels and ServiceMonitor Selectors.
+9.  Creating Visual Dashboards in Grafana and Using Template Variables.
 10. Converting Grafana Dashboards to ConfigMaps for Infrastructure as Code (IaC) Pipelines.
 11. Exposing Service Metrics for Prometheus Scraping.
 12. Automating Infrastructure Deployment Using a Shell Script.
