@@ -161,9 +161,11 @@ Kubernetes is a container orchestration platform designed to manage and scale la
 > Some services require an **external exporter** alongside the Pod to collect metrics. These exporters must be included in **Prometheus scrape configurations** to ensure proper monitoring.
 
 ----
-## Steps of failure simulation and recovery verification.
 
-### Database Failure with API Service:
+Steps of failure simulation and recovery verification.
+
+<details>
+<summary><strong>Database Failure with API Service:<summary><strong>
 [View Database Failure with API Service Video](https://bit.ly/3UlgOTS)
 
 * **Pre-Failure State Monitoring:**
@@ -203,6 +205,7 @@ Kubernetes is a container orchestration platform designed to manage and scale la
             ```bash
             kubectl scale deployment <name-of-deployment> --replicas=<number-scale> -n <namespace>
             ```
+</details>
 
 ---
 
