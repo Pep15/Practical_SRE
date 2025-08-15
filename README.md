@@ -542,4 +542,4 @@ Once you have set up and configured Prometheus and Alertmanager, you can configu
         ```bash
         helm upgrade prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring -f grafana-values.yml
         ```
-   * **This method avoids the need to import each dashboard manually.* **
+ **This method avoids the need to import each dashboard manually.**
