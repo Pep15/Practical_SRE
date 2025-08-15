@@ -4,7 +4,7 @@
 
 1.  [Overview](#overview)
 2.  [Architecture Diagram](#️-architecture-diagram)
-3.  [System Architecture & Implementation Details](#System Architecture-&-Implementation-Details)
+3.  [System Architecture & Implementation Details](#System-Architecture-&-Implementation-Details)
 4.  [Setup Environment](#setup-environment)
 5.  [Deploying Objects to the Kubernetes Cluster](#deploying-objects-to-the-kubernetes-cluster)
 6.  [Helm and Prometheus Installation](#helm-and-prometheus-installation)
