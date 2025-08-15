@@ -247,9 +247,10 @@ Kubernetes is a container orchestration platform designed to manage and scale la
 </details>  
 
 ----
-## Setup Environment
+# Setup Environment
 
-### Prerequisites:
+<details>
+<summary>Prerequisites</summary>
 
 | Tools | Description |
 | --- | --- |
@@ -259,8 +260,11 @@ Kubernetes is a container orchestration platform designed to manage and scale la
 | `Helm` | A package manager for Kubernetes.|
 | `Load Testing Tool`| using `hey`. |
 
-### Steps:
-#### Docker Installation and Configuration
+</details>
+
+<details>
+<summary>Docker Installation and Configuration</summary>
+
 1.  **Install Docker:** Run the following command to install Docker on the local machine:
     ```bash
     curl -fsSL https://get.docker.com -o get-docker.sh
@@ -296,7 +300,6 @@ Kubernetes is a container orchestration platform designed to manage and scale la
         ```
         > **`--restart always`**: is the policy to reload the container even if there are issues with the registry container, or restart the machine.
 
-
 4. **Build Docker Image and Push**
     * Once the Docker daemon is configured, I can build and push to the local registry.
     * **API_service:**
@@ -331,8 +334,11 @@ Kubernetes is a container orchestration platform designed to manage and scale la
         # Push image webportal-service:
         docker push the-registry-host(ip):5000/webportal-service:v1
         ```
-5. ####  Install and Configure Minikube
-Once Docker is installed, I can install Minikube to run a local Kubernetes cluster on the machine.
+
+</details>
+
+<details>
+<summary>Install and Configure Minikube</summary>
 
 1.  **Download and Install Minikube:**
     ```bash
@@ -356,8 +362,10 @@ Once Docker is installed, I can install Minikube to run a local Kubernetes clust
 | **`--insecure-registry`**| Tells Minikube to trust the local Docker registry, allowing it to pull images from it. |
 | **`--ports=`** | Export port |
 
+</details>
 
-## Deploying Objects to the Kubernetes Cluster
+<details>
+<summary>Deploying Objects to the Kubernetes Cluster</summary>
 
 6.  **Runs Deployment on Kubernetes cluster**
     -   Run 'namespace' to allocate each objects for the namespace
@@ -435,12 +443,14 @@ Once Docker is installed, I can install Minikube to run a local Kubernetes clust
             ```bash
             kubectl -f Policy-Group/Policy-postgresql-fromAndTo/
             ```
----
-## Helm and Prometheus Installation
+
+</details>
+
+<details>
+<summary>Helm and Prometheus Installation</summary>
 
 This guide covers the installation of Helm and the kube-prometheus-stack, which includes Prometheus, Alertmanager, and Grafana.
 
----
 ### 1. Install Helm
 **Helm** is a package manager for Kubernetes that simplifies deploying and managing applications. It uses collections of pre-configured resources called "charts."
 
@@ -451,7 +461,6 @@ This guide covers the installation of Helm and the kube-prometheus-stack, which 
     ./get_helm.sh
     ```
 
----
 ### 2. Install Prometheus
 We will use the `kube-prometheus-stack` chart from the prometheus-community repository.
 
@@ -467,67 +476,48 @@ We will use the `kube-prometheus-stack` chart from the prometheus-community repo
     helm install prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring --create-namespace
     ```
 
----
 ### 3. Configure Prometheus Components
 To monitor your custom applications, you need to configure `ServiceMonitor`, `PrometheusRule`, and `Alertmanager`.
 
 1. **ServiceMonitor:**
-
-To link Prometheus to your services, you must configure a `ServiceMonitor` resource. This tells Prometheus which services to scrape for metrics.
-* **Apply the ServiceMonitor for your applications** (api, auth, image, webportal, postgres):
+    * **Apply the ServiceMonitor for your applications** (api, auth, image, webportal, postgres):
     ```bash
     kubectl apply -f Apps_deployment/prometheus-Configuration/apps-monitors.yml
     ```
 
 2. **PrometheusRule:**
-
-Apply `PrometheusRule` resources to define alerting rules. Prometheus uses these to generate alerts, which are then sent to Alertmanager.
-* **Apply the custom alert rules for your applications:**
+    * **Apply the custom alert rules for your applications:**
     ```bash
     kubectl apply -f Apps_deployment/prometheus-Configuration/app-alerts-rules.yml
     ```
 
 3.  **Alertmanager:**
-
-    Configure Alertmanager to route alerts to a notification service like Slack by following these steps:
-
     1.  **Create the `alertmanager.yml` file:**
-        Create a file named `alertmanager.yml` with the following content, adding your specific Slack webhook URL.
         ```yaml
         slack_configs:
         - channel: '#Apps-Alerts'
           api_url: 'YOUR_SLACK_WEBHOOK_URL'
         ```
-
- > [!TIP]
-> * You must have an account on *Slack*.*
-> * Get the webhook URL from the **Incoming Webhooks** section in your Slack app settings.*
-> * The `api_url` is the secret URL you receive from Slack.*
-
- 1.  **Create the Secret from the configuration file:**
-
-      ```bash
-           kubectl create secret generic alertmanager-config --from-file=Apps_deployment/prometheus-Configuration/alertmanager.yml -n monitoring --dry-run=client -o yaml | kubectl apply -f -
-      ```
-
-3.  **Update the Helm release to use the new Secret:**
-
-       ```bash
+    2.  **Create the Secret from the configuration file:**
+        ```bash
+        kubectl create secret generic alertmanager-config --from-file=Apps_deployment/prometheus-Configuration/alertmanager.yml -n monitoring --dry-run=client -o yaml | kubectl apply -f -
+        ```
+    3.  **Update the Helm release to use the new Secret:**
+        ```bash
         helm upgrade prometheus-stack prometheus-community/kube-prometheus-stack \
          --namespace monitoring \
          --set alertmanager.config.configmapName=alertmanager-config \
          --set alertmanager.config.templateSecretName=alertmanager-config
-       ```
-
-5.  **Create an ingress for Alertmanager:**
-        This allows you to access the Alertmanager UI over HTTPS instead of using `port-forward`.
-
-   ```bash
+        ```
+    4.  **Create an ingress for Alertmanager:**
+        ```bash
         kubectl apply -f alertManager-ingress.yml
-   ```
----
-## 13. Grafana
-Once you have set up and configured Prometheus and Alertmanager, you can configure Grafana.
+        ```
+
+</details>
+
+<details>
+<summary>Grafana</summary>
 
 * **Create an ingress for Grafana** to allow access over an HTTPS page instead of using `port-forward`.
     ```bash
@@ -536,8 +526,8 @@ Once you have set up and configured Prometheus and Alertmanager, you can configu
     You should then be able to access it at `https://grafana.local`.
 
 * There are two ways to import visualization dashboards:
->[!TIP]
-> **A. Manual Method**
+
+**A. Manual Method**
 > 1.  In the left sidebar, navigate to **Dashboards**.
 > 2.  On the Dashboards page, click the **New** button.
 > 3.  From the dropdown list, choose **Import**.
@@ -545,32 +535,26 @@ Once you have set up and configured Prometheus and Alertmanager, you can configu
 > 5.  The dashboard files are located in the `Grafana_DashBoard` directory.
 
 **B. Automated Method**
+1.  **Create a ConfigMap** from the directory containing all your dashboard files.
+    ```bash
+    kubectl create configmap my-grafana-dashboards --from-file=Grafana_DashBoard/ -n monitoring
+    ```
+2.  **Add a label and annotation.**
+    ```bash
+    kubectl label configmap my-grafana-dashboards grafana_dashboard="1" -n monitoring
+    kubectl annotate configmap my-grafana-dashboards grafana_folder="Application Services" -n monitoring
+    ```
+3.  **Upgrade the `kube-prometheus-stack`** to use the values file that enables the sidecar to detect these dashboards.
+    ```bash
+    helm upgrade prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring -f grafana-values.yml
+    ```
 
-   You can automatically import dashboards by upgrading the `kube-prometheus-stack` chart with a custom `grafana-values.yml` file.
+</details>
 
-   1.  **Create a ConfigMap** from the directory containing all your dashboard files.
-        ```bash
-        kubectl create configmap my-grafana-dashboards --from-file=Grafana_DashBoard/ -n monitoring
-        ```
-   2.  **Add a label and annotation.** The Grafana sidecar looks for this label and annotation to provision the dashboards.
-        ```bash
-        kubectl label configmap my-grafana-dashboards grafana_dashboard="1" -n monitoring
-        kubectl annotate configmap my-grafana-dashboards grafana_folder="Application Services" -n monitoring
-        ```
-   3.  **Upgrade the `kube-prometheus-stack`** to use the values file that enables the sidecar to detect these dashboards.
-        ```bash
-        helm upgrade prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring -f grafana-values.yml
-        ```
- **This method avoids the need to import each dashboard manually.**
-
- ---
- ## Final Steps: Automation and Troubleshooting
-
-Here are the final steps for automating the deployment with a script and how to perform basic troubleshooting.
+<details>
+<summary>Final Steps: Automation and Troubleshooting</summary>
 
 ### Automated Setup Script
-Before running the deployment script, it's recommended to follow these one-time steps to configure Docker permissions. This allows you to run Docker commands as your current user without needing `sudo` every time.
-
 1.  **Create the `docker` group (if it doesn't already exist):**
     ```bash
     sudo groupadd docker
@@ -589,12 +573,12 @@ Before running the deployment script, it's recommended to follow these one-time 
    > **Important:** You must **log out and log back in** for the new group membership to take full effect.
 
 4.  **Run the Deployment Script:**
-    Now you can run the infrastructure deployment script.
-> [!NOTE]
-> Do not run the script as `sudo`.
-  ```bash
-  ./deploy_Apps_K8s.sh
-  ```
+    ```bash
+    ./deploy_Apps_K8s.sh
+    ```
+
+</details>
+
 
 ### Basic Troubleshooting
 If you encounter any issues with your pods, these are the first commands you should run to diagnose the problem.
