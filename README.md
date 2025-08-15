@@ -476,12 +476,11 @@ Apply `PrometheusRule` resources to define alerting rules. Prometheus uses these
         - channel: '#Apps-Alerts'
           api_url: 'YOUR_SLACK_WEBHOOK_URL'
         ```
-        > [!TIP]
-        > Helpful advice for doing things better or more easily.
-        > [!TIP]
-        > * You must have an account on **Slack**.
-        > * Get the webhook URL from the **Incoming Webhooks** section in your Slack app settings.
-        > * The `api_url` is the secret URL you receive from Slack.
+
+           > [!TIP]
+           > * You must have an account on **Slack*.
+           > * Get the webhook URL from the **Incoming Webhooks** section in your Slack app settings.*
+           > * The `api_url` is the secret URL you receive from Slack.*
 
     1.  **Create the Secret from the configuration file:**
         ```bash
