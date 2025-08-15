@@ -456,25 +456,24 @@ Once Docker is installed, you can install Minikube to run a local Kubernetes clu
                         - channel: '#Apps-Alerts'
                           api_url: '[https://hooks.slack.com/]'
                         ```
->[!TIP]
-> Create your alertmanager.yml file with the Slack webhook URL.
--   You must have accout on *slack* .  
--   Get the url *Incoming Webhooks*.  
--   api_url: `https://hooks.slack.com/`
+> [!TIP]
+> * Create your `alertmanager.yml` file with the Slack webhook URL.
+> * You must have an account on Slack.
+> * Get the URL from **Incoming Webhooks**.
+> * Your `api_url` will be similar to: `https://hooks.slack.com/...`
 
-
-     *  **Genrate the Secret from the configuration file **alertmanager.yml**.
-                    ```bash
-                    kubectl create secret generic alertmanager-config --from-file=Apps_deployment/prometheus-Configruation/alertmanager.yml -n monitoring --dry-run=client -o yaml |    kubectl apply -f -
-                    ```
-       *  **Update the Helm release to use the new Secret**.
-                    ```bash
-                    helm upgrade prometheus-stack prometheus-community/kube-prometheus-stack \
-                     --namespace monitoring \
-                     --set alertmanager.config.configmapName=alertmanager-config \
-                     --set alertmanager.config.templateSecretName=alertmanager-config
-                    ```
-       * **Create ingress for Alertmanager to allow you to access over 'HTTPs' page insted of using 'port-forward'.**
-                    ```bash
-                    kubectl apply -f alertManager-ingress.yml
-                    ```
+* **Create the Secret from the configuration file:**
+    ```bash
+    kubectl create secret generic alertmanager-config --from-file=Apps_deployment/prometheus-Configruation/alertmanager.yml -n monitoring --dry-run=client -o yaml | kubectl apply -f -
+    ```
+* **Update the Helm release to use the new Secret:**
+    ```bash
+    helm upgrade prometheus-stack prometheus-community/kube-prometheus-stack \
+     --namespace monitoring \
+     --set alertmanager.config.configmapName=alertmanager-config \
+     --set alertmanager.config.templateSecretName=alertmanager-config
+    ```
+* **Create an ingress for Alertmanager** to allow access over an HTTPS page instead of using `port-forward`.
+    ```bash
+    kubectl apply -f alertManager-ingress.yml
+    ```
