@@ -634,3 +634,12 @@ If you encounter any issues with your pods, these are the first commands you sho
 10. Converting Grafana Dashboards to ConfigMaps for Infrastructure as Code (IaC) Pipelines.
 11. Exposing Service Metrics for Prometheus Scraping.
 12. Automating Infrastructure Deployment Using a Shell Script.
+
+---
+## Improvement Suggestions
+* **My suggestions to improve the assignment:**
+  1. Implement a 3-Tier Architecture to achieve a more organized and maintainable application structure.
+  2. Introduce a single main application to handle all backend requests (e.g., an API Gateway).
+  3. Utilize Helm Charts to automate the deployment process for all applications.
+  4. Establish a CI/CD pipeline with clearly defined stages, ensuring a smooth and continuous workflow where each stage builds upon the previous one.
+
