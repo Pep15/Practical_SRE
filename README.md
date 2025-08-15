@@ -380,8 +380,9 @@ Once Docker is installed, you can install Minikube to run a local Kubernetes clu
             ```
             -   I already put Issuer with the Group of WebPortal because I have one app under the namespace 'frontend-service'
     -   **Network-Policy:**
-       > [!TIP]
-       > Before to start apply Networkpolicy there are two concepts 'ingress' , 'egress'
+
+> [!TIP]
+> Before to start apply Networkpolicy there are two concepts 'ingress' , 'egress'
        
 
      | Flag | Description |
