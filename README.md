@@ -4,55 +4,49 @@
 
 ```mermaid
 graph TD
-    subgraph "External"
-        User[fa:fa-user User] --> Browser[fa:fa-window-maximize Browser]
-        Browser --> |HTTPS Request| Ingress(fa:fa-lock Ingress Controller)
+    subgraph External
+        User --> Browser
+        Browser --> |HTTPS Request| Ingress(Ingress Controller)
     end
 
     subgraph "Kubernetes Cluster"
-        subgraph frontend-service
-            direction LR
-            WebPortal["webportal.local <br> fa:fa-cube App"]
-            SecretFE[fa:fa-key TLS Secret]
+        subgraph "frontend-service"
+            WebPortal["webportal.local <br> App"]
+            TLS_Secret_FE["TLS Secret"]
         end
 
-        subgraph app-services
-            APIService["fa:fa-cogs API Service <br> api.local <br> fa:fa-cube App"]
-            AuthService["fa:fa-shield-alt Auth Service <br> auth.local <br> fa:fa-cube App"]
-            ImageService["fa:fa-image Image Service <br> images.local <br> fa:fa-cube App"]
-            SecretBE[fa:fa-key K8s Secrets]
+        subgraph "app-services"
+            K8s_Secrets["K8s Secrets"]
+            APIService["API Service <br> api.local <br> App"]
+            AuthService["Auth Service <br> auth.local <br> App"]
+            ImageService["Image Service <br> images.local <br> App"]
         end
-
-        subgraph "External Dependencies"
-            PostgreSQL[fa:fa-database PostgreSQL]
-            S3[fa:fa-aws Amazon S3]
-        end
-
-        Ingress -- "Routes to webportal-service" --> WebPortal
-        Ingress -- "Routes to Api-service" --> APIService
-        Ingress -- "Route to Image-service" --> ImageService
-        Ingress -- "Routes to Auth-service" --> AuthService
-
-        SecretFE -. "Read TLS Secret" .-> Ingress
-        SecretBE -. "Read TLS Secret" .-> Ingress
-
-        WebPortal --> APIService
-
-        APIService --> AuthService
-        APIService --> ImageService
-        APIService --> PostgreSQL
-        AuthService --> PostgreSQL
-
-        ImageService --> S3
-
-        SecretBE -. "Read Secret <br> DataBase & JWT" .-> APIService
-        SecretBE -. "Read Secret <br> DataBase" .-> AuthService
-
-        AuthService --x |Block Connection| ImageService
     end
 
-    style Ingress fill:#f9f,stroke:#333,stroke-width:2px
-    style S3 fill:#FF9900,stroke:#333,stroke-width:2px
+    subgraph "External Dependencies"
+        PostgreSQL
+        S3["Amazon S3"]
+    end
+
+    %% Connections
+    Ingress --> |Routes to webportal-service| WebPortal
+    Ingress --> |Routes to Api-service| APIService
+    Ingress --> |Routes to Auth-service| AuthService
+    Ingress --> |Route to Image-service| ImageService
+
+    TLS_Secret_FE -.-> |"Read TLS Secret"| Ingress
+    K8s_Secrets -.-> |"Read TLS Secret"| Ingress
+
+    K8s_Secrets -.-> |"Read Secret <br> DataBase & JWT"| APIService
+    K8s_Secrets -.-> |"Read Secret <br> DataBase"| AuthService
+
+    WebPortal --> APIService
+    APIService --> AuthService
+    APIService --> ImageService
+    APIService --> PostgreSQL
+    AuthService --> PostgreSQL
+    ImageService --> S3
+    AuthService --x |"Block Connection"| ImageService
 ```
 ---
 
