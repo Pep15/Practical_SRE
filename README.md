@@ -143,7 +143,6 @@ Kubernetes is a container orchestration platform designed to manage and scale la
     1. Generated **Private Key**.
     2. Created a **Certificate Signing Request (CSR)** and generated the certificate.
     3. Allocated the certificate with the key to Kubernetes **secret tls**.
-
 > [!NOTE]
 > There are three ways to generate certificates in Kubernetes:
 > 1.  **Manual** 🛠️: Use **OpenSSL** to generate certificates and manually create the TLS secret.
