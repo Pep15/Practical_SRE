@@ -13,25 +13,24 @@
 9. [Lessons Learned](#lessons-learned)
 
 <details>
+<summary>Overview</summary>
 
-<summary>## Overview</summary>
-
+Overview
 This project implements a complete Site Reliability Engineering (SRE) solution for a microservices application composed of three distinct services: a main API, an authentication service, and an image storage service.
 
 The core objective is to build a production-grade environment on Kubernetes that is highly available, secure, observable, and capable of auto-scaling. The entire infrastructure is managed using Infrastructure as Code (IaC) principles and includes documented simulations of failure and recovery scenarios.
 
-### Core Objectives Achieved:
+Core Objectives Achieved:
+Containerization & Deployment: Services are containerized using Docker, pushed to a private registry, and deployed on Kubernetes using declarative YAML files.
 
-* **Containerization & Deployment:** Services are containerized using Docker, pushed to a private registry, and deployed on Kubernetes using declarative YAML files.
+Advanced Monitoring: A full monitoring stack is implemented using Prometheus for metrics collection and Grafana for detailed dashboards.
 
-* **Advanced Monitoring:** A full monitoring stack is implemented using **Prometheus** for metrics collection and **Grafana** for detailed dashboards.
+Automated Alerting: Alertmanager is configured to send critical alerts to Slack based on predefined rules.
 
-* **Automated Alerting:** **Alertmanager** is configured to send critical alerts to Slack based on predefined rules.
+Security: The environment is secured using Network Policies for traffic control, Secrets for credentials management, and an Ingress with self-signed TLS certificates.
 
-* **Security:** The environment is secured using **Network Policies** for traffic control, **Secrets** for credentials management, and an **Ingress** with self-signed TLS certificates.
+Resilience & Auto-Scaling: High availability is ensured through Horizontal Pod Autoscalers (HPA), Liveness/Readiness probes, and verified through practical failure simulation tests (e.g., database failure, high traffic).
 
-* **Resilience & Auto-Scaling:** High availability is ensured through **Horizontal Pod Autoscalers (HPA)**, Liveness/Readiness probes, and verified through practical failure simulation tests (e.g., database failure, high traffic).
-  
 </details>
 ---
 ## 🏛️ Architecture Diagram
