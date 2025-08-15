@@ -15,7 +15,8 @@
 <details>
 <summary>Overview</summary>
 
-Overview
+## #Overview
+
 This project implements a complete Site Reliability Engineering (SRE) solution for a microservices application composed of three distinct services: a main API, an authentication service, and an image storage service.
 
 The core objective is to build a production-grade environment on Kubernetes that is highly available, secure, observable, and capable of auto-scaling. The entire infrastructure is managed using Infrastructure as Code (IaC) principles and includes documented simulations of failure and recovery scenarios.
