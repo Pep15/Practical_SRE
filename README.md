@@ -180,10 +180,12 @@ Kubernetes is a container orchestration platform designed to manage and scale la
      - `CPU Usage`
      - `Memory Usage`
 
-> [!NOTE]
-> Some services require an **external exporter** alongside the Pod to collect metrics. These exporters must be included in **Prometheus scrape configurations** to ensure proper monitoring.
+> **[!NOTE]** Some services require an **external exporter** alongside the Pod to collect metrics. These exporters must be included in **Prometheus scrape configurations** to ensure proper monitoring.
+
 
 </details>
+
+
 
 ----
 <a id="Steps-of-failure-simulation-and-recovery-verification"></a>
@@ -273,7 +275,7 @@ Kubernetes is a container orchestration platform designed to manage and scale la
 ----
 # Setup Environment
 
-<details>
+
 <summary>Prerequisites</summary>
 
 | Tools | Description |
@@ -284,7 +286,7 @@ Kubernetes is a container orchestration platform designed to manage and scale la
 | `Helm` | A package manager for Kubernetes.|
 | `Load Testing Tool`| using `hey`. |
 
-</details>
+
 
 <details>
 <summary>Docker Installation and Configuration</summary>
