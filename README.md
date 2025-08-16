@@ -144,13 +144,15 @@ Kubernetes is a container orchestration platform designed to manage and scale la
     2. Created a **Certificate Signing Request (CSR)** and generated the certificate.
     3. Allocated the certificate with the key to Kubernetes **secret tls**.
 
-</details>
-
->[!NOTE]
-> There are three ways to generate certificates in Kubernetes:
+    
+* **There are three ways to generate certificates in Kubernetes:**
 > 1.  **Manual** 🛠️: Use **OpenSSL** to generate certificates and manually create the TLS secret.
 > 2.  **With Issuer and cert-manager** 📜: Create Kubernetes objects (**Issuer** and **Certificate**) managed automatically by **cert-manager**. *(This method was used in the project)*.
 > 3.  **Automated via Ingress Annotations** 🚀: Create an **Issuer** and reference it in the Ingress annotations for fully automated management.
+
+</details>
+
+
 
 <details>
 <summary>11. Helm Charts for Kubernetes</summary>
@@ -180,12 +182,8 @@ Kubernetes is a container orchestration platform designed to manage and scale la
      - `CPU Usage`
      - `Memory Usage`
 
-<div style="background-color: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 16px; color: #c9d1d9;">
-    <p style="margin: 0; padding: 0; color: #0d82d4;"><strong>💡 INFO</strong></p>
-    <p style="margin: 0; padding: 0; margin-top: 8px;">Some services require an external exporter alongside the Pod to collect metrics. These exporters must be included in Prometheus scrape configurations to ensure proper monitoring.</p>
-</div>
-
-
+* **Exporter**
+> Some services require an external exporter alongside the Pod to collect metrics. These exporters must be included in Prometheus scrape configurations to ensure proper monitoring.
 </details>
 
 
@@ -315,7 +313,7 @@ Kubernetes is a container orchestration platform designed to manage and scale la
             sudo systemctl restart docker
             ```
 
-> [!IMPORTANT]
+ * **IMPORTANT**
 > If I use Docker Desktop, I can configure the code JSON format on it.
 > 1. Go to the settings icon in the right corner, click, then will pop up page.
 > 2. Then navigate to the 'Docker Engine' will see there is an empty box. Enter the command in the box.
@@ -441,7 +439,7 @@ Kubernetes is a container orchestration platform designed to manage and scale la
             -   I already put Issuer with the Group of WebPortal because I have one app under the namespace 'frontend-service'
     -   **Network-Policy:**
 
-> [!TIP]
+* **TIP**
 > Before to start apply Networkpolicy there are two concepts 'ingress' , 'egress'
 
    | Type | Description |
@@ -598,7 +596,7 @@ To monitor your custom applications, you need to configure `ServiceMonitor`, `Pr
     ```bash
     su - ${USER}
     ```
-   > [!WARNING]
+   * **WARNING**
    > **Important:** You must **log out and log back in** for the new group membership to take full effect.
 
 4.  **Run the Deployment Script:**
