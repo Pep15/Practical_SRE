@@ -147,7 +147,9 @@ Kubernetes is a container orchestration platform designed to manage and scale la
     
 * **There are three ways to generate certificates in Kubernetes:**
 > 1.  **Manual** 🛠️: Use **OpenSSL** to generate certificates and manually create the TLS secret.
+
 > 2.  **With Issuer and cert-manager** 📜: Create Kubernetes objects (**Issuer** and **Certificate**) managed automatically by **cert-manager**. *(This method was used in the project)*.
+
 > 3.  **Automated via Ingress Annotations** 🚀: Create an **Issuer** and reference it in the Ingress annotations for fully automated management.
 
 </details>
