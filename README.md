@@ -181,7 +181,7 @@ Kubernetes is a container orchestration platform designed to manage and scale la
      - `Memory Usage`
 
 <div style="background-color: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 16px; color: #c9d1d9;">
-    <p style="margin: 0; padding: 0;"><strong>💡 INFO</strong></p>
+    <p style="margin: 0; padding: 0; color: #0d82d4;"><strong>💡 INFO</strong></p>
     <p style="margin: 0; padding: 0; margin-top: 8px;">Some services require an external exporter alongside the Pod to collect metrics. These exporters must be included in Prometheus scrape configurations to ensure proper monitoring.</p>
 </div>
 
